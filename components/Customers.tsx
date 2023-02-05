@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { customersAPI } from "../api/endPoints";
+import { customerAPI } from "../api/endPoints";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Button } from "react-native-paper";
 import GetConfiguration from "../constants/Config";
@@ -27,7 +27,7 @@ export default function Customers(props: any) {
 
   // Example code...
   const fetchCustomers = async () => {
-    //await axios(baseUrl + customersAPI).then((response) => {
+    //await axios(baseUrl + customerAPI).then((response) => {
     await axios(baseURL + "/api/customers").then((response) => {
       let data = Object.values(response.data);
       setCustomers(data);

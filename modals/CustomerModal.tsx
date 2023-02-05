@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Button } from "react-native-paper";
 import CustomerForm from "../forms/CustomerForm";
-import { customersAPI } from "../api/endPoints";
+import { customerAPI } from "../api/endPoints";
 import { getCustomersNames } from "../functions/customerFunctions";
 
 export default function CustomerModal(props: any) {
@@ -39,10 +39,10 @@ export default function CustomerModal(props: any) {
 
     try {
       if (formdata.customer_id)
-        await axios.put("http://localhost:8080" + customersAPI, formdata);
+        await axios.put("http://localhost:8080" + customerAPI, formdata);
       else
         await axios.post(
-          "http://localhost:8080" + customersAPI,
+          "http://localhost:8080" + customerAPI,
           Object.values(formdata)
         );
     } catch (err) {

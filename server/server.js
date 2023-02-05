@@ -77,6 +77,61 @@ app.post("/api/customers", async (req, res) => {
   res.send({ result: "ok" });
 });
 
+// POST Multiple customers
+app.post("/api/customers/many", async (req, res) => {
+  const customers = req.body;
+  //console.log(customers);
+
+  function insertValues(customers) {
+    let valuesStr = "";
+
+    //valuesStr += `('SomeName', 'Some Last Name', 'address', 'city', 'OR', '9165959706', 'email@email.com')`;
+
+    customers.forEach((c, index) => {
+      if (index === customers.length - 1) {
+        valuesStr += `('${c.fName}', '${c.lName}', '${
+          c.address ? c.address : "na"
+        }', '${c.city ? c.city : "na"}', '${c.state ? c.state : "na"}', '${
+          c.phone
+        }', '${c.email ? c.email : "na"}')`;
+      } else {
+        valuesStr += `('${c.fName}', '${c.lName}', '${
+          c.address ? c.address : "na"
+        }', '${c.city ? c.city : "na"}', '${c.state ? c.state : "na"}', '${
+          c.phone
+        }', '${c.email ? c.email : "na"}'),`;
+      }
+    });
+
+    //console.log(valuesStr);
+
+    return valuesStr;
+  }
+
+  let values = insertValues(customers);
+
+  let sql = `INSERT INTO customer (first_name, last_name, street_address, city, state, cust_phone, email) VALUES ${values}`;
+
+  console.log(sql);
+
+  try {
+    await db.pool.query(sql, customers, function (err, data) {
+      if (err) throw err;
+      console.log("User data is inserted successfully");
+    });
+    res.send({ result: "ok" });
+  } catch (err) {
+    console.error(err);
+    res.send({ result: "Insert Failed!" });
+  }
+});
+
+// insert into contacts(first_name, last_name, phone, contact_group)
+// values
+//     ('James','Smith','(408)-232-2352','Customers'),
+//     ('Michael','Smith','(408)-232-6343','Customers'),
+//     ('Maria','Garcia','(408)-232-3434','Customers');
+
 // UPDATE Customer
 app.put("/api/customers", async (req, res) => {
   const customer = req.body;

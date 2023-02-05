@@ -6,7 +6,7 @@ const baseURL = GetConfiguration().baseUrl;
 
 // export const getCustomersFromDB = async () => {
 //   const [customers, setCustomers] = useState<any>();
-//   //await axios(baseUrl + customersAPI).then((response) => {
+//   //await axios(baseUrl + customerAPI).then((response) => {
 //   return await axios(baseURL + "/api/customers").then((response) => {
 //     let data = Object.values(response.data);
 //     return data;

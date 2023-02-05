@@ -1,4 +1,5 @@
 import { useState } from "react";
+import moment from "moment";
 import { View, Text, StyleSheet, Image, TextInput } from "react-native";
 
 export default function Header(props: any) {
@@ -17,11 +18,30 @@ export default function Header(props: any) {
           />
           <TextInput placeholder="Search" style={styles.navSearch} />
         </View>
-        <View style={{ marginRight: "2rem", alignSelf: "center" }}>
-          <Text style={styles.navEl}>Last Sign-in: Dec 22, 2022</Text>
+        <View
+          style={{
+            marginRight: "2rem",
+            justifyContent: "center",
+            alignItems: "center",
+            //alignSelf: "center",
+          }}
+        >
+          <Text style={styles.navEl}>
+            Last Sign-in:{" "}
+            <Text style={{ fontSize: 14, color: "orange", marginLeft: 10 }}>
+              {moment().format("MMMM YY, HH:MM A")}
+            </Text>
+          </Text>
         </View>
-        <View style={{ alignSelf: "center" }}>
-          <Text style={[styles.navEl, { fontSize: 16, fontWeight: "bold" }]}>
+        <View style={{ justifyContent: "center", alignContent: "center" }}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "bold",
+              color: "#ffffff",
+              marginTop: -5,
+            }}
+          >
             Ruslan Kalashnikov
           </Text>
         </View>

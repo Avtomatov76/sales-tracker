@@ -17,4 +17,5 @@ export const commissionsAPI = "/api/commissions";
 export const vendorsAPI = "/api/vendors";
 
 // Customers
-export const customersAPI = "/api/customers";
+export const customerAPI = "/api/customers";
+export const customersAPI = "/api/customers/many";

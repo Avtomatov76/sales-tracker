@@ -8,7 +8,7 @@ export default function HomeScreen(props: any) {
   return (
     <View style={styles.container}>
       <Header />
-      <View style={{ height: "80%" }}>
+      <View style={{ height: "100%" }}>
         <View style={{ flexDirection: "row", height: "100%" }}>
           <Sidebar />
           <Main />

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { customersAPI } from "../api/endPoints";
+import { customerAPI } from "../api/endPoints";
 import { View, Text, StyleSheet } from "react-native";
 import Customers from "./Customers";
-import CSVUploader from "./SCVUploader";
+import CSVUploader from "./CSVUploader";
 
 export default function Main(props: any) {
   const [customers, setCustomers] = useState<any>();
@@ -17,7 +17,7 @@ export default function Main(props: any) {
 
   // Example code...
   // const fetchCustomers = async () => {
-  //   //await axios(baseUrl + customersAPI).then((response) => {
+  //   //await axios(baseUrl + customerAPI).then((response) => {
   //   await axios(baseUrl + "/api/customers").then((response) => {
   //     let data = Object.values(response.data);
   //     setCustomers(data);

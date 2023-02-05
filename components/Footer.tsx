@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
+import moment from "moment";
 
 export default function Footer(props: any) {
   return (
@@ -7,7 +8,9 @@ export default function Footer(props: any) {
         <Text style={styles.title}>Created by Ruslan Kalashnikov</Text>
       </View>
       <View>
-        <Text style={styles.copyright}>Copyright, 2022</Text>
+        <Text style={styles.copyright}>
+          Copyright, {moment().format("YYYY")}
+        </Text>
       </View>
     </View>
   );
