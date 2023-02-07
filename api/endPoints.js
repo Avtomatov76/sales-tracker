@@ -18,4 +18,10 @@ export const vendorsAPI = "/api/vendors";
 
 // Customers
 export const customerAPI = "/api/customers";
-export const customersAPI = "/api/customers/many";
+export const saveCustomersAPI = "/api/customers/many";
+
+// Products
+export const saveProductsAPI = "/api/products/many";
+
+// Transactions
+export const saveTransactionsAPI = "/api/transactions/many";

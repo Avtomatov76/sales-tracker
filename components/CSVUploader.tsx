@@ -4,7 +4,12 @@ import axios from "axios";
 import Papa from "papaparse";
 import GetConfiguration from "../constants/Config";
 import { getCustomersNames } from "../functions/customerFunctions";
-import { customerAPI, customersAPI } from "../api/endPoints";
+import {
+  customerAPI,
+  saveCustomersAPI,
+  saveProductsAPI,
+  saveTransactionsAPI,
+} from "../api/endPoints";
 import { Button } from "react-native-paper";
 import ErrorModal from "../modals/ErrorModal";
 import { processParsedData } from "../functions/csvUploaderFunctions";
@@ -52,13 +57,53 @@ export default function CSVUploader(props: any) {
     setShowInfoModal(true);
   };
 
-  const uploadCustomers = async () => {
+  const uploadData = async () => {
     alert("About to Upload these customers!");
+
+    axios
+      .all([
+        axios.post(
+          "http://localhost:8080" + saveCustomersAPI,
+          Object.values(data.customerData)
+        ),
+        axios.post(
+          "http://localhost:8080" + saveProductsAPI,
+          Object.values(data.productData)
+        ),
+        axios.post(
+          "http://localhost:8080" + saveTransactionsAPI,
+          Object.values(data.transactionData)
+        ),
+      ])
+      .then(
+        axios.spread((data1, data2, data3) => {
+          // output of req.
+          console.log("data1", data1, "data2", data2, "data3", data3);
+        })
+      );
 
     // try {
     //   await axios.post(
-    //     "http://localhost:8080" + customersAPI,
-    //     Object.values(customerData)
+    //     "http://localhost:8080" + saveCustomersAPI,
+    //     Object.values(data.customerData)
+    //   );
+    // } catch (err) {
+    //   console.log(err);
+    // }
+
+    // try {
+    //   await axios.post(
+    //     "http://localhost:8080" + saveProductsAPI,
+    //     Object.values(data.productData)
+    //   );
+    // } catch (err) {
+    //   console.log(err);
+    // }
+
+    // try {
+    //   await axios.post(
+    //     "http://localhost:8080" + saveTransactionsAPI,
+    //     Object.values(data.transactionData)
     //   );
     // } catch (err) {
     //   console.log(err);
@@ -136,7 +181,7 @@ export default function CSVUploader(props: any) {
       />
       <InfoModal
         visible={showInfoModal}
-        upload={uploadCustomers}
+        upload={uploadData}
         hideModal={() => setShowInfoModal(false)}
         list={data.uniqueCustomers || []}
         recordType="customers"

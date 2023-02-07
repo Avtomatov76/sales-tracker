@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const db = require("./db");
+const { getProductsBySupplier } = require("./queries/productQueries");
 const {
   getAllCustomers,
   getCustomer,
@@ -80,22 +81,20 @@ app.post("/api/customers", async (req, res) => {
 // POST Multiple customers
 app.post("/api/customers/many", async (req, res) => {
   const customers = req.body;
-  //console.log(customers);
+  //console.log("CUSTOMERS: ", customers);
 
   function insertValues(customers) {
     let valuesStr = "";
 
-    //valuesStr += `('SomeName', 'Some Last Name', 'address', 'city', 'OR', '9165959706', 'email@email.com')`;
-
     customers.forEach((c, index) => {
       if (index === customers.length - 1) {
-        valuesStr += `('${c.fName}', '${c.lName}', '${
+        valuesStr += `('${c.id}', '${c.fName}', '${c.lName}', '${
           c.address ? c.address : "na"
         }', '${c.city ? c.city : "na"}', '${c.state ? c.state : "na"}', '${
           c.phone
         }', '${c.email ? c.email : "na"}')`;
       } else {
-        valuesStr += `('${c.fName}', '${c.lName}', '${
+        valuesStr += `('${c.id}', '${c.fName}', '${c.lName}', '${
           c.address ? c.address : "na"
         }', '${c.city ? c.city : "na"}', '${c.state ? c.state : "na"}', '${
           c.phone
@@ -103,21 +102,19 @@ app.post("/api/customers/many", async (req, res) => {
       }
     });
 
-    //console.log(valuesStr);
-
     return valuesStr;
   }
 
   let values = insertValues(customers);
 
-  let sql = `INSERT INTO customer (first_name, last_name, street_address, city, state, cust_phone, email) VALUES ${values}`;
+  let sql = `INSERT INTO customer (customer_id, first_name, last_name, street_address, city, state, cust_phone, email) VALUES ${values}`;
 
   console.log(sql);
 
   try {
     await db.pool.query(sql, customers, function (err, data) {
       if (err) throw err;
-      console.log("User data is inserted successfully");
+      console.log("User data was inserted successfully");
     });
     res.send({ result: "ok" });
   } catch (err) {
@@ -125,12 +122,6 @@ app.post("/api/customers/many", async (req, res) => {
     res.send({ result: "Insert Failed!" });
   }
 });
-
-// insert into contacts(first_name, last_name, phone, contact_group)
-// values
-//     ('James','Smith','(408)-232-2352','Customers'),
-//     ('Michael','Smith','(408)-232-6343','Customers'),
-//     ('Maria','Garcia','(408)-232-3434','Customers');
 
 // UPDATE Customer
 app.put("/api/customers", async (req, res) => {
@@ -218,6 +209,102 @@ app.get("/api/commissions", async (req, res) => {
 app.get("/api/products", async (req, res) => {
   try {
     const result = await db.pool.query(getAllProducts);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+app.get("/api/products/details", async (req, res) => {
+  // get params off body
+  // customize calls to DB based on params
+  // handle results
+  // try {
+  //   const result = await db.pool.query(getAllProducts);
+  //   res.send(result);
+  // } catch (err) {
+  //   throw err;
+  // }
+});
+
+// POST Multiple products
+app.post("/api/products/many", async (req, res) => {
+  const products = req.body;
+  //console.log("PRODUCTS: ", products);
+
+  function insertValues(products) {
+    let valuesStr = "";
+
+    products.forEach((p, index) => {
+      if (index === products.length - 1) {
+        valuesStr += `('${p.id}', '${p.destinationID}', '${p.typeID}', '${p.vendorID}', '${p.supplierID}', '${p.partySize}', '${p.partyInfo}', '${p.productCost}', '${p.productComm}', '${p.isCommReceived}', '${p.tvlStartDate}', '${p.tvlEndDate}')`;
+      } else {
+        valuesStr += `('${p.id}', '${p.destinationID}', '${p.typeID}', '${p.vendorID}', '${p.supplierID}', '${p.partySize}', '${p.partyInfo}', '${p.productCost}', '${p.productComm}', '${p.isCommReceived}', '${p.tvlStartDate}', '${p.tvlEndDate}'),`;
+      }
+    });
+
+    return valuesStr;
+  }
+
+  let values = insertValues(products);
+
+  let sql = `INSERT INTO product (product_id, fk_destination_id, fk_type_id, fk_vendor_id, fk_supplier_id, size_of_party, party_info, product_cost, product_comm, is_comm_received, travel_start_date, travel_end_date) VALUES ${values}`;
+
+  console.log(sql);
+
+  try {
+    await db.pool.query(sql, products, function (err, data) {
+      if (err) throw err;
+      console.log("Product data was inserted successfully");
+    });
+    res.send({ result: "ok" });
+  } catch (err) {
+    console.error(err);
+    res.send({ result: "Insert Failed!" });
+  }
+});
+
+// POST Multiple transactions
+app.post("/api/transactions/many", async (req, res) => {
+  const transactions = req.body;
+  //console.log("TRANSACTIONS: ", transactions);
+
+  function insertValues(transactions) {
+    let valuesStr = "";
+
+    transactions.forEach((t, index) => {
+      if (index === transactions.length - 1) {
+        valuesStr += `('${t.customerID}', '${t.productID}', '${t.transactionType}', '${t.transactionAmount}', '${t.transactionDate}')`;
+      } else {
+        valuesStr += `('${t.customerID}', '${t.productID}', '${t.transactionType}', '${t.transactionAmount}', '${t.transactionDate}'),`;
+      }
+    });
+
+    return valuesStr;
+  }
+
+  let values = insertValues(transactions);
+
+  let sql = `INSERT INTO transaction (fk_customer_id, fk_product_id, transaction_type, transaction_amount, transaction_date) VALUES ${values}`;
+
+  console.log(sql);
+
+  try {
+    await db.pool.query(sql, transactions, function (err, data) {
+      if (err) throw err;
+      console.log("Transactions data was inserted successfully");
+    });
+    res.send({ result: "ok" });
+  } catch (err) {
+    console.error(err);
+    res.send({ result: "Insert Failed!" });
+  }
+});
+
+// TEST queries
+app.get("/api/test", async (req, res) => {
+  try {
+    const result = await db.pool.query(getProductsBySupplier("TPI"));
     res.send(result);
   } catch (err) {
     throw err;

@@ -4,6 +4,11 @@ import { customerAPI } from "../api/endPoints";
 import { View, Text, StyleSheet } from "react-native";
 import Customers from "./Customers";
 import CSVUploader from "./CSVUploader";
+import Dashboard from "./Dashboard";
+import Transactions from "./Transactions";
+import Commissions from "./Commissions";
+import Vendors from "./Vendors";
+import Suppliers from "./Suppliers";
 
 export default function Main(props: any) {
   const [customers, setCustomers] = useState<any>();
@@ -26,12 +31,19 @@ export default function Main(props: any) {
 
   //console.log("Customers: ", customers);
 
-  return (
-    <View style={styles.container}>
-      {/* <Customers customers={customers} /> */}
-      <CSVUploader />
-    </View>
-  );
+  function displayScreen() {
+    if (props.screen === "transactions") return <Transactions />;
+    if (props.screen === "commissions") return <Commissions />;
+    if (props.screen === "customers")
+      return <Customers customers={customers} />;
+    if (props.screen === "vendors") return <Vendors />;
+    if (props.screen === "suppliers") return <Suppliers />;
+    if (props.screen === "uploader") return <CSVUploader />;
+
+    return <Dashboard />;
+  }
+
+  return <View style={styles.container}>{displayScreen()}</View>;
 }
 
 const styles = StyleSheet.create({

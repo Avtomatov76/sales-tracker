@@ -1,36 +1,53 @@
+import { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 export default function Sidebar(props: any) {
-  return (
-    <View style={styles.container}>
-      <View style={{ marginBottom: "3rem" }}>
-        <Text>Dashboard</Text>
-      </View>
+  const [active, setActive] = useState("dashboard");
 
-      <View style={{ marginBottom: "1rem" }}>
-        <Text>Transactions</Text>
-      </View>
-      <View style={{ marginBottom: "1rem" }}>
-        <Text>Commissions</Text>
-      </View>
-      <View style={{ marginBottom: "1rem" }}>
-        <Text>customers</Text>
-      </View>
-      <View style={{ marginBottom: "1rem" }}>
-        <Text>Vendors</Text>
-      </View>
-      <View style={{ marginBottom: "1rem" }}>
-        <Text>Suppliers</Text>
-      </View>
-    </View>
-  );
+  function handlePress(screen: any) {
+    setActive(screen);
+    props.navigate(screen);
+  }
+
+  const tabs = [
+    "Dashboard",
+    "Transactions",
+    "Commissions",
+    "Customers",
+    "Vendors",
+    "Suppliers",
+    "Uploader",
+  ];
+
+  function displayTabs() {
+    const tabsArray = [];
+
+    tabs.map((tab: any, index: any) =>
+      tabsArray.push(
+        <View key={index} style={{ marginBottom: index === 0 ? 50 : 20 }}>
+          <Text
+            onPress={() => handlePress(tab.toLowerCase())}
+            style={{ color: active === tab.toLowerCase() ? "red" : "grey" }}
+          >
+            {tab}
+          </Text>
+        </View>
+      )
+    );
+
+    return tabsArray;
+  }
+
+  console.log("______________________restarted______________________");
+
+  return <View style={styles.container}>{displayTabs()}</View>;
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: "3rem",
-    paddingLeft: "3rem",
+    paddingTop: "3rem", // change
+    paddingLeft: "3rem", // change
     flexDirection: "column",
     backgroundColor: "#FFFFFF",
     borderRightWidth: 1,

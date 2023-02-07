@@ -120,7 +120,7 @@ function createProductEntry(row: any, customerID: any, partySize: any) {
     productComm: parseFloat(comm),
     isCommReceived: row.STATUS == "PAID" ? "Y" : "N",
     tvlStartDate: moment(row.DATE).format("YYYY-MM-DD"),
-    tvlEndDate: null,
+    tvlEndDate: moment(row.DATE).format("YYYY-MM-DD"),
   };
 
   let transaction = createTransactionEntry(
