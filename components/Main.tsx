@@ -24,7 +24,7 @@ export default function Main(props: any) {
   //   });
   // };
 
-  console.log("Customers: ", customers);
+  //console.log("Customers: ", customers);
 
   return (
     <View style={styles.container}>

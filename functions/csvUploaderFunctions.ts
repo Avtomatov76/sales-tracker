@@ -1,59 +1,164 @@
+import moment from "moment";
+import { nanoid } from "nanoid";
+import {
+  getSupplierOpts,
+  getTvlTypeOpts,
+  getVendorOpts,
+} from "../constants/TableRows";
+
 let strNumerals = ["2", "3", "4", "5", "6", "7", "8", "9"];
 
-export function getCustomerData(parsedCustomers: any, names: any) {
-  if (!parsedCustomers && !names) return;
+// Creates Customer, Product, and Transaction objects
+export function processParsedData(parsedData: any, customersInDB: any) {
+  if (!parsedData && !customersInDB) return;
   let customerData = [];
   let uniqueNames = [];
   let dupeCustomers = [];
   let uniqueCustomers = [];
 
-  parsedCustomers.forEach((customer: any) => {
-    let custName = customer.NAME;
-    let index = custName.indexOf(",");
+  let productData = [];
+  let transactionData = [];
 
-    let isNumeral = strNumerals.includes(custName[0]);
+  parsedData.forEach((row: any) => {
+    let custName = row.NAME;
+    let numCustomers = custName[0];
+    let isNumeral = strNumerals.includes(numCustomers);
+    let partySize = 0;
 
-    if (isNumeral) {
-      // if isNumeral => assign it to size_party
-      // if !isNumeral && no ',' => asign '1' to size_party
-      // else => count num of ',' and add '1' to size_party
-      // add this to 'Product' table
+    if (isNumeral && custName.includes(",")) {
+      partySize = custName.split(",").length - 1 + parseInt(numCustomers);
+    } else if (isNumeral) {
       custName = custName.substring(1);
+      partySize = parseInt(numCustomers);
+    } else {
+      partySize = custName.split(",").length;
     }
 
     let fullName = "na " + custName;
 
-    if (
-      !names.includes(fullName.toLowerCase()) &&
-      !uniqueNames.includes(fullName)
-    ) {
+    let foundCustomer = customersInDB.find(
+      (x: any) => x.name === fullName.toLowerCase()
+    );
+
+    if (!foundCustomer && !uniqueNames.includes(fullName)) {
       uniqueNames.push(fullName);
-      let updatedPhone = customer.PHONE.replace(/[- )(]/g, "");
+
+      let customerID = nanoid();
+      let updatedPhone = row.PHONE.replace(/[- )(]/g, "");
 
       let customerObj = {
+        id: customerID,
         fName: "na",
         lName: custName,
-        address: customer.ADDRESS ? customer.ADDRESS : "",
-        city: customer.CITY ? customer.CITY : "",
-        state: customer.STATE ? customer.STATE : "",
+        address: row.ADDRESS ? row.ADDRESS : "",
+        city: row.CITY ? row.CITY : "",
+        state: row.STATE ? row.STATE : "",
         phone: !updatedPhone ? "na" : updatedPhone,
-        email: customer.EMAIL ? customer.EMAIL : "",
+        email: row.EMAIL ? row.EMAIL : "",
       };
 
       customerData.push(customerObj);
-    } else if (names.includes(fullName.toLowerCase())) {
+
+      let { product, transaction } = createProductEntry(
+        row,
+        customerID,
+        partySize
+      );
+      productData.push(product);
+      transactionData.push(transaction);
+    } else if (!foundCustomer && uniqueNames.includes(fullName)) {
+      let customer = customerData.find((x: any) => x.lName === custName);
+      let customerID = customer.id;
+      let { product, transaction } = createProductEntry(
+        row,
+        customerID,
+        partySize
+      );
+      productData.push(product);
+      transactionData.push(transaction);
+    } else if (foundCustomer) {
       dupeCustomers.push(fullName);
+      let { product, transaction } = createProductEntry(
+        row,
+        foundCustomer.id,
+        partySize
+      );
+      productData.push(product);
+      transactionData.push(transaction);
     }
   });
   uniqueCustomers = uniqueNames.slice();
 
-  return { customerData, uniqueCustomers, dupeCustomers };
+  return {
+    customerData,
+    uniqueCustomers,
+    dupeCustomers,
+    productData,
+    transactionData,
+  };
 }
 
-export function getProductData() {
-  //
+// Creates a Product entry based on a row of parsed data
+function createProductEntry(row: any, customerID: any, partySize: any) {
+  let supplier = findEntryName(row.PROVIDER, "supplier");
+  let travelType = findEntryName(row.DESC, "type");
+  let vendor = findEntryName(row.VENDOR, "vendor");
+  let productID = nanoid();
+
+  let cost = row.PAID.replace(/[$,]/g, "");
+  let comm = row.COMM.replace(/[$,]/g, "");
+
+  let product = {
+    id: productID,
+    destinationID: "N/A",
+    typeID: travelType,
+    vendorID: vendor,
+    supplierID: supplier,
+    partySize: parseInt(partySize),
+    partyInfo: "n/a",
+    productCost: parseFloat(cost),
+    productComm: parseFloat(comm),
+    isCommReceived: row.STATUS == "PAID" ? "Y" : "N",
+    tvlStartDate: moment(row.DATE).format("YYYY-MM-DD"),
+    tvlEndDate: null,
+  };
+
+  let transaction = createTransactionEntry(
+    row,
+    customerID,
+    productID,
+    parseFloat(cost)
+  );
+
+  return { product, transaction };
 }
 
-export function getTransactionData() {
-  //
+function createTransactionEntry(
+  row: any,
+  customerID: any,
+  productID: any,
+  tripCost: any
+) {
+  let transaction = {
+    customerID: customerID,
+    productID: productID,
+    transactionType: row.CODE,
+    transactionAmount: tripCost,
+    transactionDate: moment(row.DATE).format("YYYY-MM-DD"),
+  };
+
+  return transaction;
+}
+
+// Returns an appropriate abbreviation for a given category
+function findEntryName(rawEntry: any, flag: any) {
+  let options = {};
+
+  if (flag === "supplier") options = getSupplierOpts();
+  if (flag === "type") options = getTvlTypeOpts();
+  if (flag === "vendor") options = getVendorOpts();
+
+  let found = Object.keys(options).find((x: any) => rawEntry.includes(x));
+
+  return !found ? "N/A" : options[found];
 }

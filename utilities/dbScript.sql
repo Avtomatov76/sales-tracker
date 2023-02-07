@@ -138,7 +138,8 @@ VALUES
 
 
 CREATE OR REPLACE TABLE Product (
-  product_id 			INT PRIMARY KEY AUTO_INCREMENT,
+  -- product_id 			INT PRIMARY KEY AUTO_INCREMENT,
+  product_id 		VARCHAR(50) PRIMARY KEY,
   fk_destination_id 		CHAR(3) NOT NULL,
   fk_type_id 			VARCHAR(50) NOT NULL,
   fk_vendor_id 			CHAR(3) NOT NULL,
@@ -161,17 +162,17 @@ CREATE OR REPLACE TABLE Product (
 );
 
 INSERT INTO
-  Product (fk_destination_id, fk_type_id, fk_vendor_id, fk_supplier_id, size_of_party, party_info, product_cost, product_comm, is_comm_received, travel_start_date, travel_end_date)
+  Product (product_id, fk_destination_id, fk_type_id, fk_vendor_id, fk_supplier_id, size_of_party, party_info, product_cost, product_comm, is_comm_received, travel_start_date, travel_end_date)
 VALUES
-  ('VNO', 'Flight', 'DLV','TPI', 1, 'n/a', 777.77, 55.99, 'N', '2021-12-05', NULL),
-  ('VNO', 'Flight', 'FUN', 'TPI', 1, 'n/a', 2000, 100, 'N', '2021-10-25', NULL)
+  ('p234567892345678987643', 'VNO', 'Flight', 'DLV','TPI', 1, 'n/a', 777.77, 55.99, 'N', '2021-12-05', NULL),
+  ('p234567892345678987644', 'VNO', 'Flight', 'FUN', 'TPI', 1, 'n/a', 2000, 100, 'N', '2021-10-25', NULL)
 ;
 
 
 CREATE OR REPLACE TABLE Transaction (
   transation_id 		INT PRIMARY KEY AUTO_INCREMENT,
   fk_customer_id 		VARCHAR(50) NOT NULL,
-  fk_product_id 		INT NOT NULL,
+  fk_product_id 		VARCHAR(50) NOT NULL,
   transaction_type		CHAR(2) NOT NULL,
   transaction_amount	FLOAT NOT NULL,
   transaction_date		DATE NOT NULL,
@@ -184,8 +185,8 @@ CREATE OR REPLACE TABLE Transaction (
 INSERT INTO
   Transaction (fk_customer_id, fk_product_id, transaction_type, transaction_amount, transaction_date)
 VALUES
-  ('1234567892345678987643', 1, 'CC', 777.77, '2021-06-10'),
-  ('1234567892345678987644', 2, 'CC', 2000, '2021-07-07')
+  ('1234567892345678987643', 'p234567892345678987643', 'CC', 777.77, '2021-06-10'),
+  ('1234567892345678987644', 'p234567892345678987644', 'CC', 2000, '2021-07-07')
 ;
 
 

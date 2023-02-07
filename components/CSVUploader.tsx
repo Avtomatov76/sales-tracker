@@ -2,40 +2,35 @@ import { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "react-native";
 import axios from "axios";
 import Papa from "papaparse";
-import { nanoid } from "nanoid";
 import GetConfiguration from "../constants/Config";
 import { getCustomersNames } from "../functions/customerFunctions";
 import { customerAPI, customersAPI } from "../api/endPoints";
 import { Button } from "react-native-paper";
 import ErrorModal from "../modals/ErrorModal";
-import { getCustomerData } from "../functions/csvUploaderFunctions";
+import { processParsedData } from "../functions/csvUploaderFunctions";
 import InfoModal from "../modals/InfoModal";
 import CSVTable from "./CSVTable";
-import { getSupplierOpts, getTvlTypeOpts } from "../constants/TableRows";
-
-// Ignore number before last name
-// handle missing first name,
-// handle commas between multipe names, count multiple name as party - otherwise grab the firs one only
-// parse phone from '(555) 555-5555' to numbers only
-// parse 'Paid' and 'Comm' into floats for the DB
-// write func to get name(s) and phone number to insert into 'Customers' (validate before inserting)
-// write func to get rest info to insert into 'Product' and 'Transaction' tables with drop downs of customers, etc.
 
 export default function CSVUploader(props: any) {
-  const [parsedData, setParsedData] = useState([]);
-  const [tableRows, setTableRows] = useState([]);
-  const [values, setValues] = useState([]);
   const [customers, setCustomers] = useState<any>();
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
-  //const [dupeCustomers, setDupeCustomers] = useState([]);
+  const [data, setData] = useState<any>({
+    parsedData: [],
+    tableRows: [],
+    customerData: [],
+    values: [],
+    productData: [],
+    transactionData: [],
+    uniqueCustomers: [],
+    dupeCustomers: [],
+  });
+
+  //console.log("_____________________RESTARTED___________________________");
 
   const baseURL = GetConfiguration().baseUrl;
-  console.log(parsedData);
 
-  let names = [];
-  let id = nanoid();
-  console.log("ID: ", id);
+  let customersInDB = [];
 
   useEffect(() => {
     const getCustomersFromDB = async () => {
@@ -46,28 +41,10 @@ export default function CSVUploader(props: any) {
     };
 
     getCustomersFromDB();
-    // test
-    const supplierOpts = getSupplierOpts();
-    const tvlTypeOpts = getTvlTypeOpts();
-    console.log(tvlTypeOpts);
-    console.log(supplierOpts);
   }, []);
 
-  if (customers) names = getCustomersNames(customers);
-
-  let { customerData, uniqueCustomers, dupeCustomers } = getCustomerData(
-    parsedData,
-    names
-    //dupeCustomers,
-    //uniqueCustomers
-  );
-  console.log(customerData);
-  console.log(names);
-  console.log("Unique customers: ", uniqueCustomers);
-  console.log("Duplicate customers: ", dupeCustomers);
-
   const displayModal = () => {
-    if (dupeCustomers.length > 0) {
+    if (data.dupeCustomers.length > 0) {
       setShowErrorModal(true);
       return;
     }
@@ -89,6 +66,8 @@ export default function CSVUploader(props: any) {
   };
 
   const changeHandler = (event: any) => {
+    if (customers) customersInDB = getCustomersNames(customers);
+
     Papa.parse(event.target.files[0], {
       header: true,
       skipEmptyLines: true,
@@ -102,12 +81,32 @@ export default function CSVUploader(props: any) {
           valuesArray.push(Object.values(d));
         });
 
-        setParsedData(results.data);
-        setTableRows(rowsArray[0]);
-        setValues(valuesArray);
+        let {
+          customerData,
+          uniqueCustomers,
+          dupeCustomers,
+          productData,
+          transactionData,
+        } = processParsedData(results.data, customersInDB);
+
+        setData({
+          ...data,
+          parsedData: results.data,
+          tableRows: rowsArray[0],
+          values: valuesArray,
+          customerData: customerData,
+          uniqueCustomers: uniqueCustomers,
+          dupeCustomers: dupeCustomers,
+          productData: productData,
+          transactionData: transactionData,
+        });
       },
     });
   };
+
+  console.log("Customer Data: ", data.customerData);
+  console.log("Product Data: ", data.productData);
+  console.log("Transaction Data: ", data.transactionData);
 
   return (
     <ScrollView style={{ flexDirection: "column" }}>
@@ -121,10 +120,10 @@ export default function CSVUploader(props: any) {
         />
       </View>
 
-      {values.length === 0 ? null : (
+      {data.values.length === 0 ? null : (
         <CSVTable
-          tableRows={tableRows}
-          values={values}
+          tableRows={data.tableRows}
+          values={data.values}
           displayModal={displayModal}
         />
       )}
@@ -132,14 +131,14 @@ export default function CSVUploader(props: any) {
       <ErrorModal
         visible={showErrorModal}
         hideModal={() => setShowErrorModal(false)}
-        list={dupeCustomers || []}
+        list={data.dupeCustomers || []}
         recordType="customers"
       />
       <InfoModal
         visible={showInfoModal}
         upload={uploadCustomers}
         hideModal={() => setShowInfoModal(false)}
-        list={uniqueCustomers || []}
+        list={data.uniqueCustomers || []}
         recordType="customers"
       />
     </ScrollView>
