@@ -29,7 +29,7 @@ export default function Header(props: any) {
           <Text style={styles.navEl}>
             Last Sign-in:{" "}
             <Text style={{ fontSize: 14, color: "orange", marginLeft: 10 }}>
-              {moment().format("MMMM YY, HH:MM A")}
+              {moment().format("DD MMMM, HH:MM")}
             </Text>
           </Text>
         </View>

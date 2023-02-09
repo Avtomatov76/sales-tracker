@@ -1,5 +1,6 @@
 import { Formik } from "formik";
 import axios from "axios";
+import { nanoid } from "nanoid";
 import {
   View,
   Text,
@@ -20,6 +21,7 @@ export default function CustomerModal(props: any) {
   console.log(customersNames);
 
   const initialValues = {
+    id: "",
     firstName: "",
     lastName: "",
     address: "",
@@ -40,11 +42,12 @@ export default function CustomerModal(props: any) {
     try {
       if (formdata.customer_id)
         await axios.put("http://localhost:8080" + customerAPI, formdata);
-      else
+      else {
         await axios.post(
           "http://localhost:8080" + customerAPI,
           Object.values(formdata)
         );
+      }
     } catch (err) {
       console.log(err);
     }
@@ -62,7 +65,9 @@ export default function CustomerModal(props: any) {
         <View style={{ backgroundColor: "rgba(0, 0, 0, 0.3)", height: "100%" }}>
           <View style={styles.centeredView}>
             <CustomerForm
-              flag="add"
+              flag={props.flag}
+              index={props.index}
+              customers={props.customers}
               initialValues={initialValues}
               customersNames={customersNames}
               handleSubmit={handleSubmit}

@@ -64,7 +64,7 @@ app.get("/api/customers", async (req, res) => {
 
 // POST Customer
 app.post("/api/customers", async (req, res) => {
-  let sql = `INSERT INTO customer (first_name, last_name, street_address, city, state, cust_phone, email) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  let sql = `INSERT INTO customer (customer_id, first_name, last_name, street_address, city, state, cust_phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
   const customer = req.body;
 

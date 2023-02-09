@@ -21,3 +21,17 @@ export function getCustomersNames(customers: any) {
 
   return namesAndIDs;
 }
+
+export const displayName = (customer: any, flag: any) => {
+  let firstName = customer.first_name;
+  let lastName =
+    flag === "details"
+      ? customer.last_name
+      : customer.last_name.length > 25
+      ? customer.last_name.substring(0, 25) + "..."
+      : customer.last_name;
+
+  if (firstName === "na") return lastName.toUpperCase();
+
+  return firstName.toUpperCase() + " " + lastName.toUpperCase();
+};

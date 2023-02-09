@@ -7,11 +7,15 @@ import {
   Platform,
   Pressable,
 } from "react-native";
+import { nanoid } from "nanoid";
 import { Button } from "react-native-paper";
+import AddForm from "./form-parts/AddForm";
+import DetailsForm from "./form-parts/DetailsForm";
 
 export default function CustomerForm(props: any) {
   const [error, setError] = useState(false);
   const [formValues, setFormValues] = useState({
+    id: props.initialValues.id,
     firstName: props.initialValues.firstName,
     lastName: props.initialValues.lastName,
     address: props.initialValues.address,
@@ -23,6 +27,9 @@ export default function CustomerForm(props: any) {
 
   const customersNames = props.customersNames;
   console.log(customersNames);
+
+  console.log(props.index);
+  console.log(props.customers);
 
   const errors = {
     firstName: "You must enter customer's first name!",
@@ -46,7 +53,10 @@ export default function CustomerForm(props: any) {
       return;
     }
 
-    props.handleSubmit(formValues);
+    let id = nanoid();
+    let values = formValues;
+    values.id = id;
+    props.handleSubmit(values);
   };
 
   const validateForm = () => {
@@ -86,6 +96,36 @@ export default function CustomerForm(props: any) {
     //setError(true);
   };
 
+  const displayFormContent = () => {
+    if (props.flag === "details")
+      return <DetailsForm customer={props.customers[props.index]} />;
+
+    if (props.flag === "delete")
+      return (
+        <View>
+          <Text>Deleting...</Text>
+        </View>
+      );
+
+    if (props.flag === "edit")
+      return (
+        <View>
+          <Text>Editing...</Text>
+        </View>
+      );
+
+    if (props.flag === "add")
+      return (
+        <AddForm
+          formValues={formValues}
+          error={error}
+          errors={errors}
+          handleBlur={handleBlur}
+          handleOnChange={handleOnChange}
+        />
+      );
+  };
+
   console.log(formValues);
   console.log(error);
 
@@ -104,100 +144,48 @@ export default function CustomerForm(props: any) {
       >
         <Text>&#10005;</Text>
       </Pressable>
-      <View style={{ width: "100%" }}>
-        {error && !formValues.firstName ? (
-          <Text style={{ color: "red", fontSize: 12, marginBottom: 5 }}>
-            {errors.firstName}
-          </Text>
-        ) : null}
-        <TextInput
-          onBlur={() => handleBlur("firstName")}
-          value={formValues.firstName}
-          placeholder="First name"
-          placeholderTextColor="grey"
-          onChange={(e) => handleOnChange(e, "firstName")}
-          style={styles.textInput}
-        />
-        {error && !formValues.lastName ? (
-          <Text style={{ color: "red", fontSize: 12, marginBottom: 5 }}>
-            {errors.lastName}
-          </Text>
-        ) : null}
-        <TextInput
-          onBlur={() => handleBlur("lastName")}
-          value={formValues.lastName}
-          placeholder="Last name"
-          placeholderTextColor="grey"
-          onChange={(e) => handleOnChange(e, "lastName")}
-          style={styles.textInput}
-        />
 
-        <TextInput
-          //onBlur={handleBlur("address")}
-          value={formValues.address}
-          placeholder="Address"
-          placeholderTextColor="grey"
-          onChange={(e) => handleOnChange(e, "address")}
-          style={styles.textInput}
-        />
+      {displayFormContent()}
 
-        <TextInput
-          //onBlur={handleBlur("city")}
-          value={formValues.city}
-          placeholder="City"
-          placeholderTextColor="grey"
-          onChange={(e) => handleOnChange(e, "city")}
-          style={styles.textInput}
-        />
-
-        <TextInput
-          //onBlur={handleBlur("state")}
-          value={formValues.state}
-          placeholder="State, ex: 'OR'"
-          placeholderTextColor="grey"
-          onChange={(e) => handleOnChange(e, "state")}
-          style={styles.textInput}
-        />
-        {error && !formValues.phone ? (
-          <Text style={{ color: "red", fontSize: 12, marginBottom: 5 }}>
-            {errors.phoneEmpty}
-          </Text>
-        ) : (error && formValues.phone.length < 10) ||
-          formValues.phone.length > 11 ? (
-          <Text style={{ color: "red", fontSize: 12, marginBottom: 5 }}>
-            {errors.phoneWrong}
-          </Text>
-        ) : null}
-        <TextInput
-          onBlur={() => handleBlur("phone")}
-          value={formValues.phone}
-          placeholder="(888) 777-9999"
-          placeholderTextColor="grey"
-          onChange={(e) => handleOnChange(e, "phone")}
-          style={styles.textInput}
-        />
-
-        <TextInput
-          //onBlur={handleBlur("email")}
-          value={formValues.email}
-          placeholder="some@email.com"
-          placeholderTextColor="grey"
-          onChange={(e) => handleOnChange(e, "email")}
-          style={styles.textInput}
-        />
-      </View>
-
-      <View style={{ marginTop: 20, width: "100%" }}>
-        <Button
-          mode="contained"
-          //color="#f27d42"
-          //buttonColor="#f27d42"
-          style={styles.addBtn}
-          onPress={submitForm}
+      {props.flag === "add" || props.flag === "edit" ? (
+        <View
+          style={{
+            marginTop: 20,
+            flexDirection: "row",
+          }}
         >
-          Submit
-        </Button>
-      </View>
+          <Button
+            mode="contained"
+            //color="#f27d42"
+            //buttonColor="#f27d42"
+            style={styles.addBtn}
+            onPress={submitForm}
+          >
+            Submit
+          </Button>
+          <Button
+            mode="contained"
+            //color="#f27d42"
+            buttonColor="red"
+            style={styles.xnlBtn}
+            onPress={props.hideModal}
+          >
+            Cancel
+          </Button>
+        </View>
+      ) : (
+        <View style={{ marginTop: 20 }}>
+          <Button
+            mode="contained"
+            //color="#f27d42"
+            //buttonColor="#f27d42"
+            style={styles.addBtn}
+            onPress={props.hideModal}
+          >
+            OK
+          </Button>
+        </View>
+      )}
     </View>
   );
 }
@@ -210,9 +198,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: "white",
     borderRadius: 20,
-    paddingLeft: 35,
-    paddingRight: 35,
-    paddingBottom: 35,
+    paddingLeft: 30, //35
+    paddingRight: 30, //35
+    paddingBottom: 30, //35
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -224,7 +212,15 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   addBtn: {
-    width: "100%",
+    //width: "100%",
+    marginBottom: 10,
+    //width: 100,
+    //backgroundColor: "#ffffff",
+  },
+  xnlBtn: {
+    //width: "100%",
+    marginBottom: 10,
+    marginLeft: 10,
     //width: 100,
     //backgroundColor: "#ffffff",
   },

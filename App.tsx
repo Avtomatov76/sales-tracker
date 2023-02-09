@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
+import { Button, Menu, Divider, Provider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import HomeScreen from "./screens/HomeScreen";
 import Customers from "./components/Customers";
@@ -11,7 +12,9 @@ import Main from "./components/Main";
 export default function App() {
   return (
     <View>
-      <HomeScreen />
+      <Provider>
+        <HomeScreen />
+      </Provider>
     </View>
   );
 }
