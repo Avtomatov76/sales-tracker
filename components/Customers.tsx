@@ -14,15 +14,23 @@ import { Button, Menu, Divider } from "react-native-paper";
 import GetConfiguration from "../constants/Config";
 import CustomerModal from "../modals/CustomerModal";
 import { displayName } from "../functions/customerFunctions";
+import DetailsForm from "../forms/form-parts/DetailsForm";
+import Searchbar from "./Searchbar";
+import CustomerCard from "./cards/CustomerCard";
+import CustomerList from "./CustomerList";
 
 export default function Customers(props: any) {
   const [customers, setCustomers] = useState<any>();
+  const [showAllCustomers, setShowAllCustomers] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [flag, setFlag] = useState("");
   const [customerIndex, setCustomerIndex] = useState<any>();
   const [showCustomerMenu, setShowCustomerMenu] = useState(false);
   const [displayResults, setDisplayResults] = useState(false);
   const [foundCustomers, setFoundCustomers] = useState<any>([]);
+  //
+  const [testCustomers, setTestCustomers] = useState<any>([]);
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     fetchCustomers();
@@ -81,17 +89,39 @@ export default function Customers(props: any) {
   };
 
   const showSearchResults = (e: any) => {
-    let customerArray = customers.filter((c: any) =>
-      c.last_name.toLowerCase().includes(e.target.value)
-    );
+    // let customerArray = customers.filter((c: any) =>
+    //   c.last_name.toLowerCase().includes(e.target.value)
+    // );
+
+    let options = [];
+
+    let customerArray = customers.forEach((c: any) => {
+      if (c.last_name.toLowerCase().includes(e.target.value))
+        options.push(c.last_name.toUpperCase());
+    });
 
     console.log(e.target.value);
     console.log(customerArray);
 
-    setFoundCustomers(customerArray.slice());
+    //setFoundCustomers(customerArray.slice());
+    setFoundCustomers(options.slice());
+    setDisplayResults(true);
   };
 
   console.log(foundCustomers);
+  console.log(testCustomers);
+
+  const handleSelection = (value: any) => {
+    console.log("Handling selection: ", value);
+
+    // APP BREAKING HERE!!
+    let customerArr = customers.filter((c) =>
+      c.last_name.toLowerCase().includes(value.toLowerCase())
+    );
+
+    setTestCustomers(customerArr.slice());
+    setShowDetails(true);
+  };
 
   return (
     <View>
@@ -105,17 +135,20 @@ export default function Customers(props: any) {
       >
         <Text style={{ fontSize: 35 }}>Customers</Text>
 
-        <Pressable style={{ flexDirection: "row" }}>
+        {/* <View style={styles.searchContainer}>
+          <Pressable
+            //onPress={() => setDisplayResults(true)}
+            style={{ paddingTop: 10, margin: 0 }}
+          >
+            <Image
+              style={styles.searchIcon}
+              source={require("../assets/icons/search.png")}
+            />
+          </Pressable>
+
           <TextInput
             placeholder="Search by last name"
-            style={{
-              color: "grey",
-              borderColor: "purple",
-              borderWidth: 1,
-              padding: 10,
-              paddingLeft: 20,
-              borderRadius: 20,
-            }}
+            style={styles.searchInput}
             onChange={(e) => showSearchResults(e)}
           />
           <Menu
@@ -123,23 +156,32 @@ export default function Customers(props: any) {
             onDismiss={() => setDisplayResults(false)}
             anchor={
               <Pressable
-                onPress={() => setDisplayResults(true)}
-                style={{ padding: 0, margin: 0 }}
+                //onPress={() => setDisplayResults(true)}
+                style={{ paddingTop: 10, margin: 0 }}
               >
                 <Image
                   style={styles.searchIcon}
-                  source={require("../assets/icons/more.png")}
+                  source={require("../assets/icons/search.png")}
                 />
               </Pressable>
             }
+            //contentStyle={{ alignItems: "center" }}
           >
             {!foundCustomers
               ? null
               : foundCustomers.map((c: any, index: any) => (
-                  <Menu.Item key={index} title={c.last_name} />
+                  <Pressable onPress={() => showCustomerDetails(index)}>
+                    <Menu.Item key={index} title={c.last_name} />
+                  </Pressable>
                 ))}
           </Menu>
-        </Pressable>
+        </View> */}
+
+        <Searchbar
+          options={foundCustomers}
+          onChange={(e: any) => showSearchResults(e)}
+          handleSelection={handleSelection}
+        />
 
         <View>
           <Button
@@ -167,78 +209,113 @@ export default function Customers(props: any) {
         }}
       >
         <View style={{}}>
-          <Text style={{ marginBottom: 20, fontSize: 18 }}>All Customers:</Text>
-          <ScrollView>
-            <View style={{ height: 400 }}>
-              {!customers
-                ? null
-                : customers.map((customer: any, index: any) => (
-                    <Pressable
-                      key={index}
-                      style={{
-                        width: "100%",
-                        marginBottom: 10,
-                        //borderTopWidth: 1,
-                        borderBottomWidth: 1,
-                        borderColor: "grey",
-                        marginRight: 10,
-                        paddingRight: 5,
-                        paddingBottom: 5,
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                      onPress={() => showCustomerDetails(index)}
-                    >
-                      <Text
-                        //key={index}
-                        style={{ color: "blue" }}
-                        //onPress={() => alert("You clicked on an entry!!!!")}
-                      >
-                        {displayName(customer, "default")}
-                      </Text>
-                      {/* <hr style={{ width: "100%" }} /> */}
-                      <Menu
-                        visible={
-                          index === customerIndex ? showCustomerMenu : null
-                        }
-                        onDismiss={() => setShowCustomerMenu(false)}
-                        anchor={
-                          <Pressable
-                            onPress={() => displayMenu(index)}
-                            style={{ padding: 0, margin: 0 }}
-                          >
-                            <Image
-                              style={styles.more}
-                              source={require("../assets/icons/more.png")}
-                            />
-                          </Pressable>
-                        }
-                      >
-                        <Menu.Item
-                          onPress={() => editCustomer(customer.customer_id)}
-                          title="Edit"
-                          trailingIcon={require("../assets/icons/edit.png")}
-                        />
-                        <Divider />
-                        <Menu.Item
-                          onPress={() => deleteCustomer(customer.customer_id)}
-                          title="Delete"
-                          trailingIcon={require("../assets/icons/trash.png")}
-                        />
-                      </Menu>
-                    </Pressable>
-                  ))}
-            </View>
-          </ScrollView>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={{ marginBottom: 20, fontSize: 18, marginRight: 15 }}>
+              Show All
+            </Text>
+            <Pressable
+              onPress={() => setShowAllCustomers(!showAllCustomers)}
+              //onBlur={() => setShowAllCustomers(false)}
+            >
+              <Image
+                source={require("../assets/icons/plus-orange.png")}
+                style={{ height: 24, width: 24 }}
+              />
+            </Pressable>
+          </View>
+          {!showAllCustomers ? null : (
+            <CustomerList
+              customers={customers}
+              customerIndex={customerIndex}
+              showCustomerMenu={showCustomerMenu}
+              showCustomerDetails={showCustomerDetails}
+              dismiss={() => setShowCustomerMenu(false)}
+              displayName={displayName}
+              displayMenu={displayMenu}
+              editCustomer={editCustomer}
+              deleteCustomer={deleteCustomer}
+            />
+            // <ScrollView>
+            //   <View style={{ height: 400 }}>
+            //     {!customers
+            //       ? null
+            //       : customers.map((customer: any, index: any) => (
+            //           <Pressable
+            //             key={index}
+            //             style={{
+            //               width: "100%",
+            //               marginBottom: 10,
+            //               //borderTopWidth: 1,
+            //               borderBottomWidth: 1,
+            //               borderColor: "grey",
+            //               marginRight: 10,
+            //               paddingRight: 5,
+            //               paddingBottom: 5,
+            //               flexDirection: "row",
+            //               justifyContent: "space-between",
+            //               alignItems: "center",
+            //             }}
+            //             onPress={() => showCustomerDetails(index)}
+            //           >
+            //             <Text
+            //               //key={index}
+            //               style={{ color: "blue" }}
+            //               //onPress={() => alert("You clicked on an entry!!!!")}
+            //             >
+            //               {displayName(customer, "default")}
+            //             </Text>
+            //             {/* <hr style={{ width: "100%" }} /> */}
+            //             <Menu
+            //               visible={
+            //                 index === customerIndex ? showCustomerMenu : null
+            //               }
+            //               onDismiss={() => setShowCustomerMenu(false)}
+            //               anchor={
+            //                 <Pressable
+            //                   onPress={() => displayMenu(index)}
+            //                   style={{ padding: 0, margin: 0 }}
+            //                 >
+            //                   <Image
+            //                     style={styles.more}
+            //                     source={require("../assets/icons/more.png")}
+            //                   />
+            //                 </Pressable>
+            //               }
+            //             >
+            //               <Menu.Item
+            //                 onPress={() => editCustomer(customer.customer_id)}
+            //                 title="Edit"
+            //                 trailingIcon={require("../assets/icons/edit.png")}
+            //               />
+            //               <Divider />
+            //               <Menu.Item
+            //                 onPress={() => deleteCustomer(customer.customer_id)}
+            //                 title="Delete"
+            //                 trailingIcon={require("../assets/icons/trash.png")}
+            //               />
+            //             </Menu>
+            //           </Pressable>
+            //         ))}
+            //   </View>
+            // </ScrollView>
+          )}
         </View>
 
         <View style={{ marginBottom: 20 }}>
-          <Text>5 Highest Paying customers: </Text>
+          {/* <Text>Customer Info: </Text> */}
+          {!showDetails ? null : (
+            <DetailsForm
+              //customer={!foundCustomers ? null : foundCustomers[customerIndex]}
+              customer={!testCustomers ? null : testCustomers}
+            />
+          )}
         </View>
-        <View style={{ marginBottom: 20 }}>
-          <Text>Customers by state: </Text>
-        </View>
+
+        <CustomerCard />
+
+        {/* <View style={{ marginBottom: 20 }}>
+          <Text>Customer Details</Text>
+        </View> */}
       </View>
       <CustomerModal
         flag={flag}
@@ -256,14 +333,31 @@ const styles = StyleSheet.create({
   addBtn: {
     marginBottom: 10,
     //width: 100,
-    //backgroundColor: "#ffffff",
+    backgroundColor: "#f27d42",
   },
   more: {
     width: 20,
     height: 20,
   },
+  searchContainer: {
+    flexDirection: "row",
+    backgroundColor: "#FFFFFF",
+    marginRight: "2rem",
+    paddingLeft: ".75rem",
+    paddingRight: ".75rem",
+    borderColor: "purple",
+    borderWidth: 1,
+    borderRadius: 30,
+  },
   searchIcon: {
-    height: 24,
-    width: 24,
+    height: 18,
+    width: 18,
+  },
+  searchInput: {
+    fontSize: 14,
+    placeholderTextColor: "grey",
+    padding: ".5rem",
+    marginLeft: ".5rem",
+    outlineStyle: "none",
   },
 });

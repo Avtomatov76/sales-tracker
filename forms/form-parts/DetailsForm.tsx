@@ -3,9 +3,10 @@ import { displayName } from "../../functions/customerFunctions";
 
 export default function DetailsForm(props: any) {
   let customer = props.customer;
+  console.log("Customer: ", customer);
 
   const displayPhone = () => {
-    if (customer.cust_phone === "na") return null;
+    if (!customer.cust_phone || customer.cust_phone === "na") return null;
     let phone = "";
 
     if (customer.cust_phone[0] === "1")
@@ -32,7 +33,12 @@ export default function DetailsForm(props: any) {
     return address;
   };
 
+  if (!customer) return null;
+
   return (
+    // <View>
+    //   <Text>{customer.last_name}</Text>
+    // </View>
     <View style={{ alignSelf: "flex-start" }}>
       <Text style={{ fontSize: 40, fontWeight: "bold", marginBottom: 20 }}>
         Details

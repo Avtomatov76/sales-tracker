@@ -11,6 +11,7 @@ import { nanoid } from "nanoid";
 import { Button } from "react-native-paper";
 import AddForm from "./form-parts/AddForm";
 import DetailsForm from "./form-parts/DetailsForm";
+import CustomerCard from "../components/cards/CustomerCard";
 
 export default function CustomerForm(props: any) {
   const [error, setError] = useState(false);
@@ -29,6 +30,7 @@ export default function CustomerForm(props: any) {
   console.log(customersNames);
 
   console.log(props.index);
+  console.log(props.flag);
   console.log(props.customers);
 
   const errors = {
@@ -98,7 +100,8 @@ export default function CustomerForm(props: any) {
 
   const displayFormContent = () => {
     if (props.flag === "details")
-      return <DetailsForm customer={props.customers[props.index]} />;
+      // return <DetailsForm customer={props.customers[props.index]} />;
+      return <CustomerCard customer={props.customers[props.index]} />;
 
     if (props.flag === "delete")
       return (
@@ -126,8 +129,8 @@ export default function CustomerForm(props: any) {
       );
   };
 
-  console.log(formValues);
-  console.log(error);
+  //console.log(formValues);
+  //console.log(error);
 
   return (
     <View style={styles.modalView}>
@@ -147,33 +150,7 @@ export default function CustomerForm(props: any) {
 
       {displayFormContent()}
 
-      {props.flag === "add" || props.flag === "edit" ? (
-        <View
-          style={{
-            marginTop: 20,
-            flexDirection: "row",
-          }}
-        >
-          <Button
-            mode="contained"
-            //color="#f27d42"
-            //buttonColor="#f27d42"
-            style={styles.addBtn}
-            onPress={submitForm}
-          >
-            Submit
-          </Button>
-          <Button
-            mode="contained"
-            //color="#f27d42"
-            buttonColor="red"
-            style={styles.xnlBtn}
-            onPress={props.hideModal}
-          >
-            Cancel
-          </Button>
-        </View>
-      ) : (
+      {props.flag === "details" ? (
         <View style={{ marginTop: 20 }}>
           <Button
             mode="contained"
@@ -183,6 +160,36 @@ export default function CustomerForm(props: any) {
             onPress={props.hideModal}
           >
             OK
+          </Button>
+        </View>
+      ) : (
+        <View
+          style={{
+            width: "100%",
+            marginTop: 20,
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <Button
+            mode="contained"
+            //color="black"
+            //buttonColor="#f27d42"
+            //textColor="#f27d42"
+            style={styles.addBtn}
+            onPress={submitForm}
+          >
+            Submit
+          </Button>
+          <Button
+            mode="contained"
+            //color="black"
+            //buttonColor="red"
+            //textColor="red"
+            style={styles.xnlBtn}
+            onPress={props.hideModal}
+          >
+            Cancel
           </Button>
         </View>
       )}
@@ -215,14 +222,20 @@ const styles = StyleSheet.create({
     //width: "100%",
     marginBottom: 10,
     //width: 100,
-    //backgroundColor: "#ffffff",
+    //color: "#f27d42",
+    backgroundColor: "#368cbf",
+    //borderWidth: 1,
+    //borderColor: "#f27d42",
   },
   xnlBtn: {
     //width: "100%",
     marginBottom: 10,
-    marginLeft: 10,
+    //marginLeft: 10,
     //width: 100,
-    //backgroundColor: "#ffffff",
+    //color: "#000000",
+    backgroundColor: "red",
+    //borderWidth: 1,
+    //borderColor: "red",
   },
   textInput: {
     //display: "flex",
