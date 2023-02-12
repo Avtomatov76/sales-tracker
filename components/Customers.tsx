@@ -29,8 +29,9 @@ export default function Customers(props: any) {
   const [displayResults, setDisplayResults] = useState(false);
   const [foundCustomers, setFoundCustomers] = useState<any>([]);
   //
-  const [testCustomers, setTestCustomers] = useState<any>([]);
+  const [testCustomer, setTestCustomer] = useState<any>();
   const [showDetails, setShowDetails] = useState(false);
+  const [customerObjects, setCustomerObjects] = useState<any>([]);
 
   useEffect(() => {
     fetchCustomers();
@@ -62,8 +63,9 @@ export default function Customers(props: any) {
   console.log(customers);
 
   const showCustomerDetails = (index: any) => {
-    setCustomerIndex(index);
-    displayCustomerModal("details");
+    // setCustomerIndex(index);
+    // displayCustomerModal("details");
+    setTestCustomer(customers[index]);
   };
 
   const displayCustomerModal = (flag: string) => {
@@ -89,37 +91,39 @@ export default function Customers(props: any) {
   };
 
   const showSearchResults = (e: any) => {
-    // let customerArray = customers.filter((c: any) =>
-    //   c.last_name.toLowerCase().includes(e.target.value)
-    // );
+    let results = [];
+    let custObjects = [];
 
-    let options = [];
-
-    let customerArray = customers.forEach((c: any) => {
-      if (c.last_name.toLowerCase().includes(e.target.value))
-        options.push(c.last_name.toUpperCase());
+    customers.forEach((c: any) => {
+      if (c.last_name.toLowerCase().includes(e.target.value)) {
+        //
+        let customerObj = {
+          id: c.customer_id,
+          lastName: c.last_name.toUpperCase(),
+        };
+        //
+        results.push(c.last_name.toUpperCase());
+        custObjects.push(customerObj);
+      }
     });
 
-    console.log(e.target.value);
-    console.log(customerArray);
-
-    //setFoundCustomers(customerArray.slice());
-    setFoundCustomers(options.slice());
+    setFoundCustomers(results.slice());
+    setCustomerObjects(custObjects.slice());
     setDisplayResults(true);
   };
 
   console.log(foundCustomers);
-  console.log(testCustomers);
+  console.log(testCustomer);
 
   const handleSelection = (value: any) => {
+    if (!value) return;
     console.log("Handling selection: ", value);
 
-    // APP BREAKING HERE!!
-    let customerArr = customers.filter((c) =>
-      c.last_name.toLowerCase().includes(value.toLowerCase())
+    let customer = customers.find(
+      (c: any) => c.last_name.toLowerCase() === value.toLowerCase()
     );
 
-    setTestCustomers(customerArr.slice());
+    setTestCustomer(customer);
     setShowDetails(true);
   };
 
@@ -135,50 +139,9 @@ export default function Customers(props: any) {
       >
         <Text style={{ fontSize: 35 }}>Customers</Text>
 
-        {/* <View style={styles.searchContainer}>
-          <Pressable
-            //onPress={() => setDisplayResults(true)}
-            style={{ paddingTop: 10, margin: 0 }}
-          >
-            <Image
-              style={styles.searchIcon}
-              source={require("../assets/icons/search.png")}
-            />
-          </Pressable>
-
-          <TextInput
-            placeholder="Search by last name"
-            style={styles.searchInput}
-            onChange={(e) => showSearchResults(e)}
-          />
-          <Menu
-            visible={displayResults}
-            onDismiss={() => setDisplayResults(false)}
-            anchor={
-              <Pressable
-                //onPress={() => setDisplayResults(true)}
-                style={{ paddingTop: 10, margin: 0 }}
-              >
-                <Image
-                  style={styles.searchIcon}
-                  source={require("../assets/icons/search.png")}
-                />
-              </Pressable>
-            }
-            //contentStyle={{ alignItems: "center" }}
-          >
-            {!foundCustomers
-              ? null
-              : foundCustomers.map((c: any, index: any) => (
-                  <Pressable onPress={() => showCustomerDetails(index)}>
-                    <Menu.Item key={index} title={c.last_name} />
-                  </Pressable>
-                ))}
-          </Menu>
-        </View> */}
-
         <Searchbar
           options={foundCustomers}
+          objects={customerObjects}
           onChange={(e: any) => showSearchResults(e)}
           handleSelection={handleSelection}
         />
@@ -235,96 +198,34 @@ export default function Customers(props: any) {
               editCustomer={editCustomer}
               deleteCustomer={deleteCustomer}
             />
-            // <ScrollView>
-            //   <View style={{ height: 400 }}>
-            //     {!customers
-            //       ? null
-            //       : customers.map((customer: any, index: any) => (
-            //           <Pressable
-            //             key={index}
-            //             style={{
-            //               width: "100%",
-            //               marginBottom: 10,
-            //               //borderTopWidth: 1,
-            //               borderBottomWidth: 1,
-            //               borderColor: "grey",
-            //               marginRight: 10,
-            //               paddingRight: 5,
-            //               paddingBottom: 5,
-            //               flexDirection: "row",
-            //               justifyContent: "space-between",
-            //               alignItems: "center",
-            //             }}
-            //             onPress={() => showCustomerDetails(index)}
-            //           >
-            //             <Text
-            //               //key={index}
-            //               style={{ color: "blue" }}
-            //               //onPress={() => alert("You clicked on an entry!!!!")}
-            //             >
-            //               {displayName(customer, "default")}
-            //             </Text>
-            //             {/* <hr style={{ width: "100%" }} /> */}
-            //             <Menu
-            //               visible={
-            //                 index === customerIndex ? showCustomerMenu : null
-            //               }
-            //               onDismiss={() => setShowCustomerMenu(false)}
-            //               anchor={
-            //                 <Pressable
-            //                   onPress={() => displayMenu(index)}
-            //                   style={{ padding: 0, margin: 0 }}
-            //                 >
-            //                   <Image
-            //                     style={styles.more}
-            //                     source={require("../assets/icons/more.png")}
-            //                   />
-            //                 </Pressable>
-            //               }
-            //             >
-            //               <Menu.Item
-            //                 onPress={() => editCustomer(customer.customer_id)}
-            //                 title="Edit"
-            //                 trailingIcon={require("../assets/icons/edit.png")}
-            //               />
-            //               <Divider />
-            //               <Menu.Item
-            //                 onPress={() => deleteCustomer(customer.customer_id)}
-            //                 title="Delete"
-            //                 trailingIcon={require("../assets/icons/trash.png")}
-            //               />
-            //             </Menu>
-            //           </Pressable>
-            //         ))}
-            //   </View>
-            // </ScrollView>
           )}
         </View>
 
-        <View style={{ marginBottom: 20 }}>
-          {/* <Text>Customer Info: </Text> */}
+        {/* <View style={{ marginBottom: 20 }}>
           {!showDetails ? null : (
             <DetailsForm
               //customer={!foundCustomers ? null : foundCustomers[customerIndex]}
-              customer={!testCustomers ? null : testCustomers}
+              customer={!testCustomer ? null : testCustomer}
             />
           )}
-        </View>
-
-        <CustomerCard />
-
-        {/* <View style={{ marginBottom: 20 }}>
-          <Text>Customer Details</Text>
         </View> */}
+
+        <CustomerCard
+          flag={flag}
+          customer={!testCustomer ? null : testCustomer}
+          // customer={!customers ? null : customers[customerIndex]}
+          // index={customerIndex}
+          // customers={customers}
+        />
       </View>
-      <CustomerModal
+      {/* <CustomerModal
         flag={flag}
         //initialValues={initialValues} <== initial values should be passed from this component or other separate component
         index={customerIndex}
         customers={customers}
         visible={showModal}
         hideModal={() => setShowModal(false)}
-      />
+      /> */}
     </View>
   );
 }

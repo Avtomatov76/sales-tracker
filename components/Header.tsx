@@ -11,13 +11,13 @@ export default function Header(props: any) {
         <Text style={styles.title}>Sales Tracker</Text>
       </View>
       <View style={{ flexDirection: "row" }}>
-        <View style={styles.searchContainer}>
+        {/* <View style={styles.searchContainer}>
           <Image
             source={require("../assets/icons/search.png")}
             style={styles.searchIcon}
           />
           <TextInput placeholder="Search" style={styles.navSearch} />
-        </View>
+        </View> */}
         <View
           style={{
             marginRight: "2rem",

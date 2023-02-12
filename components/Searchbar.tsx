@@ -19,12 +19,27 @@ const useStyles = makeStyles({
 export default function Searchbar(props: any) {
   const classes = useStyles();
 
-  const handleSelection = (value: any) => {
-    console.log(value);
+  const custObjects = props.objects;
+  const options = props.options;
+
+  //
+  // console.log("Customer Names: ", options);
+  // console.log("Customer Objects: ", custObjects);
+  //
+
+  const handleSelection = (value: any, event: any) => {
+    //console.log(event);
+    console.log("Customer Names: ", options);
+    console.log("Customer Objects: ", custObjects);
+
     props.handleSelection(value);
   };
 
-  console.log(props.options);
+  const handleOnChange = () => {
+    //console.log(params);
+    props.onChange();
+  };
+
   return (
     <View
     //style={styles.searchContainer}
@@ -36,7 +51,8 @@ export default function Searchbar(props: any) {
         freeSolo
         autoComplete
         autoHighlight
-        options={props.options}
+        options={options}
+        //options={props.objects}
         //onSelect={() => alert("Selected!!")}
         renderInput={(params) => (
           <TextField
@@ -50,7 +66,7 @@ export default function Searchbar(props: any) {
             //on={() => console.log("Clicked!!!!!")}
           />
         )}
-        onChange={(event, value) => handleSelection(value)}
+        onChange={(event, value) => handleSelection(value, event)}
       />
     </View>
   );

@@ -26,16 +26,37 @@ export const displayName = (customer: any, flag: any) => {
   if (!customer) return;
 
   let firstName = customer.first_name;
-  let lastName =
-    flag === "details"
-      ? customer.last_name
-      : customer.last_name.length > 25
-      ? customer.last_name.substring(0, 25) + "..."
-      : customer.last_name;
+  let lastName = "";
 
-  if (firstName === "na") return lastName.toUpperCase();
-  else return firstName.toUpperCase() + " " + lastName.toUpperCase();
-  // return firstName + " " + lastName;
+  if (flag === "details") {
+    if (firstName === "na") {
+      lastName = customer.last_name;
+      return lastName.toUpperCase();
+    } else {
+      lastName = customer.last_name;
+      return firstName.toUpperCase() + " " + lastName.toUpperCase();
+    }
+  } else {
+    if (customer.last_name.length > 25)
+      lastName = customer.last_name.substring(0, 25) + "...";
+    else lastName = customer.last_name;
+
+    if (firstName === "na") return lastName.toUpperCase();
+    else return firstName.toUpperCase() + " " + lastName.toUpperCase();
+  }
+
+  // if (flag === "details" && firstName === "na") {
+  //   lastName = customer.last_name;
+  //   return lastName.toUpperCase();
+  // } else if (flag === "details" && firstName !== "na")
+  //   return firstName.toUpperCase() + " " + lastName.toUpperCase();
+
+  // if (customer.last_name.length > 25)
+  //   lastName = customer.last_name.substring(0, 25) + "...";
+  // else lastName = customer.last_name;
+
+  // if (firstName === "na") return lastName.toUpperCase();
+  // else return firstName.toUpperCase() + " " + lastName.toUpperCase();
 };
 
 export const displayPhone = (customer: any) => {
