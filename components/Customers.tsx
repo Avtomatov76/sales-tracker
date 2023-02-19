@@ -218,14 +218,14 @@ export default function Customers(props: any) {
           // customers={customers}
         />
       </View>
-      {/* <CustomerModal
+      <CustomerModal
         flag={flag}
         //initialValues={initialValues} <== initial values should be passed from this component or other separate component
         index={customerIndex}
         customers={customers}
         visible={showModal}
         hideModal={() => setShowModal(false)}
-      /> */}
+      />
     </View>
   );
 }
