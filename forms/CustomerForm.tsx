@@ -9,9 +9,12 @@ import {
 } from "react-native";
 import { nanoid } from "nanoid";
 import { Button } from "react-native-paper";
-import AddForm from "./form-parts/AddForm";
+import AddUpdateForm from "./form-parts/AddUpdateForm";
 import DetailsForm from "./form-parts/DetailsForm";
 import CustomerCard from "../components/cards/CustomerCard";
+import { checkNameForDupes } from "../functions/customerFunctions";
+import ConfirmDelete from "./form-parts/ConfirmDelete";
+import CustomButton from "../components/CustomButton";
 
 export default function CustomerForm(props: any) {
   const [error, setError] = useState(false);
@@ -27,10 +30,9 @@ export default function CustomerForm(props: any) {
   });
 
   const customersNames = props.customersNames;
-  console.log(customersNames);
-
-  console.log(props.index);
-  console.log(props.flag);
+  // console.log(customersNames);
+  // console.log(props.index);
+  // console.log(props.flag);
   console.log(props.customers);
 
   const errors = {
@@ -49,15 +51,22 @@ export default function CustomerForm(props: any) {
   };
 
   const submitForm = () => {
+    console.log(props.flag);
+    //if (props.flag === "delete") props.handleSubmit({});
+
     let isValid = validateForm();
     if (!isValid) {
       console.log("There are erorrs in your form!!");
       return;
     }
 
-    let id = nanoid();
     let values = formValues;
-    values.id = id;
+
+    if (props.flag === "add") {
+      let id = nanoid();
+      values.id = id;
+    }
+
     props.handleSubmit(values);
   };
 
@@ -72,7 +81,11 @@ export default function CustomerForm(props: any) {
       return false;
     }
 
-    let isDupe = checkNameForDupes(formValues.firstName, formValues.lastName);
+    let isDupe = checkNameForDupes(
+      formValues.firstName,
+      formValues.lastName,
+      props.customers
+    );
     if (isDupe) {
       alert(
         `${formValues.firstName} ${formValues.lastName} - is already in the database.  Please update the customer instead of adding a duplicate record!`
@@ -81,13 +94,6 @@ export default function CustomerForm(props: any) {
     }
 
     return true;
-  };
-
-  const checkNameForDupes = (fName: any, lName: any) => {
-    let name = fName.trim().toLowerCase() + " " + lName.trim().toLowerCase();
-    if (customersNames.includes(name)) return true;
-
-    return false;
   };
 
   const handleBlur = (field: any) => {
@@ -100,31 +106,29 @@ export default function CustomerForm(props: any) {
 
   const displayFormContent = () => {
     if (props.flag === "details")
-      // return <DetailsForm customer={props.customers[props.index]} />;
       return <CustomerCard customer={props.customers[props.index]} />;
 
     if (props.flag === "delete")
       return (
-        <View>
-          <Text>Deleting...</Text>
-        </View>
+        <ConfirmDelete
+          hideModal={props.hideModal}
+          customerId={props.customerId}
+          customer={props.customer}
+          //submitForm={submitForm()}
+          deleteCustomer={props.deleteCustomer}
+        />
       );
 
-    if (props.flag === "edit")
+    if (props.flag === "add" || props.flag === "edit")
       return (
-        <View>
-          <Text>Editing...</Text>
-        </View>
-      );
-
-    if (props.flag === "add")
-      return (
-        <AddForm
+        <AddUpdateForm
           formValues={formValues}
           error={error}
           errors={errors}
           handleBlur={handleBlur}
           handleOnChange={handleOnChange}
+          submitForm={submitForm}
+          hideModal={props.hideModal}
         />
       );
   };
@@ -149,50 +153,6 @@ export default function CustomerForm(props: any) {
       </Pressable>
 
       {displayFormContent()}
-
-      {props.flag === "details" ? (
-        <View style={{ marginTop: 20 }}>
-          <Button
-            mode="contained"
-            //color="#f27d42"
-            //buttonColor="#f27d42"
-            style={styles.addBtn}
-            onPress={props.hideModal}
-          >
-            OK
-          </Button>
-        </View>
-      ) : (
-        <View
-          style={{
-            width: "100%",
-            marginTop: 20,
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <Button
-            mode="contained"
-            //color="black"
-            //buttonColor="#f27d42"
-            //textColor="#f27d42"
-            style={styles.addBtn}
-            onPress={submitForm}
-          >
-            Submit
-          </Button>
-          <Button
-            mode="contained"
-            //color="black"
-            //buttonColor="red"
-            //textColor="red"
-            style={styles.xnlBtn}
-            onPress={props.hideModal}
-          >
-            Cancel
-          </Button>
-        </View>
-      )}
     </View>
   );
 }
@@ -218,29 +178,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  addBtn: {
-    //width: "100%",
-    marginBottom: 10,
-    //width: 100,
-    //color: "#f27d42",
-    backgroundColor: "#368cbf",
-    //borderWidth: 1,
-    //borderColor: "#f27d42",
-  },
-  xnlBtn: {
-    //width: "100%",
-    marginBottom: 10,
-    //marginLeft: 10,
-    //width: 100,
-    //color: "#000000",
-    backgroundColor: "red",
-    //borderWidth: 1,
-    //borderColor: "red",
-  },
   textInput: {
-    //display: "flex",
-    //flex: 1,
-    //width: "100%",
     marginBottom: 10,
     paddingTop: 5,
     paddingBottom: 5,

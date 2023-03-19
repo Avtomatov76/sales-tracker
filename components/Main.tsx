@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { customerAPI } from "../api/endPoints";
 import { View, Text, StyleSheet } from "react-native";
+import { Button } from "react-native-paper";
 import Customers from "./Customers";
 import CSVUploader from "./CSVUploader";
 import Dashboard from "./Dashboard";
@@ -9,6 +10,7 @@ import Transactions from "./Transactions";
 import Commissions from "./Commissions";
 import Vendors from "./Vendors";
 import Suppliers from "./Suppliers";
+import Sidebar from "./Sidebar";
 
 export default function Main(props: any) {
   const [customers, setCustomers] = useState<any>();

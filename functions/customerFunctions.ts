@@ -44,19 +44,6 @@ export const displayName = (customer: any, flag: any) => {
     if (firstName === "na") return lastName.toUpperCase();
     else return firstName.toUpperCase() + " " + lastName.toUpperCase();
   }
-
-  // if (flag === "details" && firstName === "na") {
-  //   lastName = customer.last_name;
-  //   return lastName.toUpperCase();
-  // } else if (flag === "details" && firstName !== "na")
-  //   return firstName.toUpperCase() + " " + lastName.toUpperCase();
-
-  // if (customer.last_name.length > 25)
-  //   lastName = customer.last_name.substring(0, 25) + "...";
-  // else lastName = customer.last_name;
-
-  // if (firstName === "na") return lastName.toUpperCase();
-  // else return firstName.toUpperCase() + " " + lastName.toUpperCase();
 };
 
 export const displayPhone = (customer: any) => {
@@ -86,4 +73,33 @@ export const displayAddress = (customer: any) => {
     customer.street_address + "\n" + customer.city + ", " + customer.state;
 
   return address;
+};
+
+export const checkNameForDupes = (
+  fName: any,
+  lName: any,
+  customerArray: any
+) => {
+  if (!customerArray || !fName || !lName) return;
+
+  let firstName = fName.trim().toLowerCase();
+  let lastName = lName.trim().toLowerCase();
+
+  let dupeFound = false;
+  customerArray.forEach((x: any) => {
+    if (
+      x.first_name.trim().toLowerCase() === firstName &&
+      x.last_name.trim().toLowerCase() === lastName
+    )
+      dupeFound = true;
+  });
+
+  if (dupeFound) return true;
+
+  return false;
+};
+
+export const findCustomerById = (id: any, data: any) => {
+  let customer = data.find((x) => x.customer_id == id);
+  return customer;
 };

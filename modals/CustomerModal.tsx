@@ -1,56 +1,57 @@
-import { Formik } from "formik";
 import axios from "axios";
-import { nanoid } from "nanoid";
-import {
-  View,
-  Text,
-  //Modal,
-  StyleSheet,
-  Pressable,
-  TextInput,
-  TouchableOpacity,
-  Modal,
-} from "react-native";
+import { View, StyleSheet, Modal } from "react-native";
 import { Button } from "react-native-paper";
 import CustomerForm from "../forms/CustomerForm";
 import { customerAPI } from "../api/endPoints";
+import GetConfiguration from "../constants/Config";
 import { getCustomersNames } from "../functions/customerFunctions";
+import { useQueryClient } from "react-query";
 
 export default function CustomerModal(props: any) {
+  const queryClient = useQueryClient();
+
   let customersNames = getCustomersNames(props.customers);
-  console.log(customersNames);
+  let baseUrl = GetConfiguration().baseUrl;
 
   const initialValues = {
-    id: "",
-    firstName: "",
-    lastName: "",
-    address: "",
-    city: "",
-    state: "",
-    phone: "",
-    email: "",
+    id: props.flag === "edit" ? props.customer.customer_id : "",
+    firstName: props.flag === "edit" ? props.customer.first_name : "",
+    lastName: props.flag === "edit" ? props.customer.last_name : "",
+    address: props.flag === "edit" ? props.customer.street_address : "",
+    city: props.flag === "edit" ? props.customer.city : "",
+    state: props.flag === "edit" ? props.customer.state : "",
+    phone: props.flag === "edit" ? props.customer.cust_phone : "",
+    email: props.flag === "edit" ? props.customer.email : "",
   };
 
   const hideModal = () => {
     props.hideModal();
   };
 
+  const deleteCustomer = async (id: any) => {
+    try {
+      await axios.post(baseUrl + customerAPI + `/${id}`);
+    } catch (err) {
+      console.log(err);
+    }
+
+    await queryClient.invalidateQueries(["customers"]);
+  };
+
   const handleSubmit = async (formdata: any) => {
-    console.log(`Submitted: `, formdata);
     hideModal();
 
     try {
-      if (formdata.customer_id)
-        await axios.put("http://localhost:8080" + customerAPI, formdata);
-      else {
-        await axios.post(
-          "http://localhost:8080" + customerAPI,
-          Object.values(formdata)
-        );
+      if (props.flag === "edit")
+        await axios.put(baseUrl + customerAPI, formdata);
+      else if (props.flag === "add") {
+        await axios.post(baseUrl + customerAPI, Object.values(formdata));
       }
     } catch (err) {
       console.log(err);
     }
+
+    await queryClient.invalidateQueries(["customers"]);
   };
 
   return (
@@ -67,10 +68,13 @@ export default function CustomerModal(props: any) {
             <CustomerForm
               flag={props.flag}
               index={props.index}
+              customerId={props.customerId}
               customers={props.customers}
+              customer={props.customer}
               initialValues={initialValues}
               customersNames={customersNames}
               handleSubmit={handleSubmit}
+              deleteCustomer={deleteCustomer}
               hideModal={hideModal}
             />
           </View>

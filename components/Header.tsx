@@ -1,13 +1,27 @@
 import { useState } from "react";
 import moment from "moment";
-import { View, Text, StyleSheet, Image, TextInput } from "react-native";
+import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import { Chip } from "react-native-paper";
 
 export default function Header(props: any) {
   const [inputStyle, setInputStyle] = useState();
 
+  const handleShowMenu = () => {
+    props.showMenu();
+  };
+
   return (
     <View style={styles.container}>
-      <View>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        {props.screenSize ? (
+          <Pressable onPress={handleShowMenu}>
+            <Image
+              source={require("../assets/icons/hamburger-menu.png")}
+              style={styles.menu}
+            />
+          </Pressable>
+        ) : null}
+
         <Text style={styles.title}>Sales Tracker</Text>
       </View>
       <View style={{ flexDirection: "row" }}>
@@ -28,16 +42,32 @@ export default function Header(props: any) {
         >
           <Text style={styles.navEl}>
             Last Sign-in:{" "}
-            <Text style={{ fontSize: 14, color: "orange", marginLeft: 10 }}>
+            {/* <Text style={{ fontSize: 14, color: "orange", marginLeft: 10 }}>
               {moment().format("DD MMMM, HH:MM")}
-            </Text>
+            </Text> */}
+            <Chip
+              mode="flat"
+              textStyle={{
+                fontSize: 14,
+                color: "#FFFFFF", //"#368cbf", //"orange",
+                //fontWeight: "bold",
+                //backgroundColor: "#FFFFFF",
+              }}
+              style={{
+                backgroundColor: "#f27d42", //"#FFFFFF",
+                borderRadius: 20,
+                marginLeft: 10,
+              }}
+            >
+              {moment().format("DD MMMM, hh:mm A")}
+            </Chip>
           </Text>
         </View>
         <View style={{ justifyContent: "center", alignContent: "center" }}>
           <Text
             style={{
-              fontSize: 20,
-              fontWeight: "bold",
+              fontSize: 24,
+              //fontWeight: "bold",
               color: "#ffffff",
               marginTop: -5,
             }}
@@ -49,6 +79,32 @@ export default function Header(props: any) {
     </View>
   );
 }
+
+// {showSidebar ? (
+//   <View style={{ position: "absolute", top: 100, left: 100 }}>
+//     <Sidebar
+//       navigate={props.navigate}
+//       screen="small"
+//       hide={() => setShowSidebar(false)}
+//     />
+//   </View>
+// ) : null}
+
+// const testMenu = () => {
+//   return (
+//     <View>
+//       <Button
+//         mode="contained"
+//         style={{ width: 150 }}
+//         onPress={() => setShowSidebar(!showSidebar)}
+//       >
+//         TEST MENU!!
+//       </Button>
+//     </View>
+//   );
+// };
+
+//const [showSidebar, setShowSidebar] = useState(false);
 
 const styles = StyleSheet.create({
   container: {
@@ -86,5 +142,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     height: 18,
     width: 18,
+  },
+  menu: {
+    marginTop: 3,
+    marginRight: 20,
+    height: 24,
+    width: 24,
   },
 });

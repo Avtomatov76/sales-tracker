@@ -21,6 +21,7 @@ export default function Searchbar(props: any) {
 
   const custObjects = props.objects;
   const options = props.options;
+  //console.log("Options: ", options);
 
   //
   // console.log("Customer Names: ", options);
@@ -28,10 +29,6 @@ export default function Searchbar(props: any) {
   //
 
   const handleSelection = (value: any, event: any) => {
-    //console.log(event);
-    console.log("Customer Names: ", options);
-    console.log("Customer Objects: ", custObjects);
-
     props.handleSelection(value);
   };
 
@@ -52,7 +49,9 @@ export default function Searchbar(props: any) {
         autoComplete
         autoHighlight
         options={options}
-        //options={props.objects}
+        //includeInputInList={true}
+        //filterOptions={custObjects}
+        //options={custObjects}
         //onSelect={() => alert("Selected!!")}
         renderInput={(params) => (
           <TextField
@@ -63,7 +62,7 @@ export default function Searchbar(props: any) {
             //className={classes.searchInput}
             //style={{ borderWidth: 1, borderColor: "purple", borderRadius: 30 }}
             //color="primary"
-            //on={() => console.log("Clicked!!!!!")}
+            //onSelect={() => console.log("Clicked!!!!! ", params.id)}
           />
         )}
         onChange={(event, value) => handleSelection(value, event)}

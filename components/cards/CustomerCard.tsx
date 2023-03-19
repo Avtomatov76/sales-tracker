@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { View, Text } from "react-native";
 import { Divider } from "react-native-paper";
 import {
@@ -5,13 +6,36 @@ import {
   displayName,
   displayPhone,
 } from "../../functions/customerFunctions";
+import { useQueryClient } from "react-query";
 import { Avatar, Button, Card, Text as Txt } from "react-native-paper";
 
 export default function CustomerCard(props: any) {
+  const [showModal, setShowModal] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  let flag = "";
+
+  const handlePress = (action: any) => {
+    console.log("action: ", action);
+    flag = action;
+    setShowModal(true);
+  };
+
   let customer = props.customer;
   const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
 
   console.log(customer);
+
+  const handleEdit = async () => {
+    props.editCustomer(customer.customer_id);
+    //await queryClient.invalidateQueries(["customers"]);
+  };
+
+  const handleDelete = async () => {
+    props.deleteCustomer(customer.customer_id);
+    //await queryClient.invalidateQueries(["customers"]);
+  };
 
   if (!customer) return null;
 
@@ -49,8 +73,10 @@ export default function CustomerCard(props: any) {
       </Card.Content>
 
       <Card.Actions style={{ marginTop: 10, marginBottom: 5 }}>
-        <Button>Edit</Button>
-        <Button buttonColor="red">Delete</Button>
+        <Button onPress={handleEdit}>Edit</Button>
+        <Button onPress={handleDelete} buttonColor="red">
+          Delete
+        </Button>
       </Card.Actions>
     </Card>
   );

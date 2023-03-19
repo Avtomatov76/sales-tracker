@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 
 export default function Sidebar(props: any) {
-  const [active, setActive] = useState("dashboard");
+  const [active, setActive] = useState(
+    !props.screen ? "dashboard" : props.screen
+  );
 
   function handlePress(screen: any) {
     setActive(screen);
     props.navigate(screen);
+    if (props.screenSize === "small") props.hide();
   }
 
   const tabs = [
@@ -24,18 +27,32 @@ export default function Sidebar(props: any) {
 
     tabs.map((tab: any, index: any) =>
       tabsArray.push(
-        <View key={index} style={{ marginBottom: index === 0 ? 50 : null }}>
+        <View
+          key={index}
+          style={{
+            marginBottom:
+              index === 0 && props.screenSize === "large" ? 50 : null,
+          }}
+        >
           {active === tab.toLowerCase() ? (
             <Text
               onPress={() => handlePress(tab.toLowerCase())}
-              style={styles.tabActive}
+              style={
+                props.screenSize === "large"
+                  ? styles.tabActive
+                  : [styles.tabActive, styles.tabSmall]
+              }
             >
               {tab}
             </Text>
           ) : (
             <Text
               onPress={() => handlePress(tab.toLowerCase())}
-              style={styles.tabDefault}
+              style={
+                props.screenSize === "large"
+                  ? styles.tabDefault
+                  : [styles.tabDefault, styles.tabSmall]
+              }
             >
               {tab}
             </Text>
@@ -49,18 +66,50 @@ export default function Sidebar(props: any) {
 
   console.log("______________________restarted______________________");
 
-  return <View style={styles.container}>{displayTabs()}</View>;
+  return (
+    <View
+      style={
+        props.screenSize === "large"
+          ? styles.containerLarge
+          : styles.containerSmall
+      }
+    >
+      {displayTabs()}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  containerLarge: {
     flex: 1,
     paddingTop: "3rem", // change
-    //paddingLeft: "3rem", // change
     flexDirection: "column",
     backgroundColor: "#FFFFFF",
     borderRightWidth: 1,
     borderRightColor: "#f27d42",
+  },
+  containerSmall: {
+    flex: 1,
+    width: 190,
+    //paddingTop: "3rem", // change
+    flexDirection: "column",
+    backgroundColor: "#FFFFFF",
+    borderLeftWidth: 3,
+    //borderRightWidth: 1,
+    //borderBottomWidth: 1,
+    borderLeftColor: "#f27d42",
+    //borderRightColor: "#368cbf",
+    //borderBottomColor: "#368cbf",
+    paddingTop: 10,
+    paddingBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   tabActive: {
     flex: 1,
@@ -70,7 +119,6 @@ const styles = StyleSheet.create({
     color: "#000000", //"#FFFFFF",
     fontSize: 20,
     alignSelf: "center",
-    //textAlign: "center",
     borderRadius: 4,
     paddingLeft: 50,
     paddingTop: 8,
@@ -83,10 +131,14 @@ const styles = StyleSheet.create({
     color: "#808080", //"#000000",
     fontSize: 20,
     alignSelf: "center",
-    //textAlign: "center",
     borderRadius: 10,
     paddingLeft: 50,
     paddingTop: 8,
     paddingBottom: 10,
+  },
+  tabSmall: {
+    width: "90%",
+    paddingLeft: 20,
+    paddingRight: 20,
   },
 });

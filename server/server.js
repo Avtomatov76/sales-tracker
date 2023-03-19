@@ -6,9 +6,11 @@ const { getProductsBySupplier } = require("./queries/productQueries");
 const {
   getAllCustomers,
   getCustomer,
-  getCommissions,
   postCustomer,
+  postCustomers,
+  deleteCustomer,
 } = require("./queries/customerQueries");
+const { getCommissions } = require("./queries/commissionQueries");
 const {
   getYearToDateSalesQuery,
   getCurrentMonthSalesQuery,
@@ -53,7 +55,6 @@ app.get("/api/customers/:id", async (req, res) => {
 });
 
 app.get("/api/customers", async (req, res) => {
-  //console.log("Inside customers API!!");
   try {
     const result = await db.pool.query(getAllCustomers);
     res.send(result);
@@ -78,48 +79,13 @@ app.post("/api/customers", async (req, res) => {
   res.send({ result: "ok" });
 });
 
-// POST Multiple customers
-app.post("/api/customers/many", async (req, res) => {
-  const customers = req.body;
-  //console.log("CUSTOMERS: ", customers);
-
-  function insertValues(customers) {
-    let valuesStr = "";
-
-    customers.forEach((c, index) => {
-      if (index === customers.length - 1) {
-        valuesStr += `('${c.id}', '${c.fName}', '${c.lName}', '${
-          c.address ? c.address : "na"
-        }', '${c.city ? c.city : "na"}', '${c.state ? c.state : "na"}', '${
-          c.phone
-        }', '${c.email ? c.email : "na"}')`;
-      } else {
-        valuesStr += `('${c.id}', '${c.fName}', '${c.lName}', '${
-          c.address ? c.address : "na"
-        }', '${c.city ? c.city : "na"}', '${c.state ? c.state : "na"}', '${
-          c.phone
-        }', '${c.email ? c.email : "na"}'),`;
-      }
-    });
-
-    return valuesStr;
-  }
-
-  let values = insertValues(customers);
-
-  let sql = `INSERT INTO customer (customer_id, first_name, last_name, street_address, city, state, cust_phone, email) VALUES ${values}`;
-
-  console.log(sql);
-
+// DELETE Customer
+app.post("/api/customers/:id", async (req, res) => {
   try {
-    await db.pool.query(sql, customers, function (err, data) {
-      if (err) throw err;
-      console.log("User data was inserted successfully");
-    });
+    await db.pool.query(deleteCustomer(req.params["id"]));
     res.send({ result: "ok" });
   } catch (err) {
-    console.error(err);
-    res.send({ result: "Insert Failed!" });
+    throw err;
   }
 });
 
@@ -127,7 +93,7 @@ app.post("/api/customers/many", async (req, res) => {
 app.put("/api/customers", async (req, res) => {
   const customer = req.body;
   console.log(customer);
-  let sql = `UPDATE customer SET first_name = '${customer.firstName}', last_name = '${customer.lastName}', street_address = '${customer.address}', city = '${customer.city}', state = '${customer.state}', cust_phone = '${customer.phone}', email = '${customer.email}' WHERE customer_id = ${customer.customer_id}`;
+  let sql = updateCustomer(customer);
 
   await db.pool.query(sql, function (err, data) {
     if (err) throw err;
@@ -146,6 +112,25 @@ app.get("/api/customers/delete/:id", async (req, res) => {
     res.redirect("/customers");
   } catch (err) {
     throw err;
+  }
+});
+
+// POST Multiple customers
+app.post("/api/customers/many", async (req, res) => {
+  const customers = req.body;
+
+  let values = postCustomers(customers);
+  let sql = `INSERT INTO customer (customer_id, first_name, last_name, street_address, city, state, cust_phone, email) VALUES ${values}`;
+
+  try {
+    await db.pool.query(sql, customers, function (err, data) {
+      if (err) throw err;
+      console.log("User data was inserted successfully");
+    });
+    res.send({ result: "ok" });
+  } catch (err) {
+    console.error(err);
+    res.send({ result: "Insert Failed!" });
   }
 });
 

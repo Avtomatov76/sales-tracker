@@ -1,26 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
-import { customerAPI } from "../api/endPoints";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Image,
-  Pressable,
-  TextInput,
-} from "react-native";
-import { Button, Menu, Divider } from "react-native-paper";
+import { useQuery } from "react-query";
+import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import { Button } from "react-native-paper";
 import GetConfiguration from "../constants/Config";
 import CustomerModal from "../modals/CustomerModal";
-import { displayName } from "../functions/customerFunctions";
-import DetailsForm from "../forms/form-parts/DetailsForm";
+import { displayName, findCustomerById } from "../functions/customerFunctions";
 import Searchbar from "./Searchbar";
 import CustomerCard from "./cards/CustomerCard";
 import CustomerList from "./CustomerList";
+import LoadingScreen from "./LoadingScreen";
+import ErrorScreen from "./ErrorScreen";
 
 export default function Customers(props: any) {
-  const [customers, setCustomers] = useState<any>();
+  const [customerId, setCustomerId] = useState("");
   const [showAllCustomers, setShowAllCustomers] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [flag, setFlag] = useState("");
@@ -29,16 +22,13 @@ export default function Customers(props: any) {
   const [displayResults, setDisplayResults] = useState(false);
   const [foundCustomers, setFoundCustomers] = useState<any>([]);
   //
-  const [testCustomer, setTestCustomer] = useState<any>();
+  const [customer, setCustomer] = useState<any>();
   const [showDetails, setShowDetails] = useState(false);
   const [customerObjects, setCustomerObjects] = useState<any>([]);
 
-  useEffect(() => {
-    fetchCustomers();
-  }, []);
+  console.log("------------------ csutomers -------------------");
 
   const baseURL = GetConfiguration().baseUrl;
-  console.log(baseURL);
 
   // Implement submenu with edit/delete
   // Query DB for all customers and do validation to see if cusotmer alread exists
@@ -48,24 +38,19 @@ export default function Customers(props: any) {
   // find customers who pucrahsed recently
   // categorize cuatomers by locality
 
-  // Example code...
-  const fetchCustomers = async () => {
-    //await axios(baseUrl + customerAPI).then((response) => {
-    await axios(baseURL + "/api/customers").then((response) => {
-      let data = Object.values(response.data);
-      setCustomers(data);
-    });
-  };
+  const { isLoading, isError, data, error, refetch } = useQuery(
+    ["customers"],
+    () => axios.get(baseURL + "/api/customers").then((res) => res.data) // HCANGE BACK TO CORRECT VALUE!!
+  );
 
-  if (customers)
-    customers.sort((a: any, b: any) => a.last_name.localeCompare(b.last_name));
+  if (isLoading) return <LoadingScreen />;
+  if (error) return <ErrorScreen error={error} type="customers" />;
+  if (data)
+    data.sort((a: any, b: any) => a.last_name.localeCompare(b.last_name));
 
-  console.log(customers);
-
-  const showCustomerDetails = (index: any) => {
-    // setCustomerIndex(index);
-    // displayCustomerModal("details");
-    setTestCustomer(customers[index]);
+  const showCustomerDetails = (id: any) => {
+    let customer = findCustomerById(id, data); //data.find((x) => x.customer_id == id);
+    setCustomer(customer);
   };
 
   const displayCustomerModal = (flag: string) => {
@@ -79,13 +64,16 @@ export default function Customers(props: any) {
   };
 
   const editCustomer = (id: string) => {
-    console.log("Editing: ", id);
+    let customer = findCustomerById(id, data);
+    setCustomer(customer);
     setShowCustomerMenu(false);
     displayCustomerModal("edit");
   };
 
   const deleteCustomer = (id: string) => {
-    console.log("Removing: ", id);
+    let customer = findCustomerById(id, data);
+    setCustomerId(id);
+    setCustomer(customer);
     setShowCustomerMenu(false);
     displayCustomerModal("delete");
   };
@@ -94,14 +82,13 @@ export default function Customers(props: any) {
     let results = [];
     let custObjects = [];
 
-    customers.forEach((c: any) => {
+    data.forEach((c: any) => {
       if (c.last_name.toLowerCase().includes(e.target.value)) {
-        //
         let customerObj = {
           id: c.customer_id,
           lastName: c.last_name.toUpperCase(),
         };
-        //
+
         results.push(c.last_name.toUpperCase());
         custObjects.push(customerObj);
       }
@@ -112,18 +99,14 @@ export default function Customers(props: any) {
     setDisplayResults(true);
   };
 
-  console.log(foundCustomers);
-  console.log(testCustomer);
-
   const handleSelection = (value: any) => {
     if (!value) return;
-    console.log("Handling selection: ", value);
 
-    let customer = customers.find(
+    let customer = data.find(
       (c: any) => c.last_name.toLowerCase() === value.toLowerCase()
     );
 
-    setTestCustomer(customer);
+    setCustomer(customer);
     setShowDetails(true);
   };
 
@@ -159,7 +142,7 @@ export default function Customers(props: any) {
         </View>
       </View>
       <View style={{ marginBottom: 10 }}>
-        <Text>Total Customers: {customers ? customers.length : 0}</Text>
+        <Text>Total Customers: {data ? data.length : 0}</Text>
       </View>
       <hr style={{ width: "100%", color: "grey" }} />
 
@@ -176,10 +159,7 @@ export default function Customers(props: any) {
             <Text style={{ marginBottom: 20, fontSize: 18, marginRight: 15 }}>
               Show All
             </Text>
-            <Pressable
-              onPress={() => setShowAllCustomers(!showAllCustomers)}
-              //onBlur={() => setShowAllCustomers(false)}
-            >
+            <Pressable onPress={() => setShowAllCustomers(!showAllCustomers)}>
               <Image
                 source={require("../assets/icons/plus-orange.png")}
                 style={{ height: 24, width: 24 }}
@@ -188,7 +168,7 @@ export default function Customers(props: any) {
           </View>
           {!showAllCustomers ? null : (
             <CustomerList
-              customers={customers}
+              customers={data}
               customerIndex={customerIndex}
               showCustomerMenu={showCustomerMenu}
               showCustomerDetails={showCustomerDetails}
@@ -201,28 +181,21 @@ export default function Customers(props: any) {
           )}
         </View>
 
-        {/* <View style={{ marginBottom: 20 }}>
-          {!showDetails ? null : (
-            <DetailsForm
-              //customer={!foundCustomers ? null : foundCustomers[customerIndex]}
-              customer={!testCustomer ? null : testCustomer}
-            />
-          )}
-        </View> */}
-
-        <CustomerCard
-          flag={flag}
-          customer={!testCustomer ? null : testCustomer}
-          // customer={!customers ? null : customers[customerIndex]}
-          // index={customerIndex}
-          // customers={customers}
-        />
+        {!customer ? null : (
+          <CustomerCard
+            flag={flag}
+            customer={customer}
+            editCustomer={editCustomer}
+            deleteCustomer={deleteCustomer}
+          />
+        )}
       </View>
       <CustomerModal
         flag={flag}
-        //initialValues={initialValues} <== initial values should be passed from this component or other separate component
+        customerId={customerId}
         index={customerIndex}
-        customers={customers}
+        customers={data}
+        customer={!customer ? null : customer}
         visible={showModal}
         hideModal={() => setShowModal(false)}
       />

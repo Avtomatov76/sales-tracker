@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, ScrollView } from "react-native";
 import axios from "axios";
 import Papa from "papaparse";
 import GetConfiguration from "../constants/Config";
@@ -10,7 +10,6 @@ import {
   saveProductsAPI,
   saveTransactionsAPI,
 } from "../api/endPoints";
-import { Button } from "react-native-paper";
 import ErrorModal from "../modals/ErrorModal";
 import { processParsedData } from "../functions/csvUploaderFunctions";
 import InfoModal from "../modals/InfoModal";
@@ -33,13 +32,13 @@ export default function CSVUploader(props: any) {
 
   //console.log("_____________________RESTARTED___________________________");
 
-  const baseURL = GetConfiguration().baseUrl;
+  const baseUrl = GetConfiguration().baseUrl;
 
   let customersInDB = [];
 
   useEffect(() => {
     const getCustomersFromDB = async () => {
-      await axios(baseURL + customerAPI).then((response) => {
+      await axios(baseUrl + customerAPI).then((response) => {
         let data = Object.values(response.data);
         setCustomers(data);
       });
@@ -63,15 +62,12 @@ export default function CSVUploader(props: any) {
     axios
       .all([
         axios.post(
-          "http://localhost:8080" + saveCustomersAPI,
+          baseUrl + saveCustomersAPI,
           Object.values(data.customerData)
         ),
+        axios.post(baseUrl + saveProductsAPI, Object.values(data.productData)),
         axios.post(
-          "http://localhost:8080" + saveProductsAPI,
-          Object.values(data.productData)
-        ),
-        axios.post(
-          "http://localhost:8080" + saveTransactionsAPI,
+          baseUrl + saveTransactionsAPI,
           Object.values(data.transactionData)
         ),
       ])
@@ -81,33 +77,6 @@ export default function CSVUploader(props: any) {
           console.log("data1", data1, "data2", data2, "data3", data3);
         })
       );
-
-    // try {
-    //   await axios.post(
-    //     "http://localhost:8080" + saveCustomersAPI,
-    //     Object.values(data.customerData)
-    //   );
-    // } catch (err) {
-    //   console.log(err);
-    // }
-
-    // try {
-    //   await axios.post(
-    //     "http://localhost:8080" + saveProductsAPI,
-    //     Object.values(data.productData)
-    //   );
-    // } catch (err) {
-    //   console.log(err);
-    // }
-
-    // try {
-    //   await axios.post(
-    //     "http://localhost:8080" + saveTransactionsAPI,
-    //     Object.values(data.transactionData)
-    //   );
-    // } catch (err) {
-    //   console.log(err);
-    // }
   };
 
   const changeHandler = (event: any) => {

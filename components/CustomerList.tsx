@@ -6,7 +6,7 @@ import {
   Image,
   StyleSheet,
 } from "react-native";
-import { Button, Menu, Divider } from "react-native-paper";
+import { Menu, Divider } from "react-native-paper";
 
 export default function CustomerList(props: any) {
   return (
@@ -20,7 +20,6 @@ export default function CustomerList(props: any) {
                 style={{
                   width: "100%",
                   marginBottom: 10,
-                  //borderTopWidth: 1,
                   borderBottomWidth: 1,
                   borderColor: "grey",
                   marginRight: 10,
@@ -30,16 +29,11 @@ export default function CustomerList(props: any) {
                   justifyContent: "space-between",
                   alignItems: "center",
                 }}
-                onPress={() => props.showCustomerDetails(index)}
+                onPress={() => props.showCustomerDetails(customer.customer_id)}
               >
-                <Text
-                  //key={index}
-                  style={{ color: "blue" }}
-                  //onPress={() => alert("You clicked on an entry!!!!")}
-                >
+                <Text style={{ color: "blue" }}>
                   {props.displayName(customer, "default")}
                 </Text>
-                {/* <hr style={{ width: "100%" }} /> */}
                 <Menu
                   visible={
                     index === props.customerIndex
