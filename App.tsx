@@ -10,7 +10,13 @@ import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
 import Main from "./components/Main";
 
-const queryClient = new QueryClient({});
+const queryClient = new QueryClient({
+  // defaultOptions: {
+  //   queries: {
+  //     refetchOnMount: "always",
+  //   },
+  // },
+});
 
 export default function App() {
   return (

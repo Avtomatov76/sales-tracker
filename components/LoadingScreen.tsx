@@ -1,6 +1,15 @@
 import { View, Text, ActivityIndicator } from "react-native";
 
 export default function LoadingScreen(props: any) {
+  let details = props.details;
+
+  const displayLoading = () => {
+    console.log(details);
+    if (details == "db") return " Loading the DATA, foool!";
+
+    return " Loading...";
+  };
+
   return (
     <View
       style={{
@@ -10,7 +19,7 @@ export default function LoadingScreen(props: any) {
       }}
     >
       <Text style={{ fontSize: 20, color: "grey", marginBottom: 20 }}>
-        Loading...
+        {displayLoading()}
       </Text>
       <ActivityIndicator size="large" />
     </View>

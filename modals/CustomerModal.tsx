@@ -1,6 +1,6 @@
 import axios from "axios";
-import { View, StyleSheet, Modal } from "react-native";
-import { Button } from "react-native-paper";
+import { StyleSheet } from "react-native";
+import Modal from "react-native-modal";
 import CustomerForm from "../forms/CustomerForm";
 import { customerAPI } from "../api/endPoints";
 import GetConfiguration from "../constants/Config";
@@ -55,55 +55,31 @@ export default function CustomerModal(props: any) {
   };
 
   return (
-    <View style={styles.centeredView}>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={props.visible}
-        //visible={true}
-        onRequestClose={hideModal}
-      >
-        <View style={{ backgroundColor: "rgba(0, 0, 0, 0.3)", height: "100%" }}>
-          <View style={styles.centeredView}>
-            <CustomerForm
-              flag={props.flag}
-              index={props.index}
-              customerId={props.customerId}
-              customers={props.customers}
-              customer={props.customer}
-              initialValues={initialValues}
-              customersNames={customersNames}
-              handleSubmit={handleSubmit}
-              deleteCustomer={deleteCustomer}
-              hideModal={hideModal}
-            />
-          </View>
-        </View>
-      </Modal>
-    </View>
+    <Modal
+      isVisible={props.visible}
+      style={styles.modal}
+      backdropColor="rgba(0, 0, 0, 0.3)"
+      onBackdropPress={hideModal}
+    >
+      <CustomerForm
+        flag={props.flag}
+        index={props.index}
+        customerId={props.customerId}
+        customers={props.customers}
+        customer={props.customer}
+        initialValues={initialValues}
+        customersNames={customersNames}
+        handleSubmit={handleSubmit}
+        deleteCustomer={deleteCustomer}
+        hideModal={hideModal}
+      />
+    </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
+  modal: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
 });

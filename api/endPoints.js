@@ -19,6 +19,9 @@ export const vendorsAPI = "/api/vendors";
 // Customers
 export const customerAPI = "/api/customers";
 export const saveCustomersAPI = "/api/customers/many";
+export const getCustomerSales = "/api/customers/sales/";
+export const getCustomerLatestSale = "/api/customers/sale/";
+export const getCustomerCommissions = "/api/customers/commissions/";
 
 // Products
 export const saveProductsAPI = "/api/products/many";

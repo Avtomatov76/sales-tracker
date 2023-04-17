@@ -103,3 +103,40 @@ export const findCustomerById = (id: any, data: any) => {
   let customer = data.find((x) => x.customer_id == id);
   return customer;
 };
+
+export const formatDollarEntry = (amount: any) => {
+  if (!amount) return "0";
+
+  let decimalStr = "";
+  let dollarAmount = "";
+  let amountAsStr = amount.toString();
+
+  let intStr =
+    amountAsStr.substring(0, amountAsStr.indexOf(".")) || amountAsStr;
+
+  if (amountAsStr.indexOf(".") != -1)
+    decimalStr = amountAsStr.slice(amountAsStr.indexOf("."));
+  else decimalStr = ".00";
+
+  if (intStr.length > 3 && intStr.length < 7) {
+    dollarAmount =
+      "$" +
+      intStr.slice(0, intStr.length - 3) +
+      "," +
+      intStr.slice(intStr.length - 3) +
+      decimalStr;
+  } else if (intStr.length > 6) {
+    dollarAmount =
+      "$" +
+      intStr.slice(0, intStr.length - 6) +
+      "," +
+      intStr.slice(intStr.length - 6, intStr.length - 3) +
+      "," +
+      intStr.slice(intStr.length - 3) +
+      decimalStr;
+  } else {
+    dollarAmount = "$" + intStr + decimalStr;
+  }
+
+  return dollarAmount;
+};

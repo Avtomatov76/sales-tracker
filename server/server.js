@@ -2,13 +2,17 @@ const express = require("express");
 const cors = require("cors");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const db = require("./db");
+var JSONbig = require("json-bigint");
 const { getProductsBySupplier } = require("./queries/productQueries");
 const {
   getAllCustomers,
   getCustomer,
+  getCustomerSales,
+  getCustomerCommissions,
   postCustomer,
   postCustomers,
   deleteCustomer,
+  getCustomerLatestSale,
 } = require("./queries/customerQueries");
 const { getCommissions } = require("./queries/commissionQueries");
 const {
@@ -19,6 +23,7 @@ const {
   postTravelType,
 } = require("./queries/transactionQueries");
 const { getAllVendors } = require("./queries/vendorQueries");
+
 const app = express();
 const port = process.env.PORT || 8080; //19006; //...http://192.168.0.223:19006 const port = process.env.PORT || 5000;
 const bodyParser = require("body-parser");
@@ -54,6 +59,51 @@ app.get("/api/customers/:id", async (req, res) => {
   }
 });
 
+// Get num sales, commissions, total sales for customer
+app.get("/api/customers/sales/:id", async (req, res) => {
+  try {
+    const result = await db.pool.query(getCustomerSales(req.params["id"]));
+
+    var moddedResult = {
+      all_sales: result[0].all_sales,
+      all_commissions: result[0].all_commissions,
+      num_sales: JSONbig.parse(result[0].num_sales),
+    };
+
+    res.send(moddedResult);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// Get lates cusstomer sale info
+app.get("/api/customers/sale/:id", async (req, res) => {
+  try {
+    const result = await db.pool.query(getCustomerLatestSale(req.params["id"]));
+
+    // var moddedResult = {
+    //   all_sales: result[0].all_sales,
+    //   all_commissions: result[0].all_commissions,
+    //   num_sales: JSONbig.parse(result[0].num_sales),
+    // };
+
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+app.get("/api/customers/commissions/:id", async (req, res) => {
+  try {
+    const result = await db.pool.query(
+      getCustomerCommissions(req.params["id"])
+    );
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
 app.get("/api/customers", async (req, res) => {
   try {
     const result = await db.pool.query(getAllCustomers);
@@ -68,7 +118,6 @@ app.post("/api/customers", async (req, res) => {
   let sql = `INSERT INTO customer (customer_id, first_name, last_name, street_address, city, state, cust_phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
   const customer = req.body;
-
   console.log(customer);
 
   await db.pool.query(sql, customer, function (err, data) {

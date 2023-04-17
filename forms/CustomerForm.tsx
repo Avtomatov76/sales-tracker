@@ -106,7 +106,7 @@ export default function CustomerForm(props: any) {
 
   const displayFormContent = () => {
     if (props.flag === "details")
-      return <CustomerCard customer={props.customers[props.index]} />;
+      return <CustomerCard customer={props.customer} />;
 
     if (props.flag === "delete")
       return (

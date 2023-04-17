@@ -1,31 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import { Divider } from "react-native-paper";
 import {
   displayAddress,
   displayName,
   displayPhone,
+  formatDollarEntry,
 } from "../../functions/customerFunctions";
-import { useQueryClient } from "react-query";
+import axios from "axios";
+import moment from "moment";
+import GetConfiguration from "../../constants/Config";
+import { useQuery, useQueryClient } from "react-query";
 import { Avatar, Button, Card, Text as Txt } from "react-native-paper";
+import { getCustomerSales, getCustomerLatestSale } from "../../api/endPoints";
 
 export default function CustomerCard(props: any) {
-  const [showModal, setShowModal] = useState(false);
+  const [sales, setSales] = useState<any>();
+  const [latestSale, setLatetSale] = useState<any>();
 
-  const queryClient = useQueryClient();
-
-  let flag = "";
-
-  const handlePress = (action: any) => {
-    console.log("action: ", action);
-    flag = action;
-    setShowModal(true);
-  };
+  console.log(
+    "----------------   rendering customer card   -------------------"
+  );
 
   let customer = props.customer;
-  const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
+  let flag = "";
+  const baseURL = GetConfiguration().baseUrl;
 
-  console.log(customer);
+  // const queryClient = useQueryClient();
+  // const { isLoading, isError, data, error, refetch } = useQuery(
+  //   ["customer-sales"],
+  //   () =>
+  //     axios
+  //       .get(baseURL + getCustomerSales + customer.customer_id)
+  //       .then((res) => {
+  //         res.data;
+  //         console.log(res.data);
+  //         //setSales(res.data[0].grand_total);
+  //       }), // HCANGE BACK TO CORRECT VALUE!!
+  // );
+
+  // if (error)
+  //   return (
+  //     <View>
+  //       <Text>An error has occurred: </Text>
+  //       <Text>{error as any}</Text>
+  //     </View>
+  //   );
+
+  useEffect(() => {
+    async function getCustomerData() {
+      let endpoints = [
+        baseURL + getCustomerSales + customer.customer_id,
+        baseURL + getCustomerLatestSale + customer.customer_id,
+      ];
+      Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
+        ([{ data: sales }, { data: latestSale }]) => {
+          setSales(sales);
+          setLatetSale(latestSale);
+        }
+      );
+    }
+
+    getCustomerData();
+  }, [props.customer]);
+
+  const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
 
   const handleEdit = async () => {
     props.editCustomer(customer.customer_id);
@@ -36,6 +75,9 @@ export default function CustomerCard(props: any) {
     props.deleteCustomer(customer.customer_id);
     //await queryClient.invalidateQueries(["customers"]);
   };
+
+  console.log("Sales: ", sales);
+  console.log("Latest sale: ", latestSale);
 
   if (!customer) return null;
 
@@ -66,10 +108,46 @@ export default function CustomerCard(props: any) {
           </Text>
         </View>
         <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-        <Text>Number of Sales for this customer</Text>
-        <Text>Total dollar value per customer</Text>
-        <Text>Total commissions per customer</Text>
-        <Text>Latest sale info with commission</Text>
+        <Text>
+          Number of Sales:{" "}
+          {!sales || sales.num_sales == null ? 0 : sales.num_sales}
+        </Text>
+        <Text>
+          Total dollar value:{" "}
+          {!sales || sales.all_sales == null
+            ? 0
+            : formatDollarEntry(sales.all_sales)}
+        </Text>
+        <Text>
+          Total commissions:{" "}
+          {!sales || sales.all_commissions == null
+            ? 0
+            : formatDollarEntry(sales.all_commissions)}
+        </Text>
+        <View style={{ marginTop: 20 }}>
+          <Text style={{ marginBottom: 10 }}>Most recent sale details: </Text>
+
+          {!latestSale || latestSale.length == 0 ? (
+            <Text>n/a</Text>
+          ) : (
+            <View>
+              <Text>
+                Date: {moment(latestSale[0].date).format("MMMM DD, YYYY")}
+              </Text>
+              <Text>
+                Amount: {formatDollarEntry(latestSale[0].product_cost)}
+              </Text>
+              <Text>
+                Commission: {formatDollarEntry(latestSale[0].product_comm)}
+              </Text>
+              <Text>Commission received: {latestSale[0].is_comm_received}</Text>
+              <Text>Travel Type: {latestSale[0].fk_type_id}</Text>
+              <Text>Vendor: {latestSale[0].fk_vendor_id}</Text>
+              <Text>Supplier: {latestSale[0].fk_supplier_id}</Text>
+              <Text>Party size: {latestSale[0].size_of_party}</Text>
+            </View>
+          )}
+        </View>
       </Card.Content>
 
       <Card.Actions style={{ marginTop: 10, marginBottom: 5 }}>
