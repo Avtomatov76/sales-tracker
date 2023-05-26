@@ -7,10 +7,10 @@ export default function CustomButton(props: any) {
       return (
         <Btn
           mode="contained"
-          style={styles.submitBtn}
+          style={props.btnStyles ? props.btnStyles : styles.submitBtn}
           onPress={props.submitForm}
         >
-          Submit
+          {props.title ? props.title : "Submit"}
         </Btn>
       );
 

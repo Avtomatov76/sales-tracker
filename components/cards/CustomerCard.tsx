@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, Text } from "react-native";
+import { Image } from "expo-image";
 import { Divider } from "react-native-paper";
 import {
   displayAddress,
@@ -18,6 +19,9 @@ export default function CustomerCard(props: any) {
   const [sales, setSales] = useState<any>();
   const [latestSale, setLatetSale] = useState<any>();
 
+  const blurhash =
+    "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+
   console.log(
     "----------------   rendering customer card   -------------------"
   );
@@ -26,7 +30,7 @@ export default function CustomerCard(props: any) {
   let flag = "";
   const baseURL = GetConfiguration().baseUrl;
 
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   // const { isLoading, isError, data, error, refetch } = useQuery(
   //   ["customer-sales"],
   //   () =>
@@ -68,7 +72,7 @@ export default function CustomerCard(props: any) {
 
   const handleEdit = async () => {
     props.editCustomer(customer.customer_id);
-    //await queryClient.invalidateQueries(["customers"]);
+    await queryClient.invalidateQueries(["customers"]);
   };
 
   const handleDelete = async () => {
@@ -83,9 +87,17 @@ export default function CustomerCard(props: any) {
 
   return (
     <Card style={{ width: "70%" }}>
-      <Card.Cover
+      {/* <Card.Cover
         source={{ uri: "https://picsum.photos/700" }}
         style={{ margin: 10, height: 200 }}
+      /> */}
+
+      <Image
+        style={{ margin: 10, height: 200 }}
+        source={{ uri: "https://picsum.photos/700" }}
+        placeholder={blurhash}
+        contentFit="cover"
+        transition={1000}
       />
       {/* <Card.Title title="Details" left={LeftContent} /> */}
       <Card.Content>
@@ -108,6 +120,9 @@ export default function CustomerCard(props: any) {
           </Text>
         </View>
         <Divider style={{ marginTop: 10, marginBottom: 20 }} />
+        {/* <Text style={{ fontSize: 24, marginBottom: 10 }}>
+          Customer Snapshot
+        </Text> */}
         <Text>
           Number of Sales:{" "}
           {!sales || sales.num_sales == null ? 0 : sales.num_sales}
@@ -125,7 +140,9 @@ export default function CustomerCard(props: any) {
             : formatDollarEntry(sales.all_commissions)}
         </Text>
         <View style={{ marginTop: 20 }}>
-          <Text style={{ marginBottom: 10 }}>Most recent sale details: </Text>
+          <Text style={{ fontSize: 24, marginBottom: 10 }}>
+            Most recent sale:{" "}
+          </Text>
 
           {!latestSale || latestSale.length == 0 ? (
             <Text>n/a</Text>
@@ -142,8 +159,8 @@ export default function CustomerCard(props: any) {
               </Text>
               <Text>Commission received: {latestSale[0].is_comm_received}</Text>
               <Text>Travel Type: {latestSale[0].fk_type_id}</Text>
-              <Text>Vendor: {latestSale[0].fk_vendor_id}</Text>
-              <Text>Supplier: {latestSale[0].fk_supplier_id}</Text>
+              <Text>Vendor: {latestSale[0].vendor_name}</Text>
+              <Text>Supplier: {latestSale[0].supplier_name}</Text>
               <Text>Party size: {latestSale[0].size_of_party}</Text>
             </View>
           )}

@@ -18,14 +18,15 @@ export default function Footer(props: any) {
 
 const styles = StyleSheet.create({
   container: {
+    display: "flex",
     height: "10%",
     flexDirection: "column",
     justifyContent: "center",
-    //alignItems: "flex-end",
     alignItems: "center",
     paddingLeft: "3rem",
     paddingRight: "3rem",
     backgroundColor: "#33363b",
+    marginTop: "auto",
   },
   title: {
     color: "#FFFFFF",

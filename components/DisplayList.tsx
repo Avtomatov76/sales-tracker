@@ -8,13 +8,17 @@ import {
 } from "react-native";
 import { Menu, Divider } from "react-native-paper";
 
-export default function CustomerList(props: any) {
+export default function DisplayList(props: any) {
+  //
+  //console.log(props.data);
+  //console.log("ENTRY INDEX: ", props.entryIndex);
+  //
   return (
     <ScrollView>
       <View style={{ height: 400 }}>
-        {!props.customers
+        {!props.data
           ? null
-          : props.customers.map((customer: any, index: any) => (
+          : props.data.map((el: any, index: any) => (
               <Pressable
                 key={index}
                 style={{
@@ -29,19 +33,14 @@ export default function CustomerList(props: any) {
                   justifyContent: "space-between",
                   alignItems: "center",
                 }}
-                onPress={() => props.showCustomerDetails(customer.customer_id)}
+                onPress={() => props.showDetails(el[props.type + "_id"])}
               >
                 <Text style={{ color: "blue" }}>
-                  {props.displayName(customer, "default")}
+                  {props.displayName(el, "default")}
                 </Text>
-
                 <Menu
-                  visible={
-                    index === props.customerIndex
-                      ? props.showCustomerMenu
-                      : null
-                  }
-                  onDismiss={props.dismiss}
+                  visible={index === props.entryIndex ? props.showMenu : null}
+                  onDismiss={props.dismissMenu}
                   anchor={
                     <Pressable
                       onPress={() => props.displayMenu(index)}
@@ -55,13 +54,13 @@ export default function CustomerList(props: any) {
                   }
                 >
                   <Menu.Item
-                    onPress={() => props.editCustomer(customer.customer_id)}
+                    onPress={() => props.editEntry(el[props.type + "_id"])}
                     title="Edit"
                     trailingIcon={require("../assets/icons/edit.png")}
                   />
                   <Divider />
                   <Menu.Item
-                    onPress={() => props.deleteCustomer(customer.customer_id)}
+                    onPress={() => props.deleteEntry(el[props.type + "_id"])}
                     title="Delete"
                     trailingIcon={require("../assets/icons/trash.png")}
                   />

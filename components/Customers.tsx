@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
-import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 import { Button } from "react-native-paper";
 import GetConfiguration from "../constants/Config";
 import CustomerModal from "../modals/CustomerModal";
@@ -11,6 +11,7 @@ import CustomerCard from "./cards/CustomerCard";
 import CustomerList from "./CustomerList";
 import LoadingScreen from "./LoadingScreen";
 import ErrorScreen from "./ErrorScreen";
+import SectionRenderer from "./SectionRenderer";
 
 export default function Customers(props: any) {
   const [customerId, setCustomerId] = useState("");
@@ -26,7 +27,7 @@ export default function Customers(props: any) {
   const [showDetails, setShowDetails] = useState(false);
   const [customerObjects, setCustomerObjects] = useState<any>([]);
 
-  console.log("------------------ csutomers -------------------");
+  console.log("------------------ customers -------------------");
 
   const baseURL = GetConfiguration().baseUrl;
 
@@ -49,6 +50,7 @@ export default function Customers(props: any) {
     data.sort((a: any, b: any) => a.last_name.localeCompare(b.last_name));
 
   const showCustomerDetails = (id: any) => {
+    //console.log(id);
     let customer = findCustomerById(id, data); //data.find((x) => x.customer_id == id);
     setCustomer(customer);
   };
@@ -64,6 +66,7 @@ export default function Customers(props: any) {
   };
 
   const editCustomer = (id: string) => {
+    //console.log("EDITING: ", id);
     let customer = findCustomerById(id, data);
     setCustomer(customer);
     setShowCustomerMenu(false);
@@ -110,86 +113,138 @@ export default function Customers(props: any) {
     setShowDetails(true);
   };
 
+  //
+  if (data)
+    data.sort((a: any, b: any) => {
+      a.last_name.localeCompare(b.last_name);
+    });
+  // console.log("DATA: ", data);
+  // console.log("Customer objects: ", customerObjects);
+  // console.log("Found csutomers: ", foundCustomers);
+
+  //
+
   return (
-    <View>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 10,
-        }}
-      >
-        <Text style={{ fontSize: 35 }}>Customers</Text>
+    // <View>
+    //   <View
+    //     style={{
+    //       flexDirection: "row",
+    //       justifyContent: "space-between",
+    //       alignItems: "center",
+    //       marginBottom: 10,
+    //     }}
+    //   >
+    //     <Text style={{ fontSize: 35 }}>Customers</Text>
 
-        <Searchbar
-          options={foundCustomers}
-          objects={customerObjects}
-          onChange={(e: any) => showSearchResults(e)}
-          handleSelection={handleSelection}
-        />
+    //     <Searchbar
+    //       options={foundCustomers}
+    //       objects={customerObjects}
+    //       onChange={(e: any) => showSearchResults(e)}
+    //       handleSelection={handleSelection}
+    //     />
 
-        <View>
-          <Button
-            mode="contained"
-            //color="#f27d42"
-            //buttonColor="#f27d42"
-            style={styles.addBtn}
-            onPress={() => displayCustomerModal("add")}
-          >
-            Add
-          </Button>
-        </View>
-      </View>
-      <View style={{ marginBottom: 10 }}>
-        <Text>Total Customers: {data ? data.length : 0}</Text>
-      </View>
-      <hr style={{ width: "100%", color: "grey" }} />
+    //     <View>
+    //       <Button
+    //         mode="contained"
+    //         //color="#f27d42"
+    //         //buttonColor="#f27d42"
+    //         style={styles.addBtn}
+    //         onPress={() => displayCustomerModal("add")}
+    //       >
+    //         Add
+    //       </Button>
+    //     </View>
+    //   </View>
+    //   <View style={{ marginBottom: 10 }}>
+    //     <Text>Total Customers: {data ? data.length : 0}</Text>
+    //   </View>
+    //   <hr
+    //     style={{
+    //       width: "100%",
+    //       backgroundColor: "grey",
+    //       border: "none",
+    //       height: 1,
+    //     }}
+    //   />
 
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          marginTop: 40,
-          marginBottom: 20,
-        }}
-      >
-        <View style={{}}>
-          <View style={{ flexDirection: "row" }}>
-            <Text style={{ marginBottom: 20, fontSize: 18, marginRight: 15 }}>
-              Show All
-            </Text>
-            <Pressable onPress={() => setShowAllCustomers(!showAllCustomers)}>
-              <Image
-                source={require("../assets/icons/plus-orange.png")}
-                style={{ height: 24, width: 24 }}
-              />
-            </Pressable>
-          </View>
-          {!showAllCustomers ? null : (
-            <CustomerList
-              customers={data}
-              customerIndex={customerIndex}
-              showCustomerMenu={showCustomerMenu}
-              showCustomerDetails={showCustomerDetails}
-              dismiss={() => setShowCustomerMenu(false)}
-              displayName={displayName}
-              displayMenu={displayMenu}
-              editCustomer={editCustomer}
-              deleteCustomer={deleteCustomer}
-            />
-          )}
-        </View>
+    //   <View
+    //     style={{
+    //       flexDirection: "row",
+    //       justifyContent: "space-between",
+    //       marginTop: 40,
+    //       marginBottom: 20,
+    //     }}
+    //   >
+    //     <View style={{}}>
+    //       <View style={{ flexDirection: "row" }}>
+    //         <Text style={{ marginBottom: 20, fontSize: 18, marginRight: 15 }}>
+    //           Show All
+    //         </Text>
+    //         <Pressable onPress={() => setShowAllCustomers(!showAllCustomers)}>
+    //           <Image
+    //             source={require("../assets/icons/plus-orange.png")}
+    //             style={{ height: 24, width: 24 }}
+    //           />
+    //         </Pressable>
+    //       </View>
+    //       {!showAllCustomers ? null : (
+    //         <CustomerList
+    //           customers={data}
+    //           customerIndex={customerIndex}
+    //           showCustomerMenu={showCustomerMenu}
+    //           showCustomerDetails={showCustomerDetails}
+    //           dismiss={() => setShowCustomerMenu(false)}
+    //           displayName={displayName}
+    //           displayMenu={displayMenu}
+    //           editCustomer={editCustomer}
+    //           deleteCustomer={deleteCustomer}
+    //         />
+    //       )}
+    //     </View>
 
-        {!customer ? null : (
-          <CustomerCard
-            flag={flag}
-            customer={customer}
-            editCustomer={editCustomer}
-            deleteCustomer={deleteCustomer}
-          />
-        )}
-      </View>
+    //     {!customer ? null : (
+    //       <CustomerCard
+    //         flag={flag}
+    //         customer={customer}
+    //         editCustomer={editCustomer}
+    //         deleteCustomer={deleteCustomer}
+    //       />
+    //     )}
+    //   </View>
+    //   <CustomerModal
+    //     flag={flag}
+    //     customerId={customerId}
+    //     index={customerIndex}
+    //     customers={data}
+    //     customer={!customer ? null : customer}
+    //     visible={showModal}
+    //     hideModal={() => setShowModal(false)}
+    //   />
+    // </View>
+
+    <>
+      <SectionRenderer
+        title="Customers"
+        type="customer"
+        flag={flag}
+        entry={customer}
+        entryIndex={customerIndex}
+        data={data}
+        editEntry={editCustomer}
+        deleteEntry={deleteCustomer}
+        showAll={showAllCustomers}
+        foundEntries={foundCustomers}
+        entryObjects={customerObjects}
+        showSearchResults={showSearchResults}
+        showDetails={showCustomerDetails}
+        showMenu={showCustomerMenu}
+        displayMenu={displayMenu}
+        dismissMenu={() => setShowCustomerMenu(false)}
+        handleSelection={handleSelection}
+        displayName={displayName}
+        displayModal={() => displayCustomerModal("add")}
+        toggleShowAll={() => setShowAllCustomers(!showAllCustomers)}
+      />
       <CustomerModal
         flag={flag}
         customerId={customerId}
@@ -199,7 +254,7 @@ export default function Customers(props: any) {
         visible={showModal}
         hideModal={() => setShowModal(false)}
       />
-    </View>
+    </>
   );
 }
 

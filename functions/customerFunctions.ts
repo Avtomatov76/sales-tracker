@@ -67,6 +67,8 @@ export const displayPhone = (customer: any) => {
 
 export const displayAddress = (customer: any) => {
   if (!customer) return;
+  if (customer.street_address.length == 0) return;
+
   let address = "";
 
   address =
@@ -111,12 +113,15 @@ export const formatDollarEntry = (amount: any) => {
   let dollarAmount = "";
   let amountAsStr = amount.toString();
 
+  if (amountAsStr[0] == "$") amountAsStr = amountAsStr.substring(1);
+
   let intStr =
     amountAsStr.substring(0, amountAsStr.indexOf(".")) || amountAsStr;
 
-  if (amountAsStr.indexOf(".") != -1)
+  if (amountAsStr.indexOf(".") != -1) {
     decimalStr = amountAsStr.slice(amountAsStr.indexOf("."));
-  else decimalStr = ".00";
+    if (decimalStr.length == 2) decimalStr = decimalStr + "0";
+  } else decimalStr = ".00";
 
   if (intStr.length > 3 && intStr.length < 7) {
     dollarAmount =

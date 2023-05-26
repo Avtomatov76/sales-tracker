@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Dimensions, Button } from "react-native";
-import Customers from "../components/Customers";
+import { View, StyleSheet } from "react-native";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import Main from "../components/Main";
@@ -20,12 +19,8 @@ export default function HomeScreen(props: any) {
   }, []);
 
   function navigateTo(screen: any) {
-    // console.log(screen);
-    //if (screen === "customers") {
     console.log("navigating...");
     setScreen(screen);
-    //}
-    //alert("about to navigate somewhere...");
   }
 
   console.log("Screen", screen);
@@ -41,7 +36,6 @@ export default function HomeScreen(props: any) {
           {screenWidth < 1300 ? null : (
             <Sidebar navigate={navigateTo} screenSize="large" screen={screen} />
           )}
-          {/* <Sidebar navigate={navigateTo} screen="large" /> */}
 
           <Main
             screen={screen}
@@ -75,10 +69,9 @@ export default function HomeScreen(props: any) {
 
 const styles = StyleSheet.create({
   container: {
-    height: "100vh",
-    //flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "100vh",
     backgroundColor: "grey",
-    //alignItems: "center",
-    //justifyContent: "center",
   },
 });

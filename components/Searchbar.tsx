@@ -59,6 +59,7 @@ export default function Searchbar(props: any) {
             onChange={props.onChange}
             variant="outlined"
             label="Search by last name"
+            size="small"
             //className={classes.searchInput}
             //style={{ borderWidth: 1, borderColor: "purple", borderRadius: 30 }}
             //color="primary"

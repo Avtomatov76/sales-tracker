@@ -1,108 +1,246 @@
 import { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
+import TextField from "@material-ui/core/TextField";
+import axios from "axios";
 import { Divider } from "react-native-paper";
 import { Avatar, Button, Card, Text as Txt } from "react-native-paper";
+import { useQuery } from "react-query";
 import LoadingScreen from "./LoadingScreen";
+import ErrorScreen from "./ErrorScreen";
+import GetConfiguration from "../constants/Config";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import moment from "moment";
+import CustomButton from "./CustomButton";
+import ErrorModal from "../modals/ErrorModal";
+import CommissionsCard from "./cards/CommissionsCard";
+import { formatDollarEntry } from "../functions/customerFunctions";
 
-const dummyData = {
-  name: "Zitty Balls",
-  commissions: 2000,
-  sales: 40000,
-  phone: "800-999-0000",
-};
-
-const dummyDataArr = ["Zitty Balls", 2000, 40000, "800-999-0000"];
+// Commissions total to get:
+// Year to date
+// current month
+// by supplier - historic/year-to-date
+// by vendor - historic/year-to-date
+// -- maybe --
+// percentage of supplier vs overall - pie chart? -- historic/year-to-date
+// vendor commissions comparison - pie chart? -- historic/year-to-date
 
 export default function Commissions(props: any) {
-  const handleEdit = () => {
-    console.log("Editing....");
+  const [commissions, setCommissions] = useState<any>();
+  const [value, onChange] = useState(new Date());
+  const [startDate, setStartDate] = useState<any>("");
+  const [endDate, setEndDate] = useState<any>("");
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [stage, setStage] = useState("");
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
+  const baseURL = GetConfiguration().baseUrl;
+
+  const { isLoading, isError, data, error, refetch } = useQuery(
+    ["commissions"],
+    () => axios.get(baseURL + "/api/commissions").then((res) => res.data) // HCANGE BACK TO CORRECT VALUE!!
+  );
+
+  if (isLoading) return <LoadingScreen />;
+  if (error) return <ErrorScreen error={error} type="commissions" />;
+  if (data) console.log("Commissions data: ", data);
+  //data.sort((a: any, b: any) => a.last_name.localeCompare(b.last_name));
+
+  const handleOnClick = (stage: any) => {
+    console.log("Stage:", stage);
+    setStage(stage);
+    setShowCalendar(true);
   };
 
-  const handleDelete = () => {
-    console.log("Deleting....");
+  const handleOnChange = (value: any, stage: any) => {
+    onChange(value);
+
+    console.log("A");
+    console.log("Stage: ", stage);
+    console.log("PRINTING DATE: ", value);
+    console.log("PRINTING STAGE: ", stage);
+
+    let dateStr = moment(value).format("YYYY-MM-DD");
+    if (stage == "start") setStartDate(dateStr);
+    if (stage == "end") setEndDate(dateStr);
+    setShowCalendar(false);
   };
+
+  const handleSearch = async () => {
+    console.log("SEARCHING...............");
+
+    if (!startDate && !endDate) {
+      setShowErrorModal(true);
+      return;
+    }
+
+    // if (!startDate && endDate) setStartDate(endDate);
+    // if (startDate && !endDate) setEndDate(startDate);
+
+    const params = {
+      start: !startDate && endDate ? endDate : startDate,
+      end: !endDate && startDate ? startDate : endDate,
+    };
+
+    console.log("PARAMS: ", params);
+
+    await axios
+      .get(baseURL + "/api/commissions-range", { params })
+      .then((res) => setCommissions(res.data[0]));
+
+    //setShowCalendar(false);
+  };
+
+  // console.log("Selected start day: ", startDate);
+  // console.log("Selected end day: ", endDate);
+  console.log("Commissions for a date range: ", commissions);
+
+  //
 
   return (
-    // <Card
-    //   style={{
-    //     display: "flex",
-    //     width: "80%",
-    //     height: "80%",
-    //   }}
-    // >
-    //   <Card.Cover
-    //     source={{ uri: "https://picsum.photos/700" }}
-    //     style={{ display: "flex", margin: 10, height: 200 }}
-    //   />
-    //   {/* <Card.Title title="Details" left={LeftContent} /> */}
-    //   <Card.Content style={{ display: "flex" }}>
-    //     {/* <Txt variant="titleLarge">Card title</Txt> */}
-    //     {/* <Txt variant="bodyMedium">Card content</Txt> */}
-
-    //     <View style={{ alignSelf: "flex-start" }}>
-    //       <Text style={{ fontSize: 40, fontWeight: "bold", marginBottom: 20 }}>
-    //         Commissions
-    //       </Text>
-    //     </View>
-    //     <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-    //     <Text>DIsplay some ocmmiccions bullcrap: </Text>
-    //   </Card.Content>
-
-    //   <Card.Actions
-    //     style={{
-    //       display: "flex",
-    //       //marginTop: "auto",
-    //       //bottom: 0,
-    //     }}
-    //   >
-    //     <Button onPress={handleEdit}>Edit</Button>
-    //     <Button onPress={handleDelete} buttonColor="red">
-    //       Delete
-    //     </Button>
-    //   </Card.Actions>
-    // </Card>
-
-    <View
-      style={{
-        display: "flex",
-        width: "80%",
-        height: "80%",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-    >
-      <View style={styles.twoBoxesStyle}>
+    <>
+      <View>
         <View
-          style={[
-            styles.smallBoxStyle,
-            { backgroundColor: "green", marginBottom: 20 },
-          ]}
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignContent: "center",
+            alignItems: "center",
+            marginBottom: 10,
+          }}
         >
-          <Text style={{ color: "#FFFFFF", fontSize: 24 }}>
-            Name: {!dummyData ? null : dummyData.name}
-          </Text>
-        </View>
-        <View style={styles.smallBoxStyle}>
-          <Text style={{ color: "#FFFFFF", fontSize: 24 }}>
-            Sales and Commissions: {!dummyData ? null : dummyData.sales} +{" "}
-            {!dummyData ? null : dummyData.commissions}
-          </Text>
-        </View>
-      </View>
-      <View style={styles.bigBoxStyle}>
-        <Text style={{ color: "#FFFFFF", fontSize: 24 }}>
-          Phone: {!dummyData ? null : dummyData.phone}
-        </Text>
-        {dummyDataArr.map((el: any, index: any) => (
-          <Text
-            key={index}
-            style={{ marginBottom: 10, color: "#FFFFFF", fontSize: 18 }}
+          <Text style={{ fontSize: 35 }}>Commissions</Text>
+
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
           >
-            {el}
+            <View style={{ display: "flex", marginRight: 20 }}>
+              <TextField
+                size="small"
+                value={startDate}
+                onClick={() => handleOnClick("start")}
+                //onClick={() => console.log("start date clicked!!")}
+                variant="outlined"
+                label="Select start date"
+                style={{ width: 160 }}
+              />
+            </View>
+            <View style={{ display: "flex", marginRight: 30 }}>
+              <TextField
+                size="small"
+                value={endDate}
+                onClick={() => handleOnClick("end")}
+                variant="outlined"
+                label="Select end date"
+                style={{ width: 160 }}
+              />
+            </View>
+            <CustomButton
+              title="Search"
+              submitForm={handleSearch}
+              flag="add"
+              btnStyles={{ height: "auto" }}
+            />
+          </View>
+        </View>
+        <View>
+          <Text style={{ marginBottom: 10 }}>
+            Total commissions earned:&nbsp;
+            <Text style={{ color: "green" }}>
+              {!data ? "n/a" : formatDollarEntry(data[0].sum)}
+            </Text>
           </Text>
-        ))}
+        </View>
+        <hr
+          style={{
+            width: "100%",
+            backgroundColor: "grey",
+            border: "none",
+            height: 1,
+          }}
+        />
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginTop: 40,
+            marginBottom: 20,
+          }}
+        >
+          {/* {
+            commissions && commissions.commissions != null ? (
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  marginTop: 20,
+                  width: "80%",
+                  //marginLeft: 30,
+                  alignItems: "center",
+                }}
+              >
+                <View>
+                  <Text style={{ fontSize: 16 }}>
+                    Commissions for the period between
+                  </Text>
+                  <Text style={{ marginBottom: 20, fontSize: 16 }}>
+                    <Text style={{ fontSize: 16, color: "blue" }}>
+                      {startDate}
+                    </Text>{" "}
+                    and{" "}
+                    <Text style={{ fontSize: 16, color: "blue" }}>
+                      {endDate}
+                    </Text>{" "}
+                    is:
+                  </Text>
+
+                  <Text style={{ fontSize: 24, color: "green" }}>
+                    ${commissions.commissions}
+                  </Text>
+                </View>
+              </View>
+            ) : null
+          } */}
+
+          <CommissionsCard
+            commissions={
+              commissions && commissions.commissions
+                ? commissions.commissions
+                : 0
+            }
+            startDate={startDate}
+            endDate={endDate}
+          />
+        </View>
       </View>
-    </View>
+      {showCalendar ? (
+        <View
+          style={{
+            display: "flex",
+            position: "absolute",
+            alignSelf: "flex-end",
+            marginTop: 50,
+            marginRight: stage == "start" ? 100 : 0,
+          }}
+        >
+          <Calendar
+            onChange={(value) => handleOnChange(value, stage)}
+            value={value}
+          />
+        </View>
+      ) : null}
+      {/* <ErrorModal
+        visible={showErrorModal}
+        hideModal={() => setShowErrorModal(false)}
+        recordType="dateMissing"
+      /> */}
+    </>
   );
 }
 

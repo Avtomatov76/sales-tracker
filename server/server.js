@@ -9,17 +9,23 @@ const {
   getCustomer,
   getCustomerSales,
   getCustomerCommissions,
+  updateCustomer,
   postCustomer,
   postCustomers,
   deleteCustomer,
   getCustomerLatestSale,
 } = require("./queries/customerQueries");
-const { getCommissions } = require("./queries/commissionQueries");
+const {
+  getAllCommissions,
+  getCommissionsForDateRange,
+  getCommissionsYearToDate,
+  getCommissionsCurrMonth,
+  getAllCommTopSuppliers,
+  getYearToDateCommTopSuppliers,
+} = require("./queries/commissionQueries");
 const {
   getYearToDateSalesQuery,
   getCurrentMonthSalesQuery,
-  getYearToDateCommissions,
-  getCurrentMonthCommissions,
   postTravelType,
 } = require("./queries/transactionQueries");
 const { getAllVendors } = require("./queries/vendorQueries");
@@ -76,10 +82,11 @@ app.get("/api/customers/sales/:id", async (req, res) => {
   }
 });
 
-// Get lates cusstomer sale info
+// Get the latest cusstomer sale info
 app.get("/api/customers/sale/:id", async (req, res) => {
   try {
     const result = await db.pool.query(getCustomerLatestSale(req.params["id"]));
+    //console.log("All latest sale info: ", result);
 
     // var moddedResult = {
     //   all_sales: result[0].all_sales,
@@ -212,34 +219,79 @@ app.get("/api/sales-month", async (req, res) => {
   }
 });
 
+// GET all Commissions
+app.get("/api/commissions", async (req, res) => {
+  //console.log("QUERY: ", res);
+  try {
+    const result = await db.pool.query(getAllCommissions);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+app.get("/api/commissions-range", async (req, res) => {
+  try {
+    const result = await db.pool.query(
+      getCommissionsForDateRange(req.query.start, req.query.end)
+    );
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// GET year-to-date commissions
 app.get("/api/commissions-year", async (req, res) => {
   try {
-    const result = await db.pool.query(getYearToDateCommissions);
+    const result = await db.pool.query(getCommissionsYearToDate);
     res.send(result);
   } catch (err) {
     throw err;
   }
 });
 
+// GET current month commissions
 app.get("/api/commissions-month", async (req, res) => {
   try {
-    const result = await db.pool.query(getCurrentMonthCommissions);
+    const result = await db.pool.query(getCommissionsCurrMonth);
     res.send(result);
   } catch (err) {
     throw err;
   }
 });
 
-app.get("/api/commissions", async (req, res) => {
+// GET all commissions for top suppliers
+app.get("/api/commissions-suppliers-total", async (req, res) => {
   try {
-    const result = await db.pool.query(getCommissions);
+    const result = await db.pool.query(getAllCommTopSuppliers);
     res.send(result);
   } catch (err) {
     throw err;
   }
 });
 
-// GET Product
+// GET year-to-date commissions for top suppliers
+app.get("/api/commissions-suppliers-year", async (req, res) => {
+  try {
+    const result = await db.pool.query(getYearToDateCommTopSuppliers);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// GET commissions for vendors
+app.get("/api/commissions-vendors", async (req, res) => {
+  // try {
+  //   const result = await db.pool.query(getCommissionsCurrMonth);
+  //   res.send(result);
+  // } catch (err) {
+  //   throw err;
+  // }
+});
+
+// GET Products
 app.get("/api/products", async (req, res) => {
   try {
     const result = await db.pool.query(getAllProducts);

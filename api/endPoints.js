@@ -1,8 +1,6 @@
 export const transactionsAPI = "/api/transactions";
 export const getYearToDateSalesAPI = "/api/sales-year";
 export const getCurrentMonthSalesAPI = "/api/sales-month";
-export const getYearToDateCommissionsAPI = "/api/commissions-year";
-export const getCurrentMonthCommissionsAPI = "/api/commissions-month";
 
 // Suppliers
 export const suppliersAPI = "/api/suppliers";
@@ -12,6 +10,11 @@ export const travelTypesAPI = "/api/travel/types";
 
 // Commissions
 export const commissionsAPI = "/api/commissions";
+export const getYearToDateCommissionsAPI = "/api/commissions-year";
+export const getCommissionsCurrMonth = "/api/commissions-month";
+export const getCommissionsYearToDate = "/api/commissions-year";
+export const getAllCommTopSuppliers = "/api/commissions-suppliers-total";
+export const getYearToDateCommTopSuppliers = "/api/commissions-suppliers-year";
 
 // Vendors
 export const vendorsAPI = "/api/vendors";

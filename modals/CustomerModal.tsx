@@ -10,6 +10,10 @@ import { useQueryClient } from "react-query";
 export default function CustomerModal(props: any) {
   const queryClient = useQueryClient();
 
+  //
+  console.log(props);
+  //
+
   let customersNames = getCustomersNames(props.customers);
   let baseUrl = GetConfiguration().baseUrl;
 

@@ -56,20 +56,37 @@ export default function ErrorModal(props: any) {
               >
                 WARNING!
               </Text>
-              <Text
-                style={{
-                  color: "grey",
-                  fontSize: 12,
-                  textAlign: "center",
-                }}
-              >
-                Following {props.recordType} are already in the database
-              </Text>
-              <View
-                style={{ width: "100%", paddingTop: 10, paddingBottom: 10 }}
-              >
-                <Text style={styles.text}>{displayList()}</Text>
-              </View>
+
+              {props.recordType == "customers" ? (
+                <>
+                  <Text
+                    style={{
+                      color: "grey",
+                      fontSize: 12,
+                      textAlign: "center",
+                    }}
+                  >
+                    Following {props.recordType} are already in the database
+                  </Text>
+                  <View
+                    style={{ width: "100%", paddingTop: 10, paddingBottom: 10 }}
+                  >
+                    <Text style={styles.text}>{displayList()}</Text>
+                  </View>
+                </>
+              ) : (
+                <View>
+                  <Text
+                    style={{
+                      color: "grey",
+                      fontSize: 12,
+                      textAlign: "center",
+                    }}
+                  >
+                    No date range has been selected!
+                  </Text>
+                </View>
+              )}
 
               <View style={{ marginTop: 20, width: "100%" }}>
                 <Button
