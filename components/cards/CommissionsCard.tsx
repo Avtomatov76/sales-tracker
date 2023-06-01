@@ -85,6 +85,7 @@ export default function CommissionsCard(props: any) {
   const displayPieDetails = (supplier: any, index: any) => {
     return (
       <View
+        key={index}
         style={{
           display: "flex",
           flexDirection: "row",
@@ -95,15 +96,13 @@ export default function CommissionsCard(props: any) {
         <View
           style={{
             display: "flex",
-            height: 20,
-            width: 50,
+            height: 15,
+            width: 40,
             backgroundColor: sliceColor[index],
             marginRight: 20,
           }}
         ></View>
-        <Text style={{ color: "grey", fontSize: 14 }}>
-          {supplier.name + " - "}
-        </Text>
+        <Text style={{ fontSize: 14 }}>{supplier.name + " - "}</Text>
         <Text style={{ color: "green", fontSize: 14 }}>
           {formatDollarEntry(supplier.total)}
         </Text>
@@ -258,7 +257,12 @@ export default function CommissionsCard(props: any) {
                   },
                 ]}
               >
-                Historic Totals by Supplier
+                Top Suppliers{" "}
+                <Text
+                  style={{ color: "#000000", fontSize: 16, fontWeight: "100" }}
+                >
+                  &#40;historic data&#41;
+                </Text>
               </Text>
               <PieChart
                 widthAndHeight={widthAndHeight}
@@ -294,7 +298,12 @@ export default function CommissionsCard(props: any) {
                   },
                 ]}
               >
-                Year-To-Date by Supplier
+                Top Suppliers{" "}
+                <Text
+                  style={{ color: "#000000", fontSize: 16, fontWeight: "100" }}
+                >
+                  &#40;year-to-date&#41;
+                </Text>
               </Text>
               <PieChart
                 widthAndHeight={widthAndHeight}

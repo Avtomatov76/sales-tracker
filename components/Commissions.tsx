@@ -15,6 +15,7 @@ import CustomButton from "./CustomButton";
 import ErrorModal from "../modals/ErrorModal";
 import CommissionsCard from "./cards/CommissionsCard";
 import { formatDollarEntry } from "../functions/customerFunctions";
+import TestCommPage from "./cards/TestCommPage";
 
 // Commissions total to get:
 // Year to date
@@ -208,7 +209,7 @@ export default function Commissions(props: any) {
             ) : null
           } */}
 
-          <CommissionsCard
+          <TestCommPage
             commissions={
               commissions && commissions.commissions
                 ? commissions.commissions
@@ -217,6 +218,16 @@ export default function Commissions(props: any) {
             startDate={startDate}
             endDate={endDate}
           />
+
+          {/* <CommissionsCard
+            commissions={
+              commissions && commissions.commissions
+                ? commissions.commissions
+                : 0
+            }
+            startDate={startDate}
+            endDate={endDate}
+          /> */}
         </View>
       </View>
       {showCalendar ? (
