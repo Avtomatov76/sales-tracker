@@ -3,6 +3,17 @@ import { Button as Btn } from "react-native-paper";
 
 export default function CustomButton(props: any) {
   const renderBtn = () => {
+    if (props.flag === "search")
+      return (
+        <Btn
+          mode="contained"
+          style={styles.searchBtn}
+          onPress={props.submitForm}
+        >
+          Search
+        </Btn>
+      );
+
     if (props.flag === "add")
       return (
         <Btn
@@ -10,7 +21,7 @@ export default function CustomButton(props: any) {
           style={props.btnStyles ? props.btnStyles : styles.submitBtn}
           onPress={props.submitForm}
         >
-          {props.title ? props.title : "Submit"}
+          {props.title ? props.title : "SUBMIT"}
         </Btn>
       );
 
@@ -21,14 +32,18 @@ export default function CustomButton(props: any) {
           style={styles.deleteBtn}
           onPress={props.handleDelete}
         >
-          Delete
+          DELETE
         </Btn>
       );
 
     if (props.flag === "cancel")
       return (
-        <Btn style={styles.cancelBtn} onPress={props.hideModal}>
-          Cancel
+        <Btn
+          textColor="#368cbf"
+          style={styles.cancelBtn}
+          onPress={props.hideModal}
+        >
+          CANCEL
         </Btn>
       );
   };
@@ -37,18 +52,27 @@ export default function CustomButton(props: any) {
 }
 
 const styles = StyleSheet.create({
-  submitBtn: {
-    marginBottom: 10,
+  searchBtn: {
+    display: "flex",
     color: "#FFFFFF",
-    backgroundColor: "#368cbf",
+    backgroundColor: "#F27D42", //"#368cbf",
+    borderRadius: 12,
+  },
+  submitBtn: {
+    display: "flex",
+    color: "#FFFFFF",
+    backgroundColor: "#368cbf", //"#F27D42", //"#368cbf",
+    borderRadius: 12,
   },
   deleteBtn: {
-    marginBottom: 10,
+    display: "flex",
     backgroundColor: "red",
+    borderRadius: 12,
   },
   cancelBtn: {
-    marginBottom: 10,
+    display: "flex",
     borderWidth: 1,
-    borderColor: "grey",
+    borderColor: "#368cbf",
+    borderRadius: 12,
   },
 });

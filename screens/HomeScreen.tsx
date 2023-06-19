@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import Main from "../components/Main";
@@ -23,9 +23,21 @@ export default function HomeScreen(props: any) {
     setScreen(screen);
   }
 
-  console.log("Screen", screen);
-
   return (
+    // <View
+    //   style={[
+    //     styles.container,
+    //     {
+    //       // Try setting `flexDirection` to `"row"`.
+    //       flexDirection: "column",
+    //     },
+    //   ]}
+    // >
+    //   <View style={{ flex: 1, backgroundColor: "red" }} />
+    //   <View style={{ flex: 2, backgroundColor: "darkorange" }} />
+    //   <View style={{ flex: 3, backgroundColor: "green" }} />
+    // </View>
+
     <View style={styles.container}>
       <Header
         screenSize={screenWidth < 1300 ? true : false}
@@ -70,8 +82,12 @@ export default function HomeScreen(props: any) {
 const styles = StyleSheet.create({
   container: {
     display: "flex",
-    flexDirection: "column",
     minHeight: "100vh",
-    backgroundColor: "grey",
+    flexDirection: "column",
+    //backgroundColor: "grey",
   },
+  // container: {
+  //   flex: 1,
+  //   //padding: 20,
+  // },
 });

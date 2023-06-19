@@ -6,7 +6,7 @@ const currMonthEnd = "2022-01-24"; //moment().endOf("month").format("YYYY-MM-DD"
 
 // GET all commissions
 const getAllCommissions = `
-SELECT CONCAT("$", ROUND(SUM(product_comm),2)) as sum FROM product
+SELECT CONCAT("$", ROUND(SUM(product_comm),2)) as commissions FROM product
 `;
 
 // GET commissions for a specified range

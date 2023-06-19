@@ -9,11 +9,16 @@ import {
 let strNumerals = ["2", "3", "4", "5", "6", "7", "8", "9"];
 
 // Creates Customer, Product, and Transaction objects
-export function processParsedData(parsedData: any, customersInDB: any) {
+export function processParsedData(
+  parsedData: any,
+  customersInDB: any,
+  productHashes: any
+) {
   if (!parsedData && !customersInDB) return;
   let customerData = [];
   let uniqueNames = [];
   let dupeCustomers = [];
+  let dupeProducts = [];
   let uniqueCustomers = [];
 
   let productData = [];
@@ -24,6 +29,19 @@ export function processParsedData(parsedData: any, customersInDB: any) {
     let numCustomers = custName[0];
     let isNumeral = strNumerals.includes(numCustomers);
     let partySize = 0;
+
+    //
+    let prodHash =
+      row.DATE +
+      row.NAME +
+      row.PHONE +
+      row.DESC +
+      row.VENDOR +
+      row.PAID +
+      row.CODE +
+      row.COMM;
+
+    prodHash = prodHash.replace(/\s+/g, "").toLowerCase();
 
     if (isNumeral && custName.includes(",")) {
       partySize = custName.split(",").length - 1 + parseInt(numCustomers);
@@ -62,29 +80,44 @@ export function processParsedData(parsedData: any, customersInDB: any) {
       let { product, transaction } = createProductEntry(
         row,
         customerID,
-        partySize
+        partySize,
+        prodHash,
+        productHashes
       );
-      productData.push(product);
-      transactionData.push(transaction);
+
+      if (!checkIfObjEmpty(product)) productData.push(product);
+      else dupeProducts.push(prodHash);
+
+      if (!checkIfObjEmpty(transaction)) transactionData.push(transaction);
     } else if (!foundCustomer && uniqueNames.includes(fullName)) {
       let customer = customerData.find((x: any) => x.lName === custName);
       let customerID = customer.id;
       let { product, transaction } = createProductEntry(
         row,
         customerID,
-        partySize
+        partySize,
+        prodHash,
+        productHashes
       );
-      productData.push(product);
-      transactionData.push(transaction);
+
+      if (!checkIfObjEmpty(product)) productData.push(product);
+      else dupeProducts.push(prodHash);
+
+      if (!checkIfObjEmpty(transaction)) transactionData.push(transaction);
     } else if (foundCustomer) {
       dupeCustomers.push(fullName);
       let { product, transaction } = createProductEntry(
         row,
         foundCustomer.id,
-        partySize
+        partySize,
+        prodHash,
+        productHashes
       );
-      productData.push(product);
-      transactionData.push(transaction);
+
+      if (!checkIfObjEmpty(product)) productData.push(product);
+      else dupeProducts.push(prodHash);
+
+      if (!checkIfObjEmpty(transaction)) transactionData.push(transaction);
     }
   });
   uniqueCustomers = uniqueNames.slice();
@@ -93,13 +126,28 @@ export function processParsedData(parsedData: any, customersInDB: any) {
     customerData,
     uniqueCustomers,
     dupeCustomers,
+    dupeProducts,
     productData,
     transactionData,
   };
 }
 
 // Creates a Product entry based on a row of parsed data
-function createProductEntry(row: any, customerID: any, partySize: any) {
+function createProductEntry(
+  row: any,
+  customerID: any,
+  partySize: any,
+  prodHash: any,
+  productHashes: any
+) {
+  let product = {};
+  let transaction = {};
+
+  if (productHashes.includes(prodHash)) {
+    //console.log("PRESENT");
+    return { product, transaction };
+  }
+
   let supplier = findEntryName(row.PROVIDER, "supplier");
   let travelType = findEntryName(row.DESC, "type");
   let vendor = findEntryName(row.VENDOR, "vendor");
@@ -108,7 +156,7 @@ function createProductEntry(row: any, customerID: any, partySize: any) {
   let cost = row.PAID.replace(/[$,]/g, "");
   let comm = row.COMM.replace(/[$,]/g, "");
 
-  let product = {
+  product = {
     id: productID,
     destinationID: "N/A",
     typeID: travelType,
@@ -121,9 +169,10 @@ function createProductEntry(row: any, customerID: any, partySize: any) {
     isCommReceived: row.STATUS == "PAID" ? "Y" : "N",
     tvlStartDate: moment(row.DATE).format("YYYY-MM-DD"),
     tvlEndDate: moment(row.DATE).format("YYYY-MM-DD"),
+    hash: prodHash,
   };
 
-  let transaction = createTransactionEntry(
+  transaction = createTransactionEntry(
     row,
     customerID,
     productID,
@@ -161,4 +210,25 @@ function findEntryName(rawEntry: any, flag: any) {
   let found = Object.keys(options).find((x: any) => rawEntry.includes(x));
 
   return !found ? "N/A" : options[found];
+}
+
+function checkIfObjEmpty(obj: any) {
+  if (!obj) return;
+
+  if (Object.keys(obj).length > 0) return false;
+
+  return true;
+}
+
+export function getProductsAsStrings(productsArray: any) {
+  if (!productsArray) return;
+
+  let productsAsStrings = [];
+
+  productsArray.forEach((entry: any) => {
+    let prodStr = entry.hash;
+    productsAsStrings.push(prodStr);
+  });
+
+  return productsAsStrings;
 }

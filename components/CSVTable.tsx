@@ -1,9 +1,9 @@
 import { View } from "react-native";
-import { Button } from "react-native-paper";
+import CustomButton from "./CustomButton";
 
 export default function CSVTable(props: any) {
   return (
-    <View style={{marginBottom: 40}}>
+    <View style={{ marginBottom: 40 }}>
       <View>
         <table
           style={{
@@ -52,17 +52,13 @@ export default function CSVTable(props: any) {
         style={{
           marginTop: 20,
           alignSelf: "flex-start",
-          //backgroundColor: "purple",
         }}
       >
-        <Button
-          buttonColor="purple"
-          textColor="#ffffff"
-          style={{ paddingLeft: 10, paddingRight: 10 }}
-          onPress={props.displayModal}
-        >
-          Save Customers
-        </Button>
+        <CustomButton
+          flag="add"
+          submitForm={props.displayModal}
+          title="Save Customers"
+        />
       </View>
     </View>
   );

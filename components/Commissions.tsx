@@ -16,6 +16,7 @@ import ErrorModal from "../modals/ErrorModal";
 import CommissionsCard from "./cards/CommissionsCard";
 import { formatDollarEntry } from "../functions/customerFunctions";
 import TestCommPage from "./cards/TestCommPage";
+import CommissionsDetails from "./CommissionsDetails";
 
 // Commissions total to get:
 // Year to date
@@ -56,11 +57,6 @@ export default function Commissions(props: any) {
   const handleOnChange = (value: any, stage: any) => {
     onChange(value);
 
-    console.log("A");
-    console.log("Stage: ", stage);
-    console.log("PRINTING DATE: ", value);
-    console.log("PRINTING STAGE: ", stage);
-
     let dateStr = moment(value).format("YYYY-MM-DD");
     if (stage == "start") setStartDate(dateStr);
     if (stage == "end") setEndDate(dateStr);
@@ -94,30 +90,43 @@ export default function Commissions(props: any) {
 
   // console.log("Selected start day: ", startDate);
   // console.log("Selected end day: ", endDate);
-  console.log("Commissions for a date range: ", commissions);
+  //console.log("Commissions for a date range: ", commissions);
 
   //
 
   return (
     <>
-      <View>
+      <View style={{ display: "flex" }}>
         <View
           style={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
+            flexWrap: "wrap",
+            //justifyContent: "space-between",
             alignContent: "center",
             alignItems: "center",
-            marginBottom: 10,
+            // marginBottom: 10,
           }}
         >
-          <Text style={{ fontSize: 35 }}>Commissions</Text>
+          <Text
+            style={{
+              fontSize: 36,
+              fontWeight: "600",
+              paddingRight: 20,
+              marginRight: "auto",
+              marginBottom: 10,
+            }}
+          >
+            Commissions
+          </Text>
 
           <View
             style={{
               display: "flex",
+              flexWrap: "wrap",
               flexDirection: "row",
               alignItems: "center",
+              marginBottom: 10,
             }}
           >
             <View style={{ display: "flex", marginRight: 20 }}>
@@ -141,22 +150,22 @@ export default function Commissions(props: any) {
                 style={{ width: 160 }}
               />
             </View>
+          </View>
+          <View
+            style={{
+              display: "flex",
+              height: "auto",
+              marginBottom: 10,
+            }}
+          >
             <CustomButton
               title="Search"
               submitForm={handleSearch}
-              flag="add"
-              btnStyles={{ height: "auto" }}
+              flag="search"
             />
           </View>
         </View>
-        <View>
-          <Text style={{ marginBottom: 10 }}>
-            Total commissions earned:&nbsp;
-            <Text style={{ color: "green" }}>
-              {!data ? "n/a" : formatDollarEntry(data[0].sum)}
-            </Text>
-          </Text>
-        </View>
+
         <hr
           style={{
             width: "100%",
@@ -166,69 +175,17 @@ export default function Commissions(props: any) {
           }}
         />
 
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginTop: 40,
-            marginBottom: 20,
-          }}
-        >
-          {/* {
-            commissions && commissions.commissions != null ? (
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  marginTop: 20,
-                  width: "80%",
-                  //marginLeft: 30,
-                  alignItems: "center",
-                }}
-              >
-                <View>
-                  <Text style={{ fontSize: 16 }}>
-                    Commissions for the period between
-                  </Text>
-                  <Text style={{ marginBottom: 20, fontSize: 16 }}>
-                    <Text style={{ fontSize: 16, color: "blue" }}>
-                      {startDate}
-                    </Text>{" "}
-                    and{" "}
-                    <Text style={{ fontSize: 16, color: "blue" }}>
-                      {endDate}
-                    </Text>{" "}
-                    is:
-                  </Text>
-
-                  <Text style={{ fontSize: 24, color: "green" }}>
-                    ${commissions.commissions}
-                  </Text>
-                </View>
-              </View>
-            ) : null
-          } */}
-
-          <TestCommPage
+        {!commissions ? null : (
+          <CommissionsDetails
             commissions={
               commissions && commissions.commissions
                 ? commissions.commissions
                 : 0
             }
-            startDate={startDate}
-            endDate={endDate}
+            startDate={startDate || ""}
+            endDate={endDate || ""}
           />
-
-          {/* <CommissionsCard
-            commissions={
-              commissions && commissions.commissions
-                ? commissions.commissions
-                : 0
-            }
-            startDate={startDate}
-            endDate={endDate}
-          /> */}
-        </View>
+        )}
       </View>
       {showCalendar ? (
         <View

@@ -9,7 +9,7 @@ export const suppliersAPI = "/api/suppliers";
 export const travelTypesAPI = "/api/travel/types";
 
 // Commissions
-export const commissionsAPI = "/api/commissions";
+export const getTotalCommissions = "/api/commissions";
 export const getYearToDateCommissionsAPI = "/api/commissions-year";
 export const getCommissionsCurrMonth = "/api/commissions-month";
 export const getCommissionsYearToDate = "/api/commissions-year";
@@ -21,13 +21,14 @@ export const vendorsAPI = "/api/vendors";
 
 // Customers
 export const customerAPI = "/api/customers";
-export const saveCustomersAPI = "/api/customers/many";
+export const saveCustomersAPI = "/api/customers-save";
 export const getCustomerSales = "/api/customers/sales/";
 export const getCustomerLatestSale = "/api/customers/sale/";
 export const getCustomerCommissions = "/api/customers/commissions/";
 
 // Products
-export const saveProductsAPI = "/api/products/many";
+export const saveProductsAPI = "/api/products-save";
+export const getProductHashes = "/api/products-hash";
 
 // Transactions
-export const saveTransactionsAPI = "/api/transactions/many";
+export const saveTransactionsAPI = "/api/transactions-save";

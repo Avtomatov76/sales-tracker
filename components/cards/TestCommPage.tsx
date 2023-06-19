@@ -17,7 +17,7 @@ import {
 } from "../../api/endPoints";
 
 //
-const widthAndHeight = 250;
+const widthAndHeight = 150;
 const series = [123, 321, 123];
 const sliceColor = ["#fbd203", "#ffb300", "#ff9100"];
 //
@@ -30,10 +30,6 @@ export default function TestCommPage(props: any) {
 
   const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
-
-  console.log(
-    "----------------   rendering commissions card   -------------------"
-  );
 
   const baseURL = GetConfiguration().baseUrl;
 
@@ -107,16 +103,186 @@ export default function TestCommPage(props: any) {
   //   const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
 
   return (
-    <ScrollView style={{ display: "flex", flexWrap: "wrap" }}>
-      <View style={{ display: "flex", flexDirection: "row" }}>
-        <Card mode="contained" style={[styles.card, { marginRight: 20 }]}>
-          Hello
+    <Card
+      style={{
+        flexDirection: "column",
+        justifyContent: "space-between",
+        marginTop: 20,
+        marginBottom: 20,
+      }}
+    >
+      <Card
+        style={{
+          height: 350,
+          margin: 5,
+        }}
+      >
+        <Text style={[styles.catTitle, { marginTop: 20 }]}>Big Card</Text>
+        <Card.Content
+          style={{
+            //flex: 1,
+            //display: "flex",
+            flexDirection: "row",
+            //marginTop: "auto",
+            //alignSelf: "flex-end",
+          }}
+        >
+          <Card style={{ height: 200, width: 200 }}>Small Card 1</Card>
+          <Card style={{ height: 200, width: 200 }}>Small Card 2</Card>
+          <Card style={{ height: 200, width: 200 }}>Small Card 3</Card>
+        </Card.Content>
+      </Card>
+
+      <View
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          flexDirection: "row",
+        }}
+      >
+        <Card
+          style={[
+            styles.card,
+            {
+              flex: 1,
+              alignItems: "flex-start",
+              // paddingLeft: 40,
+              // paddingRight: 40,
+            },
+          ]}
+        >
+          <View style={{ marginBottom: 30 }}>
+            <Text style={styles.catTitle}>Summary</Text>
+            <View style={{ display: "flex", flexDirection: "column" }}>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  //alignItems: "center",
+                  //justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: 10,
+                }}
+              >
+                <Text style={styles.pieTitle}>
+                  Year-to-date &#40;{moment().format("YYYY")}&#41;:{" "}
+                </Text>
+                <Text style={{ fontSize: 18, color: "green" }}>
+                  {!yearToDateComm || yearToDateComm[0].commissions == null
+                    ? 0
+                    : formatDollarEntry(yearToDateComm[0].commissions)}
+                </Text>
+              </View>
+
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+
+                  marginBottom: 10,
+                }}
+              >
+                <Text style={styles.pieTitle}>
+                  Current month &#40;{moment().format("MMMM")}&#41;:{" "}
+                </Text>
+                <Text style={{ fontSize: 18, color: "green" }}>
+                  {!currMonthComm || currMonthComm[0].commissions == null
+                    ? 0
+                    : formatDollarEntry(currMonthComm[0].commissions)}
+                </Text>
+              </View>
+            </View>
+
+            <View
+              style={{
+                display: "flex",
+                marginBottom: 30,
+              }}
+            >
+              {props.commissions != 0 ? (
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    //alignItems: "center",
+                    marginTop: 20,
+                  }}
+                >
+                  <Text style={{ flexDirection: "row" }}>
+                    <Text style={styles.pieTitle}>Earnings from&nbsp;</Text>
+                    <Text style={{ fontSize: 18, color: "blue" }}>
+                      {props.startDate}
+                    </Text>{" "}
+                    <Text style={styles.pieTitle}>and </Text>
+                    <Text style={{ fontSize: 18, color: "blue" }}>
+                      {props.endDate}:&nbsp;
+                    </Text>
+                    <Text style={{ fontSize: 18, color: "green" }}>
+                      {formatDollarEntry(props.commissions)}
+                    </Text>
+                  </Text>
+                </View>
+              ) : null}
+            </View>
+          </View>
         </Card>
-        <Card style={[styles.card, { marginRight: 20 }]}>Hello</Card>
-        <Card style={[styles.card, { marginRight: 20 }]}>Hello</Card>
-        <Card style={styles.card}>Hello</Card>
+
+        <Card style={styles.card}>
+          <View style={{ marginBottom: 30 }}>
+            <Text style={styles.catTitle}>
+              Top Suppliers{" "}
+              <Text
+                style={{ color: "#000000", fontSize: 16, fontWeight: "100" }}
+              >
+                &#40;historic data&#41;
+              </Text>
+            </Text>
+            <PieChart
+              widthAndHeight={widthAndHeight}
+              series={series}
+              sliceColor={sliceColor}
+              style={{ alignSelf: "center" }}
+            />
+          </View>
+
+          <View style={{ alignSelf: "center" }}>
+            {!totalSupplierComm || totalSupplierComm.length == 0
+              ? 0
+              : totalSupplierComm.map((supplier: any, index: any) =>
+                  displayPieDetails(supplier, index)
+                )}
+          </View>
+        </Card>
+
+        <Card style={styles.card}>
+          <View style={{ marginBottom: 30 }}>
+            <Text style={styles.catTitle}>
+              Top Suppliers{" "}
+              <Text
+                style={{ color: "#000000", fontSize: 16, fontWeight: "100" }}
+              >
+                &#40;year-to-date&#41;
+              </Text>
+            </Text>
+            <PieChart
+              widthAndHeight={widthAndHeight}
+              series={series}
+              sliceColor={sliceColor}
+              style={{ alignSelf: "center" }}
+            />
+          </View>
+
+          <View style={{ alignSelf: "center" }}>
+            {!ytdSupplierComm || ytdSupplierComm.length == 0
+              ? 0
+              : ytdSupplierComm.map((supplier: any, index: any) =>
+                  displayPieDetails(supplier, index)
+                )}
+          </View>
+        </Card>
       </View>
-    </ScrollView>
+    </Card>
   );
 }
 
@@ -126,234 +292,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   pieTitle: {
-    fontSize: 18,
+    fontSize: 20,
+    paddingLeft: 40,
+    paddingRight: 40,
     //alignSelf: "center",
     //marginBottom: 20,
   },
+  catTitle: {
+    fontSize: 20,
+    marginBottom: 20,
+    paddingLeft: 40,
+    paddingRight: 40,
+    fontWeight: "600",
+    color: "#368cbf",
+  },
   card: {
     display: "flex",
-    flex: 1,
-    height: 200,
-    //width: 200,
+    flexDirection: "column", //
+    alignItems: "center",
+    //flex: 1, // <-- change this if adding one more!!
+    paddingTop: 20,
+    height: 350,
+    minWidth: 350,
     backgroundColor: "#F0F0F0",
+    margin: 5,
   },
 });
 
-// <Card style={{ width: "100%" }}>
-//   {/* <Card.Cover
-//     source={{ uri: "https://picsum.photos/700" }}
-//     style={{ margin: 10, height: 200 }}
-//   /> */}
-
-//   <Image
-//     style={{ margin: 10, height: 200 }}
-//     source={{ uri: "https://picsum.photos/700" }}
-//     placeholder={blurhash}
-//     contentFit="cover"
-//     transition={1000}
-//   />
-//   {/* <Card.Title title="Details" left={LeftContent} /> */}
-//   <Card.Content style={{ marginLeft: 30, marginRight: 30 }}>
-//     {/* <Txt variant="titleLarge">Card title</Txt> */}
-//     {/* <Txt variant="bodyMedium">Card content</Txt> */}
-
-//     <View style={{ alignSelf: "flex-start" }}>
-//       <Text
-//         style={{
-//           fontSize: 40,
-//           fontWeight: "bold",
-//           marginTop: 20,
-//           marginBottom: 20,
-//         }}
-//       >
-//         Summary
-//       </Text>
-//     </View>
-//     <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-
-//     <View
-//       style={{
-//         display: "flex",
-//         flexDirection: "row",
-//         justifyContent: "space-between",
-//         marginBottom: 30,
-//       }}
-//     >
-//       <View style={{ display: "flex", flexDirection: "column" }}>
-//         <View
-//           style={{
-//             display: "flex",
-//             flexDirection: "row",
-//             //alignItems: "center",
-//             //justifyContent: "center",
-//             alignItems: "center",
-
-//             marginBottom: 10,
-//           }}
-//         >
-//           <Text style={styles.pieTitle}>Year-to-date: </Text>
-//           <Text style={{ fontSize: 18, color: "green" }}>
-//             {!yearToDateComm || yearToDateComm[0].commissions == null
-//               ? 0
-//               : formatDollarEntry(yearToDateComm[0].commissions)}
-//           </Text>
-//         </View>
-
-//         <View
-//           style={{
-//             display: "flex",
-//             flexDirection: "row",
-//             alignItems: "center",
-
-//             marginBottom: 10,
-//           }}
-//         >
-//           <Text style={styles.pieTitle}>Current month: </Text>
-//           <Text style={{ fontSize: 18, color: "green" }}>
-//             {!currMonthComm || currMonthComm[0].commissions == null
-//               ? 0
-//               : formatDollarEntry(currMonthComm[0].commissions)}
-//           </Text>
-//         </View>
-//       </View>
-
-//       <View
-//         style={{
-//           display: "flex",
-//           marginBottom: 30,
-//         }}
-//       >
-//         {
-//           props.commissions != null ? (
-//             <View
-//               style={{
-//                 display: "flex",
-//                 flexDirection: "row",
-//                 alignItems: "center",
-//               }}
-//             >
-//               <Text style={styles.pieTitle}>
-//                 Commissions for the period between&nbsp;
-//               </Text>
-//               <Text>
-//                 <Text style={{ fontSize: 18, color: "blue" }}>
-//                   {props.startDate}
-//                 </Text>{" "}
-//                 <Text style={styles.pieTitle}>and </Text>
-//                 <Text style={{ fontSize: 18, color: "blue" }}>
-//                   {props.endDate}
-//                 </Text>{" "}
-//                 <Text style={styles.pieTitle}>is: </Text>
-//                 <Text style={{ fontSize: 18, color: "green" }}>
-//                   {formatDollarEntry(props.commissions)}
-//                 </Text>
-//               </Text>
-//             </View>
-//           ) : null
-//           // <View>
-//           //   <Text>No commissions</Text>
-//           // </View>
-//         }
-//       </View>
-//     </View>
-
-//     <View
-//       style={{
-//         display: "flex",
-//         flexDirection: "row",
-//         flexWrap: "wrap",
-//         marginBottom: 30,
-//       }}
-//     >
-//       <View
-//         style={{
-//           display: "flex",
-//           flexDirection: "column",
-//           marginRight: 100,
-//         }}
-//       >
-//         <View style={{ marginBottom: 30 }}>
-//           <Text
-//             style={[
-//               styles.pieTitle,
-//               {
-//                 alignSelf: "center",
-//                 marginBottom: 20,
-//                 color: "#368cbf",
-//                 fontWeight: "600",
-//               },
-//             ]}
-//           >
-//             Top Suppliers{" "}
-//             <Text
-//               style={{ color: "#000000", fontSize: 16, fontWeight: "100" }}
-//             >
-//               &#40;historic data&#41;
-//             </Text>
-//           </Text>
-//           <PieChart
-//             widthAndHeight={widthAndHeight}
-//             series={series}
-//             sliceColor={sliceColor}
-//           />
-//         </View>
-
-//         <View style={{ alignSelf: "center" }}>
-//           {!totalSupplierComm || totalSupplierComm.length == 0
-//             ? 0
-//             : totalSupplierComm.map((supplier: any, index: any) =>
-//                 displayPieDetails(supplier, index)
-//               )}
-//         </View>
-//       </View>
-
-//       <View
-//         style={{
-//           display: "flex",
-//           flexDirection: "column",
-//         }}
-//       >
-//         <View style={{ marginBottom: 30 }}>
-//           <Text
-//             style={[
-//               styles.pieTitle,
-//               {
-//                 alignSelf: "center",
-//                 marginBottom: 20,
-//                 color: "#368cbf",
-//                 fontWeight: "600",
-//               },
-//             ]}
-//           >
-//             Top Suppliers{" "}
-//             <Text
-//               style={{ color: "#000000", fontSize: 16, fontWeight: "100" }}
-//             >
-//               &#40;year-to-date&#41;
-//             </Text>
-//           </Text>
-//           <PieChart
-//             widthAndHeight={widthAndHeight}
-//             series={series}
-//             sliceColor={sliceColor}
-//           />
-//         </View>
-
-//         <View style={{ alignSelf: "center" }}>
-//           {!ytdSupplierComm || ytdSupplierComm.length == 0
-//             ? 0
-//             : ytdSupplierComm.map((supplier: any, index: any) =>
-//                 displayPieDetails(supplier, index)
-//               )}
-//         </View>
-//       </View>
-//     </View>
-//   </Card.Content>
-
-//   {/* <Card.Actions style={{ marginTop: 10, marginBottom: 5 }}>
-//     <Button onPress={handleEdit}>Edit</Button>
-//     <Button onPress={handleDelete} buttonColor="red">
-//       Delete
-//     </Button>
-//   </Card.Actions> */}
-// </Card>
+// #E8E9EB

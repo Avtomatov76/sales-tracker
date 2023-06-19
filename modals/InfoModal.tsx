@@ -1,22 +1,43 @@
-import { View, Text, StyleSheet, Pressable, Modal } from "react-native";
-import { Button } from "react-native-paper";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Modal,
+  ScrollView,
+} from "react-native";
+import { getProductsAsStrings } from "../functions/csvUploaderFunctions";
+import CustomButton from "../components/CustomButton";
 
 export default function InfoModal(props: any) {
   const hideModal = () => {
     props.hideModal();
   };
 
-  let list = props.list;
+  let uniqueCustomers = props.uniqueCustomers;
+  let dupeCustomers = props.dupeCustomers;
+  let uniqueProducts = getProductsAsStrings(props.productData) || [];
+  let dupeProducts = props.dupeProducts;
 
-  const displayList = () => {
+  const displayData = (arrayOfDupes: any, arrayOfUniques: any, title: any) => {
+    if (!arrayOfDupes || !arrayOfUniques) return null;
+
     return (
-      <View>
-        {list.map((entry: any, index: any) => (
-          <Text key={index} style={{ color: "green" }}>
-            {entry}
-          </Text>
+      <ScrollView style={styles.scrollView}>
+        <Text style={styles.modalSubtitle}>{title}</Text>
+        {arrayOfDupes.length != 0
+          ? arrayOfDupes.map((entry: any, index: any) => (
+              <View key={index} style={{ flexDirection: "row" }}>
+                <Text style={{ color: "red" }}>{entry}</Text>
+              </View>
+            ))
+          : null}
+        {arrayOfUniques.map((entry: any, index: any) => (
+          <View key={index} style={{ display: "flex" }}>
+            <Text style={{ color: "green" }}>{entry}</Text>
+          </View>
         ))}
-      </View>
+      </ScrollView>
     );
   };
 
@@ -36,74 +57,53 @@ export default function InfoModal(props: any) {
         <View style={{ backgroundColor: "rgba(0, 0, 0, 0.3)", height: "100%" }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <Pressable
+              <View
                 style={{
-                  alignSelf: "flex-end",
-                  //marginTop: 10,
-                  //marginBottom: 20,
-                  marginRight: -20,
-                  paddingLeft: 5,
-                  paddingRight: 5,
-                }}
-                onPress={props.hideModal}
-              >
-                <Text>&#10005;</Text>
-              </Pressable>
-              <Text
-                style={{
-                  color: "purple",
-                  marginBottom: 10,
-                  fontSize: 40,
-                  fontWeight: "bold",
-                  textAlign: "center",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                 }}
               >
-                CONFIRMATION
-              </Text>
-              <Text
-                style={{
-                  color: "grey",
-                  fontSize: 12,
-                  textAlign: "center",
-                }}
-              >
-                Do you want to upload the following {props.recordType}?
-              </Text>
+                <Text style={styles.modalTitle}>Confirmation</Text>
+                <Pressable onPress={props.hideModal}>
+                  <Text style={{ color: "grey" }}>&#10005;</Text>
+                </Pressable>
+              </View>
+
               <View
                 style={{ width: "100%", paddingTop: 10, paddingBottom: 10 }}
               >
-                <Text style={styles.text}>{displayList()}</Text>
+                {displayData(dupeCustomers, uniqueCustomers, "Customers")}
+
+                {displayData(dupeProducts, uniqueProducts, "Products")}
+                <Text
+                  style={{
+                    marginTop: 5,
+                    color: "grey", //"rgb(54, 140, 191)",
+                    fontSize: 12,
+                  }}
+                >
+                  &#42; Entries in <Text style={{ color: "red" }}>RED</Text>{" "}
+                  will not be uploaded because they are already present in the
+                  database.
+                </Text>
               </View>
 
               <View
                 style={{
-                  //flexDirection: "row",
-                  //justifyContent: "center",
-                  marginTop: 20,
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  marginTop: 40,
                   width: "100%",
                 }}
               >
-                <Button
-                  mode="contained"
-                  //color="#f27d42"
-                  //buttonColor="#f27d42"
-                  style={styles.btn}
-                  onPress={handleSubmit}
-                >
-                  Submit
-                </Button>
-                <Button
-                  mode="contained"
-                  //color="#f27d42"
-                  //buttonColor="#f27d42"
-                  style={[
-                    styles.btn,
-                    { marginTop: 10, backgroundColor: "red" },
-                  ]}
-                  onPress={() => props.hideModal()}
-                >
-                  Cancel
-                </Button>
+                <View style={{ marginRight: 20 }}>
+                  <CustomButton
+                    flag="cancel"
+                    hideModal={() => props.hideModal()}
+                  />
+                </View>
+                <CustomButton flag="add" submitForm={handleSubmit} />
               </View>
             </View>
           </View>
@@ -121,11 +121,11 @@ const styles = StyleSheet.create({
   },
   modalView: {
     backgroundColor: "white",
-    borderRadius: 20,
-    paddingTop: 15,
-    paddingLeft: 35,
-    paddingRight: 35,
-    paddingBottom: 35,
+    borderRadius: 5,
+    paddingTop: 20,
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingBottom: 30,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -135,21 +135,22 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  btn: {
-    //width: 100,
-    //width: 100,
-    //backgroundColor: "#ffffff",
+  modalTitle: {
+    marginBottom: 20,
+    fontSize: 26,
+    fontWeight: "600",
   },
-  text: {
-    //height: "80%",
+  modalSubtitle: {
+    color: "grey",
+    fontSize: 18,
     marginBottom: 10,
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
+  },
+  scrollView: {
+    maxHeight: 200,
     borderWidth: 1,
-    borderRadius: 10,
-    borderColor: "purple",
-    overflow: "hidden",
+    borderRadius: 4,
+    borderColor: "#DDDDDD",
+    padding: 10,
+    marginBottom: 10,
   },
 });

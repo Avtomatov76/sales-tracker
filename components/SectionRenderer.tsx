@@ -12,6 +12,7 @@ import CustomerList from "./CustomerList";
 import LoadingScreen from "./LoadingScreen";
 import ErrorScreen from "./ErrorScreen";
 import DisplayList from "./DisplayList";
+import CustomButton from "./CustomButton";
 
 export default function SectionRenderer(props: any) {
   const displayCard = (type: string) => {
@@ -64,17 +65,11 @@ export default function SectionRenderer(props: any) {
           handleSelection={props.handleSelection}
         />
 
-        <View>
-          <Button
-            mode="contained"
-            //color="#f27d42"
-            //buttonColor="#f27d42"
-            style={styles.addBtn}
-            onPress={() => props.displayModal("add")}
-          >
-            Add
-          </Button>
-        </View>
+        <CustomButton
+          title="Add"
+          flag="add"
+          submitForm={() => props.displayModal("add")}
+        />
       </View>
       <View style={{ marginBottom: 10 }}>
         <Text>

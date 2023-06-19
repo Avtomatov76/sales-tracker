@@ -2,6 +2,10 @@ const getAllProducts = `
 SELECT * FROM product
 `;
 
+const getProductHashes = `
+SELECT hash FROM product
+`;
+
 function getProductsBySupplier(param) {
   return `SELECT product_cost, product_comm, fk_type_id, supplier_name 
             FROM product p 
@@ -12,4 +16,5 @@ function getProductsBySupplier(param) {
 
 module.exports = {
   getProductsBySupplier,
+  getProductHashes,
 };

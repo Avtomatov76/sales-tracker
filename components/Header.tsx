@@ -12,7 +12,16 @@ export default function Header(props: any) {
 
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          marginRight: "auto",
+          padding: 5,
+          paddingRight: 30,
+        }}
+      >
         {props.screenSize ? (
           <Pressable onPress={handleShowMenu}>
             <Image
@@ -24,57 +33,66 @@ export default function Header(props: any) {
 
         <Text style={styles.title}>Sales Tracker</Text>
       </View>
-      <View style={{ flexDirection: "row" }}>
-        {/* <View style={styles.searchContainer}>
+
+      {/* <View style={styles.searchContainer}>
           <Image
             source={require("../assets/icons/search.png")}
             style={styles.searchIcon}
           />
           <TextInput placeholder="Search" style={styles.navSearch} />
         </View> */}
-        <View
-          style={{
-            marginRight: "2rem",
-            justifyContent: "center",
-            alignItems: "center",
-            //alignSelf: "center",
-          }}
-        >
-          <Text style={styles.navEl}>
-            Last Sign-in:{" "}
-            {/* <Text style={{ fontSize: 14, color: "orange", marginLeft: 10 }}>
+      <View
+        style={{
+          display: "flex",
+          marginRight: "2rem",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 5,
+          // marginBottom: 10,
+        }}
+      >
+        <Text style={styles.navEl}>
+          Last Sign-in:{" "}
+          {/* <Text style={{ fontSize: 14, color: "orange", marginLeft: 10 }}>
               {moment().format("DD MMMM, HH:MM")}
             </Text> */}
-            <Chip
-              mode="flat"
-              textStyle={{
-                fontSize: 14,
-                color: "#FFFFFF", //"#368cbf", //"orange",
-                //fontWeight: "bold",
-                //backgroundColor: "#FFFFFF",
-              }}
-              style={{
-                backgroundColor: "#f27d42", //"#FFFFFF",
-                borderRadius: 20,
-                marginLeft: 10,
-              }}
-            >
-              {moment().format("DD MMMM, hh:mm A")}
-            </Chip>
-          </Text>
-        </View>
-        <View style={{ justifyContent: "center", alignContent: "center" }}>
-          <Text
-            style={{
-              fontSize: 24,
+          <Chip
+            mode="flat"
+            textStyle={{
+              fontSize: 14,
+              color: "#FFFFFF", //"#368cbf", //"orange",
               //fontWeight: "bold",
-              color: "#ffffff",
-              marginTop: -5,
+              //backgroundColor: "#FFFFFF",
+            }}
+            style={{
+              backgroundColor: "#f27d42", //"#FFFFFF",
+              borderRadius: 20,
+              marginLeft: 10,
             }}
           >
-            Ruslan Kalashnikov
-          </Text>
-        </View>
+            {moment().format("DD MMMM, hh:mm A")}
+          </Chip>
+        </Text>
+      </View>
+      <View
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignContent: "center",
+          padding: 5,
+          // marginBottom: 10,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 24,
+            //fontWeight: "bold",
+            color: "#ffffff",
+            marginTop: -5,
+          }}
+        >
+          Ruslan Kalashnikov
+        </Text>
       </View>
     </View>
   );
@@ -108,12 +126,16 @@ export default function Header(props: any) {
 
 const styles = StyleSheet.create({
   container: {
-    height: "10%",
+    display: "flex",
+    height: "auto",
+    flexWrap: "wrap",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingLeft: "3rem",
-    paddingRight: "3rem",
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingLeft: 35,
+    paddingRight: 35,
     backgroundColor: "#368cbf",
   },
   title: {

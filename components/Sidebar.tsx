@@ -81,8 +81,9 @@ export default function Sidebar(props: any) {
 
 const styles = StyleSheet.create({
   containerLarge: {
-    flex: 1,
-    paddingTop: "3rem", // change
+    display: "flex",
+    width: 250,
+    paddingTop: 45, // change
     flexDirection: "column",
     backgroundColor: "#FFFFFF",
     borderRightWidth: 1,
@@ -91,7 +92,6 @@ const styles = StyleSheet.create({
   containerSmall: {
     flex: 1,
     width: 190,
-    //paddingTop: "3rem", // change
     flexDirection: "column",
     backgroundColor: "#FFFFFF",
     borderLeftWidth: 3,
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     borderLeftColor: "#f27d42",
     //borderRightColor: "#368cbf",
     //borderBottomColor: "#368cbf",
-    paddingTop: 10,
+    marginTop: 20,
     paddingBottom: 10,
     shadowColor: "#000",
     shadowOffset: {
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     alignSelf: "center",
     borderRadius: 4,
-    paddingLeft: 50,
+    paddingLeft: 30,
     paddingTop: 8,
     paddingBottom: 10,
   },
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     alignSelf: "center",
     borderRadius: 10,
-    paddingLeft: 50,
+    paddingLeft: 30,
     paddingTop: 8,
     paddingBottom: 10,
   },
