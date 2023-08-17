@@ -1,9 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import TextField from "@material-ui/core/TextField";
 import axios from "axios";
-import { Divider } from "react-native-paper";
-import { Avatar, Button, Card, Text as Txt } from "react-native-paper";
 import { useQuery } from "react-query";
 import LoadingScreen from "./LoadingScreen";
 import ErrorScreen from "./ErrorScreen";
@@ -13,19 +11,8 @@ import "react-calendar/dist/Calendar.css";
 import moment from "moment";
 import CustomButton from "./CustomButton";
 import ErrorModal from "../modals/ErrorModal";
-import CommissionsCard from "./cards/CommissionsCard";
-import { formatDollarEntry } from "../functions/customerFunctions";
-import TestCommPage from "./cards/TestCommPage";
+import { getTotalCommissions, getCommissionsForRange } from "../api/endPoints";
 import CommissionsDetails from "./CommissionsDetails";
-
-// Commissions total to get:
-// Year to date
-// current month
-// by supplier - historic/year-to-date
-// by vendor - historic/year-to-date
-// -- maybe --
-// percentage of supplier vs overall - pie chart? -- historic/year-to-date
-// vendor commissions comparison - pie chart? -- historic/year-to-date
 
 export default function Commissions(props: any) {
   const [commissions, setCommissions] = useState<any>();
@@ -40,16 +27,13 @@ export default function Commissions(props: any) {
 
   const { isLoading, isError, data, error, refetch } = useQuery(
     ["commissions"],
-    () => axios.get(baseURL + "/api/commissions").then((res) => res.data) // HCANGE BACK TO CORRECT VALUE!!
+    () => axios.get(baseURL + getTotalCommissions).then((res) => res.data)
   );
 
   if (isLoading) return <LoadingScreen />;
   if (error) return <ErrorScreen error={error} type="commissions" />;
-  if (data) console.log("Commissions data: ", data);
-  //data.sort((a: any, b: any) => a.last_name.localeCompare(b.last_name));
 
   const handleOnClick = (stage: any) => {
-    console.log("Stage:", stage);
     setStage(stage);
     setShowCalendar(true);
   };
@@ -64,35 +48,27 @@ export default function Commissions(props: any) {
   };
 
   const handleSearch = async () => {
-    console.log("SEARCHING...............");
-
     if (!startDate && !endDate) {
       setShowErrorModal(true);
       return;
     }
-
-    // if (!startDate && endDate) setStartDate(endDate);
-    // if (startDate && !endDate) setEndDate(startDate);
 
     const params = {
       start: !startDate && endDate ? endDate : startDate,
       end: !endDate && startDate ? startDate : endDate,
     };
 
-    console.log("PARAMS: ", params);
-
     await axios
-      .get(baseURL + "/api/commissions-range", { params })
+      .get(baseURL + getCommissionsForRange, { params })
       .then((res) => setCommissions(res.data[0]));
-
-    //setShowCalendar(false);
   };
 
-  // console.log("Selected start day: ", startDate);
-  // console.log("Selected end day: ", endDate);
-  //console.log("Commissions for a date range: ", commissions);
-
-  //
+  if (!data[0].commissions)
+    return (
+      <View>
+        <Text>No Commissions</Text>
+      </View>
+    );
 
   return (
     <>
@@ -102,10 +78,8 @@ export default function Commissions(props: any) {
             display: "flex",
             flexDirection: "row",
             flexWrap: "wrap",
-            //justifyContent: "space-between",
             alignContent: "center",
             alignItems: "center",
-            // marginBottom: 10,
           }}
         >
           <Text
@@ -134,7 +108,6 @@ export default function Commissions(props: any) {
                 size="small"
                 value={startDate}
                 onClick={() => handleOnClick("start")}
-                //onClick={() => console.log("start date clicked!!")}
                 variant="outlined"
                 label="Select start date"
                 style={{ width: 160 }}
@@ -175,17 +148,13 @@ export default function Commissions(props: any) {
           }}
         />
 
-        {!commissions ? null : (
-          <CommissionsDetails
-            commissions={
-              commissions && commissions.commissions
-                ? commissions.commissions
-                : 0
-            }
-            startDate={startDate || ""}
-            endDate={endDate || ""}
-          />
-        )}
+        <CommissionsDetails
+          commissions={
+            commissions && commissions.commissions ? commissions.commissions : 0
+          }
+          startDate={startDate || ""}
+          endDate={endDate || ""}
+        />
       </View>
       {showCalendar ? (
         <View
@@ -211,29 +180,3 @@ export default function Commissions(props: any) {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  smallBoxStyle: {
-    display: "flex",
-    backgroundColor: "orange",
-    width: "50%",
-    height: "20%",
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  bigBoxStyle: {
-    display: "flex",
-    backgroundColor: "blue",
-    width: "50%",
-    height: "30%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  twoBoxesStyle: {
-    display: "flex",
-    height: "80%",
-    width: "100%",
-    alignItems: "center",
-  },
-});

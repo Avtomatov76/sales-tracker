@@ -66,7 +66,7 @@ export default function Header(props: any) {
             }}
             style={{
               backgroundColor: "#f27d42", //"#FFFFFF",
-              borderRadius: 20,
+              borderRadius: 5, //20,
               marginLeft: 10,
             }}
           >

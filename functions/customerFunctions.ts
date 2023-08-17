@@ -78,20 +78,23 @@ export const displayAddress = (customer: any) => {
 };
 
 export const checkNameForDupes = (
+  id = "",
   fName: any,
   lName: any,
   customerArray: any
 ) => {
   if (!customerArray || !fName || !lName) return;
 
+  let custID = id.trim().toLowerCase() || "";
   let firstName = fName.trim().toLowerCase();
   let lastName = lName.trim().toLowerCase();
 
   let dupeFound = false;
   customerArray.forEach((x: any) => {
     if (
-      x.first_name.trim().toLowerCase() === firstName &&
-      x.last_name.trim().toLowerCase() === lastName
+      x.customer_id.trim().toLowerCase() != custID &&
+      x.first_name.trim().toLowerCase() == firstName &&
+      x.last_name.trim().toLowerCase() == lastName
     )
       dupeFound = true;
   });
@@ -109,11 +112,15 @@ export const findCustomerById = (id: any, data: any) => {
 export const formatDollarEntry = (amount: any) => {
   if (!amount) return "0";
 
+  let minusSign = "";
   let decimalStr = "";
   let dollarAmount = "";
   let amountAsStr = amount.toString();
 
   if (amountAsStr[0] == "$") amountAsStr = amountAsStr.substring(1);
+  if (amountAsStr[0] == "-") {
+    (amountAsStr = amountAsStr.substring(1)), (minusSign = "-");
+  }
 
   let intStr =
     amountAsStr.substring(0, amountAsStr.indexOf(".")) || amountAsStr;
@@ -125,6 +132,7 @@ export const formatDollarEntry = (amount: any) => {
 
   if (intStr.length > 3 && intStr.length < 7) {
     dollarAmount =
+      minusSign +
       "$" +
       intStr.slice(0, intStr.length - 3) +
       "," +
@@ -132,6 +140,7 @@ export const formatDollarEntry = (amount: any) => {
       decimalStr;
   } else if (intStr.length > 6) {
     dollarAmount =
+      minusSign +
       "$" +
       intStr.slice(0, intStr.length - 6) +
       "," +
@@ -140,8 +149,34 @@ export const formatDollarEntry = (amount: any) => {
       intStr.slice(intStr.length - 3) +
       decimalStr;
   } else {
-    dollarAmount = "$" + intStr + decimalStr;
+    dollarAmount = minusSign + "$" + intStr + decimalStr;
   }
 
   return dollarAmount;
+};
+
+export const validateCustomer = (formValues: any, customers: any) => {
+  if (!formValues.firstName || !formValues.lastName || !formValues.phone) {
+    return { validCustomer: false, error: true };
+  }
+
+  if (formValues.phone.length < 10 || formValues.phone.length > 11) {
+    return { validCustomer: false, error: true };
+  }
+
+  let isDupe = checkNameForDupes(
+    formValues.id,
+    formValues.firstName,
+    formValues.lastName,
+    customers
+  );
+
+  if (isDupe) {
+    alert(
+      `${formValues.firstName} ${formValues.lastName} - is already in the database.  Please update the customer instead of adding a duplicate record!`
+    );
+    return { validCustomer: false, error: false };
+  }
+
+  return { validCustomer: true, error: false };
 };

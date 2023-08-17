@@ -3,10 +3,10 @@ import { StyleSheet, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Divider } from "react-native-paper";
 import PieChart from "react-native-pie-chart";
-import { formatDollarEntry } from "../../functions/customerFunctions";
+import { formatDollarEntry } from "../../../functions/customerFunctions";
 import axios from "axios";
 import moment from "moment";
-import GetConfiguration from "../../constants/Config";
+import GetConfiguration from "../../../constants/Config";
 import { useQuery, useQueryClient } from "react-query";
 import { Avatar, Button, Card, Text as Txt } from "react-native-paper";
 import {
@@ -14,13 +14,11 @@ import {
   getCommissionsYearToDate,
   getAllCommTopSuppliers,
   getYearToDateCommTopSuppliers,
-} from "../../api/endPoints";
+} from "../../../api/endPoints";
 
-//
 const widthAndHeight = 250;
 const series = [123, 321, 123];
 const sliceColor = ["#fbd203", "#ffb300", "#ff9100"];
-//
 
 export default function CommissionsCard(props: any) {
   const [currMonthComm, setCurrMonthComm] = useState<any>();
@@ -30,10 +28,6 @@ export default function CommissionsCard(props: any) {
 
   const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
-
-  console.log(
-    "----------------   rendering commissions card   -------------------"
-  );
 
   const baseURL = GetConfiguration().baseUrl;
 
@@ -62,11 +56,6 @@ export default function CommissionsCard(props: any) {
 
     getCommissions();
   }, []);
-
-  //   console.log("YTD: ", yearToDateComm);
-  //   console.log("CURR MONTH: ", currMonthComm);
-  //   console.log("TOTAL SUPPLIER COMM: ", totalSupplierComm);
-  //   console.log("YTD SUPPLIER COMM: ", ytdSupplierComm);
 
   const displaySupplierDetails = (supplier: any, index: any) => {
     return (
@@ -109,7 +98,6 @@ export default function CommissionsCard(props: any) {
       </View>
     );
   };
-  //   const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
 
   return (
     <Card style={{ width: "100%" }}>

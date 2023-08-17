@@ -1,18 +1,14 @@
 import axios from "axios";
 import { StyleSheet } from "react-native";
 import Modal from "react-native-modal";
-import CustomerForm from "../forms/CustomerForm";
-import { customerAPI } from "../api/endPoints";
+import CustomerForm from "../forms/customers/CustomerForm";
+import { customersAPI } from "../api/endPoints";
 import GetConfiguration from "../constants/Config";
 import { getCustomersNames } from "../functions/customerFunctions";
 import { useQueryClient } from "react-query";
 
 export default function CustomerModal(props: any) {
   const queryClient = useQueryClient();
-
-  //
-  console.log(props);
-  //
 
   let customersNames = getCustomersNames(props.customers);
   let baseUrl = GetConfiguration().baseUrl;
@@ -34,7 +30,7 @@ export default function CustomerModal(props: any) {
 
   const deleteCustomer = async (id: any) => {
     try {
-      await axios.post(baseUrl + customerAPI + `/${id}`);
+      await axios.post(baseUrl + customersAPI + `/${id}`);
     } catch (err) {
       console.log(err);
     }
@@ -47,9 +43,9 @@ export default function CustomerModal(props: any) {
 
     try {
       if (props.flag === "edit")
-        await axios.put(baseUrl + customerAPI, formdata);
+        await axios.put(baseUrl + customersAPI, formdata);
       else if (props.flag === "add") {
-        await axios.post(baseUrl + customerAPI, Object.values(formdata));
+        await axios.post(baseUrl + customersAPI, Object.values(formdata));
       }
     } catch (err) {
       console.log(err);

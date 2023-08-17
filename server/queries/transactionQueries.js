@@ -1,4 +1,7 @@
 // GET
+const getAllTransactions = `
+SELECT * FROM transaction`;
+
 const getYearToDateSalesQuery = `
 SELECT ROUND(SUM(transaction_amount), 2) AS sales FROM transaction WHERE EXTRACT(YEAR FROM transaction_date) = 2021;
 `;
@@ -14,6 +17,7 @@ INSERT INTO travel_type (type_id)
 `;
 
 module.exports = {
+  getAllTransactions,
   getYearToDateSalesQuery,
   getCurrentMonthSalesQuery,
 };

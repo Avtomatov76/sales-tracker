@@ -3,7 +3,14 @@ const cors = require("cors");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const db = require("./db");
 var JSONbig = require("json-bigint");
+const { getAllSuppliers } = require("./queries/supplierQueries");
+const { getAllVendors } = require("./queries/vendorQueries");
+const { getAllTravelTypes } = require("./queries/typeQueries");
+const { getAllDestinations } = require("./queries/destinationQueries");
 const {
+  getAllProducts,
+  getAllProductData,
+  getProductsRange,
   getProductsBySupplier,
   getProductHashes,
 } = require("./queries/productQueries");
@@ -19,19 +26,26 @@ const {
   getCustomerLatestSale,
 } = require("./queries/customerQueries");
 const {
-  getAllCommissions,
   getCommissionsForDateRange,
+  getAllCommissions,
   getCommissionsYearToDate,
   getCommissionsCurrMonth,
   getAllCommTopSuppliers,
   getYearToDateCommTopSuppliers,
+  getCommissionsLastYear,
+  getCommissionsLastYearToDate,
+  getCommissionsLastYearCurrMonth,
+  getUnpaidCommissions,
+  getMonthlyCommissionsYTDPrevious,
+  getMonthlyCommissionsYTDCurrent,
+  getYearToDateCommVendors,
 } = require("./queries/commissionQueries");
 const {
+  getAllTransactions,
   getYearToDateSalesQuery,
   getCurrentMonthSalesQuery,
   postTravelType,
 } = require("./queries/transactionQueries");
-const { getAllVendors } = require("./queries/vendorQueries");
 
 const app = express();
 const port = process.env.PORT || 8080; //19006; //...http://192.168.0.223:19006 const port = process.env.PORT || 5000;
@@ -128,6 +142,7 @@ app.post("/api/customers", async (req, res) => {
   let sql = `INSERT INTO customer (customer_id, first_name, last_name, street_address, city, state, cust_phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
   const customer = req.body;
+  console.log("CUSTOMER COMING IN: ", customer);
 
   await db.pool.query(sql, customer, function (err, data) {
     if (err) throw err;
@@ -183,6 +198,8 @@ app.post("/api/customers-save", async (req, res) => {
   const customers = req.body;
   //console.log("CUSTOMERS: ", customers);
 
+  if (customers.length == 0) return; //res.send({ result: "No new customers inserted!" });
+
   let values = postCustomers(customers);
   //console.log("VALUES: ", values);
   let sql = `INSERT INTO customer (customer_id, first_name, last_name, street_address, city, state, cust_phone, email) VALUES ${values}`;
@@ -207,6 +224,51 @@ app.get("/api/vendors", async (req, res) => {
   } catch (err) {
     throw err;
   }
+});
+
+// GET Supplier
+app.get("/api/suppliers", async (req, res) => {
+  try {
+    const result = await db.pool.query(getAllSuppliers);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// GET Travel Type
+app.get("/api/types", async (req, res) => {
+  try {
+    const result = await db.pool.query(getAllTravelTypes);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// GET Destination
+app.get("/api/destinations", async (req, res) => {
+  try {
+    const result = await db.pool.query(getAllDestinations);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// POST Destination
+app.post("/api/destinations", async (req, res) => {
+  let sql = `INSERT INTO destination (destination_id, destination_name) VALUES (?, ?)`;
+
+  const destination = req.body;
+  console.log("DESTINATION COMING IN : ", destination);
+
+  await db.pool.query(sql, destination, function (err, data) {
+    if (err) throw err;
+    console.log("Destination data is inserted successfully");
+  });
+
+  res.send({ result: "ok" });
 });
 
 // GET Transaction
@@ -238,6 +300,7 @@ app.get("/api/commissions", async (req, res) => {
   }
 });
 
+// GET commissions for a specified range
 app.get("/api/commissions-range", async (req, res) => {
   try {
     const result = await db.pool.query(
@@ -253,6 +316,17 @@ app.get("/api/commissions-range", async (req, res) => {
 app.get("/api/commissions-year", async (req, res) => {
   try {
     const result = await db.pool.query(getCommissionsYearToDate);
+    //const result = await db.pool.query(getMonthlyCommissionsYTDCurrent);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// GET year-to-date commissions per each month
+app.get("/api/commissions-monthlyCurrent", async (req, res) => {
+  try {
+    const result = await db.pool.query(getMonthlyCommissionsYTDCurrent);
     res.send(result);
   } catch (err) {
     throw err;
@@ -289,6 +363,56 @@ app.get("/api/commissions-suppliers-year", async (req, res) => {
   }
 });
 
+// GET commissions for last year
+app.get("/api/commissions-lastYear", async (req, res) => {
+  try {
+    const result = await db.pool.query(getCommissionsLastYear);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// GET commissions for the last year-to-date period  getCommissionsLastYearToDate,
+app.get("/api/commissions-lastYTD", async (req, res) => {
+  try {
+    const result = await db.pool.query(getCommissionsLastYearToDate);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// GET year-to-date commissions per each month (previous year)
+app.get("/api/commissions-monthlyLast", async (req, res) => {
+  try {
+    const result = await db.pool.query(getMonthlyCommissionsYTDPrevious);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// GET commissions for the last year's current month  getCommissionsLastYearCurrMonth
+app.get("/api/commissions-lastCurrent", async (req, res) => {
+  try {
+    const result = await db.pool.query(getCommissionsLastYearCurrMonth);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// GET unpaid commissions
+app.get("/api/commissions-unpaid", async (req, res) => {
+  try {
+    const result = await db.pool.query(getUnpaidCommissions);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
 // GET commissions for vendors
 app.get("/api/commissions-vendors", async (req, res) => {
   // try {
@@ -319,6 +443,26 @@ app.get("/api/products-hash", async (req, res) => {
   }
 });
 
+app.get("/api/products-data", async (req, res) => {
+  try {
+    const result = await db.pool.query(getAllProductData);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+app.get("/api/products-range", async (req, res) => {
+  try {
+    const result = await db.pool.query(
+      getProductsRange(req.query.start, req.query.end)
+    );
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
 app.get("/api/products/details", async (req, res) => {
   // get params off body
   // customize calls to DB based on params
@@ -334,7 +478,14 @@ app.get("/api/products/details", async (req, res) => {
 // POST Multiple products
 app.post("/api/products-save", async (req, res) => {
   const products = req.body;
-  //console.log("PRODUCTS: ", products);
+  if (!products || products.length == 0) return;
+
+  console.log("PRODUCTS: ", products);
+
+  let prodArray = [];
+  if (products.constructor.name === "Object") {
+    prodArray.push(products);
+  } else prodArray = products;
 
   function insertValues(products) {
     let valuesStr = "";
@@ -350,7 +501,9 @@ app.post("/api/products-save", async (req, res) => {
     return valuesStr;
   }
 
-  let values = insertValues(products);
+  let values = insertValues(prodArray);
+
+  console.log("PRODUCT VALUES: ", values);
 
   let sql = `INSERT INTO product (product_id, fk_destination_id, fk_type_id, fk_vendor_id, fk_supplier_id, size_of_party, party_info, product_cost, product_comm, is_comm_received, travel_start_date, travel_end_date, hash) VALUES ${values}`;
 
@@ -368,10 +521,27 @@ app.post("/api/products-save", async (req, res) => {
   }
 });
 
+// GET Transactions
+app.get("/api/transactions", async (req, res) => {
+  try {
+    const result = await db.pool.query(getAllTransactions);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
 // POST Multiple transactions
 app.post("/api/transactions-save", async (req, res) => {
   const transactions = req.body;
-  //console.log("TRANSACTIONS: ", transactions);
+  if (!transactions || transactions.length == 0) return;
+
+  console.log("TRANSACTIONS: ", transactions);
+
+  let transArray = [];
+  if (transactions.constructor.name === "Object") {
+    transArray.push(transactions);
+  } else transArray = transactions;
 
   function insertValues(transactions) {
     let valuesStr = "";
@@ -387,7 +557,8 @@ app.post("/api/transactions-save", async (req, res) => {
     return valuesStr;
   }
 
-  let values = insertValues(transactions);
+  let values = insertValues(transArray);
+  console.log("TRANSACTIONS VALUES: ", values);
 
   let sql = `INSERT INTO transaction (fk_customer_id, fk_product_id, transaction_type, transaction_amount, transaction_date) VALUES ${values}`;
 
@@ -404,16 +575,6 @@ app.post("/api/transactions-save", async (req, res) => {
     res.send({ result: "Insert Failed!" });
   }
 });
-
-// TEST queries
-// app.get("/api/test", async (req, res) => {
-//   try {
-//     const result = await db.pool.query(getProductsBySupplier("TPI"));
-//     res.send(result);
-//   } catch (err) {
-//     throw err;
-//   }
-// });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
@@ -433,3 +594,19 @@ app.use(
     //secure: false,
   })
 );
+
+async function doStuff(items) {
+  try {
+    const connection = await pool.getConnection();
+    await connection.beginTransaction();
+    for (const query of queries) {
+      await connection.query(query);
+    }
+    await connection.commit();
+  } catch (e) {
+    await connection.rollback();
+    throw e;
+  } finally {
+    await connection.release();
+  }
+}

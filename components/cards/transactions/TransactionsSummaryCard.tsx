@@ -4,7 +4,7 @@ import { Card } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { formatDollarEntry } from "../../../functions/customerFunctions";
 
-export default function CommissionsSummaryCard(props: any) {
+export default function TransactionsSummaryCard(props: any) {
   const getIcon = () => {
     if (!props.icon) return;
 
@@ -24,30 +24,30 @@ export default function CommissionsSummaryCard(props: any) {
     }
   };
 
-  const getComparisonData = () => {
-    let currYear = props.data[0].commissions || null;
-    let prevYear = props.compare[0].commissions || null;
+  //   const getComparisonData = () => {
+  //     let currYear = props.data[0].commissions || null;
+  //     let prevYear = props.compare[0].commissions || null;
 
-    let diff = (Math.round((currYear - prevYear) * 100) / 100).toFixed(2);
+  //     let diff = (Math.round((currYear - prevYear) * 100) / 100).toFixed(2);
 
-    return (
-      <View style={{ display: "flex", flexDirection: "row", marginBottom: 10 }}>
-        <Text
-          style={{
-            color: parseFloat(diff) < 0 ? "red" : "green",
-            fontSize: 12,
-          }}
-        >
-          {formatDollarEntry(diff)}
-        </Text>
-        <Text style={{ fontSize: 12, color: "grey", fontWeight: "600" }}>
-          {parseFloat(diff) < 0
-            ? " less than last year"
-            : " more than last year"}
-        </Text>
-      </View>
-    );
-  };
+  //     return (
+  //       <View style={{ display: "flex", flexDirection: "row", marginBottom: 10 }}>
+  //         <Text
+  //           style={{
+  //             color: parseFloat(diff) < 0 ? "red" : "green",
+  //             fontSize: 12,
+  //           }}
+  //         >
+  //           {formatDollarEntry(diff)}
+  //         </Text>
+  //         <Text style={{ fontSize: 12, color: "grey", fontWeight: "600" }}>
+  //           {parseFloat(diff) < 0
+  //             ? " less than last year"
+  //             : " more than last year"}
+  //         </Text>
+  //       </View>
+  //     );
+  //   };
 
   return (
     <Card style={[styles.card, { backgroundColor: props.color }]}>
@@ -76,7 +76,7 @@ export default function CommissionsSummaryCard(props: any) {
         </Text>
       )}
 
-      {props.compare ? getComparisonData() : null}
+      {/* {props.compare ? getComparisonData() : null} */}
 
       {props.icon == "search" ? (
         props.commissions ? (

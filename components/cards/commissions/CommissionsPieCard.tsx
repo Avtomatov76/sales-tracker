@@ -47,7 +47,7 @@ export default function CommissionsPieCard(props: any) {
           widthAndHeight={props.widthAndHeight}
           series={props.series}
           sliceColor={props.sliceColor}
-          style={{ alignSelf: "center" }} // POssibly customize this as well!!
+          style={{ alignSelf: "center" }} // Possibly customize this as well!!
         />
       </View>
 
@@ -79,6 +79,8 @@ const styles = StyleSheet.create({
     height: 350,
     minWidth: 350,
     backgroundColor: "#F0F0F0",
-    margin: 5,
+    marginTop: 15,
+    marginRight: 15,
+    borderRadius: 5,
   },
 });

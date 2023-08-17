@@ -1,38 +1,101 @@
 import { useState, useEffect } from "react";
 import { StyleSheet, ScrollView, Text, View } from "react-native";
-import { Image } from "expo-image";
-import { Divider } from "react-native-paper";
-import PieChart from "react-native-pie-chart";
-import { formatDollarEntry } from "../functions/customerFunctions";
 import axios from "axios";
-import moment from "moment";
 import GetConfiguration from "../constants/Config";
-import { useQuery, useQueryClient } from "react-query";
-import { Avatar, Button, Card, Text as Txt } from "react-native-paper";
 import {
   getTotalCommissions,
   getCommissionsCurrMonth,
   getCommissionsYearToDate,
   getAllCommTopSuppliers,
   getYearToDateCommTopSuppliers,
+  getLastYearCommissions,
+  getLastYearToDate,
+  getLastYearCurrentMonth,
+  getUnpaidCommissions,
+  getYearToDatePerMonth,
+  getLastYearToDatePerMonth,
 } from "../api/endPoints";
 import CommissionsPieCard from "./cards/commissions/CommissionsPieCard";
 import CommissionsSummaryCard from "./cards/commissions/CommissionsSummaryCard";
 import { getSeriesForPie } from "../functions/commissionsFunctions";
 import CommissionsLineChart from "./cards/commissions/CommissionsLineChart";
+import ErrorScreen from "./ErrorScreen";
+import CommissionsBarChart from "./cards/commissions/CommissionsBarChart";
 
-//
 const widthAndHeight = 150;
 const series = [300, 150, 400];
 const sliceColor = ["#fbd203", "#ffb300", "#ff9100"];
-//
 
 export default function CommissionsDetails(props: any) {
+  const [chartWidth, setChartWidth] = useState<any>(500);
   const [totalCommissions, setTotalCommissions] = useState<any>();
   const [currMonthComm, setCurrMonthComm] = useState<any>();
   const [yearToDateComm, setYearToDateComm] = useState<any>();
   const [totalSupplierComm, setTotalSupplierComm] = useState<any>();
   const [ytdSupplierComm, setYtdSupplierComm] = useState<any>();
+  const [lastYearComm, setLastYearComm] = useState<any>();
+  const [lastYearToDateComm, setLastYearToDate] = useState<any>();
+  const [lastYearCurrMonth, setLastYearCurrMonth] = useState<any>();
+  const [unpaidCommissions, setUnpaidCommissions] = useState<any>();
+  const [currYearMonthlyComm, setCurrYearMonthlyComm] = useState<any>();
+  const [lastYearMonthlyComm, setLastYearMonthlyComm] = useState<any>();
+
+  const commissionCards = [
+    {
+      title: "Total commissions",
+      data: totalCommissions || null,
+      type: "",
+      color: "#FDE0E0",
+      icon: "total",
+      iconColor: "#FF0000",
+    },
+    {
+      title: "Year-to-date",
+      data: yearToDateComm || null,
+      compare: lastYearToDateComm || null,
+      type: "YYYY",
+      color: "#ECFADC",
+      icon: "year",
+      iconColor: "#1FF438",
+    },
+    {
+      title: "Current month",
+      data: currMonthComm || null,
+      compare: lastYearCurrMonth || null,
+      type: "MMMM",
+      color: "#FFEED2",
+      icon: "month",
+      iconColor: "#FF5F15",
+    },
+    {
+      title: "Unpaid Commissions",
+      data: unpaidCommissions || null,
+      type: "MMMM",
+      color: "#FEC9C3",
+      iconColor: "#8B0000",
+      icon: "unpaid",
+    },
+    {
+      title: "",
+      type: "MMMM",
+      color: "#ECE6FF",
+      iconColor: "#791f87",
+      icon: "search",
+    },
+    {
+      title: "", // <-- Change to valid box
+      type: "MMMM",
+      color: "#ECE6FF",
+      iconColor: "#791f87",
+      icon: "search",
+    },
+  ];
+
+  // const getComponentWidth = (event: any) => {
+  //   let width = event.nativeEvent.layout.width;
+  //   if (width >= 450) setChartWidth(width);
+  //   if (width < 450) setChartWidth(450);
+  // };
 
   const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
@@ -47,6 +110,12 @@ export default function CommissionsDetails(props: any) {
         baseURL + getCommissionsCurrMonth,
         baseURL + getAllCommTopSuppliers,
         baseURL + getYearToDateCommTopSuppliers,
+        baseURL + getLastYearCommissions,
+        baseURL + getLastYearToDate,
+        baseURL + getLastYearCurrentMonth,
+        baseURL + getUnpaidCommissions,
+        baseURL + getYearToDatePerMonth,
+        baseURL + getLastYearToDatePerMonth,
       ];
       Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
         ([
@@ -55,12 +124,24 @@ export default function CommissionsDetails(props: any) {
           { data: currMonthComm },
           { data: totalSupplierComm },
           { data: ytdSupplierComm },
+          { data: lastYearComm },
+          { data: lastYearToDateComm },
+          { data: lastYearCurrMonth },
+          { data: unpaidCommissions },
+          { data: currYearMonthlyComm },
+          { data: lastYearMonthlyComm },
         ]) => {
           setTotalCommissions(totalCommissions);
           setYearToDateComm(yearToDateComm);
           setCurrMonthComm(currMonthComm);
           setTotalSupplierComm(totalSupplierComm);
           setYtdSupplierComm(ytdSupplierComm);
+          setLastYearComm(lastYearComm);
+          setLastYearToDate(lastYearToDateComm);
+          setLastYearCurrMonth(lastYearCurrMonth);
+          setUnpaidCommissions(unpaidCommissions);
+          setCurrYearMonthlyComm(currYearMonthlyComm);
+          setLastYearMonthlyComm(lastYearMonthlyComm);
         }
       );
     }
@@ -68,116 +149,95 @@ export default function CommissionsDetails(props: any) {
     getCommissions();
   }, []);
 
-  if (!props.commissions) return null;
+  // console.log("Last Year Comm: ", lastYearComm);
+  // console.log("Last Year-To-Date: ", lastYearToDateComm);
+  // console.log("Last Year Current Month: ", lastYearCurrMonth);
+  // console.log("Unpaid Commissions: ", unpaidCommissions);
+  // console.log("This Year Monthly: ", currYearMonthlyComm);
+  // console.log("Last Year Monthly: ", lastYearMonthlyComm);
+
+  if (!totalCommissions)
+    return (
+      <ErrorScreen
+        error="No commission information found in the database!"
+        type="server"
+      />
+    );
 
   return (
     <View
       style={{
         flexDirection: "column",
         justifyContent: "space-between",
-        marginTop: 20,
-        marginBottom: 20,
       }}
+      //onLayout={(event) => getComponentWidth(event)}
     >
       <View
         style={{
           display: "flex",
-          //flex: 1,
-          flexDirection: "row",
           flexWrap: "wrap",
+          flexDirection: "column",
+          backgroundColor: "#F0F0F0",
+          marginTop: 20,
+          paddingRight: 20,
+          paddingLeft: 20,
+          paddingBottom: 20,
         }}
       >
+        <Text
+          style={[
+            styles.catTitle,
+            {
+              marginTop: 20,
+              marginBottom: 20,
+              marginLeft: 8,
+            },
+          ]}
+        >
+          Summary
+        </Text>
+
         <View
           style={{
             display: "flex",
-            height: 300,
-            //flex: 1,
-            //flexWrap: "wrap",
-            flexDirection: "column",
-            backgroundColor: "#F0F0F0",
-            borderRadius: 12,
-            marginRight: 10,
-            marginBottom: 10,
-            paddingLeft: 30,
-            paddingRight: 10,
+            flexWrap: "wrap",
+            flexDirection: "row",
           }}
         >
-          <Text style={[styles.catTitle, { marginTop: 20, marginBottom: 30 }]}>
-            Commissions Summary
-          </Text>
-
-          <View
-            style={{
-              display: "flex",
-              //flex: 2,
-              flexWrap: "wrap",
-              flexDirection: "row",
-              //marginLeft: 20,
-              //marginRight: 20,
-              //justifyContent: "space-between",
-            }}
-          >
+          {commissionCards.map((card: any, index: any) => (
             <CommissionsSummaryCard
-              title="Total commissions"
-              data={totalCommissions || null}
-              color="#FDE0E0"
-              iconColor="#FF0000"
-              icon="total"
-            />
-
-            <CommissionsSummaryCard
-              title="Year-to-date"
-              data={yearToDateComm || null}
-              type="YYYY"
-              color="#ECFADC"
-              iconColor="#1FF438"
-              icon="year"
-            />
-
-            <CommissionsSummaryCard
-              title="Current month"
-              data={currMonthComm || null}
-              type="MMMM"
-              color="#FFEED2"
-              iconColor="#FF5F15"
-              icon="month"
-            />
-
-            <CommissionsSummaryCard
-              title="Current month"
-              type="MMMM"
-              color="#ECE6FF"
-              iconColor="#791f87"
-              icon="search"
+              key={index}
+              title={card.title}
+              data={card.data}
+              type={card.type}
+              color={card.color}
+              iconColor={card.iconColor}
+              icon={card.icon}
+              compare={card.compare}
               startDate={props.startDate}
               endDate={props.endDate}
               commissions={props.commissions}
             />
-          </View>
+          ))}
         </View>
+      </View>
 
-        {/* <View
-          style={{
-            display: "flex",
-            flex: 1,
-            height: 300,
-            minWidth: 400,
-            maxWidth: 600,
-            //flexWrap: "wrap",
-            borderRadius: 12,
-            backgroundColor: "grey",
-          }}
-        > */}
-        {/* <CommissionsSummaryCard
-            title="Comparison with 2020" // <-- define programmatically
-            type="YYYY"
-            color="#FFFFFF"
-            iconColor="#FF0000"
-            icon="chart"
-            flex={2}
-          /> */}
-        <CommissionsLineChart height={300} />
-        {/* </View> */}
+      <View
+        style={{
+          display: "flex",
+          flex: 1,
+          flexDirection: "row",
+          flexWrap: "wrap",
+        }}
+      >
+        <CommissionsLineChart
+          width={600}
+          minWidth={300}
+          height={300}
+          currYear={currYearMonthlyComm || null}
+          lastYear={lastYearMonthlyComm || null}
+        />
+        <CommissionsBarChart width={600} minWidth={300} height={300} />
       </View>
 
       <View
@@ -208,6 +268,15 @@ export default function CommissionsDetails(props: any) {
             titleDetails="year-to-date"
           />
         )}
+
+        <CommissionsPieCard
+          data={ytdSupplierComm || []}
+          widthAndHeight={widthAndHeight}
+          series={getSeriesForPie(ytdSupplierComm)}
+          sliceColor={sliceColor}
+          title="TEST"
+          titleDetails="testing..."
+        />
       </View>
     </View>
   );
@@ -222,14 +291,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingLeft: 40,
     paddingRight: 40,
-    //alignSelf: "center",
-    //marginBottom: 20,
   },
   catTitle: {
     fontSize: 24,
     marginBottom: 20,
-    //paddingLeft: 20,
-    //paddingRight: 40,
     fontWeight: "600",
     color: "#368cbf",
   },
@@ -237,7 +302,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column", //
     alignItems: "center",
-    //flex: 1, // <-- change this if adding one more!!
     paddingTop: 20,
     height: 350,
     minWidth: 350,

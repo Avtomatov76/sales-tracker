@@ -5,7 +5,7 @@ import Papa from "papaparse";
 import GetConfiguration from "../constants/Config";
 import { getCustomersNames } from "../functions/customerFunctions";
 import {
-  customerAPI,
+  customersAPI,
   getProductHashes,
   saveCustomersAPI,
   saveProductsAPI,
@@ -23,6 +23,7 @@ export default function CSVUploader(props: any) {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [error, setError] = useState("");
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [reload, setReload] = useState(false);
   const [data, setData] = useState<any>({
     parsedData: [],
     tableRows: [],
@@ -35,8 +36,6 @@ export default function CSVUploader(props: any) {
     dupeProducts: [],
   });
 
-  //console.log("_____________________RESTARTED___________________________");
-
   const baseURL = GetConfiguration().baseUrl;
 
   let customersInDB = [];
@@ -44,7 +43,7 @@ export default function CSVUploader(props: any) {
 
   useEffect(() => {
     async function getCustomersProductsFromDB() {
-      let endpoints = [baseURL + customerAPI, baseURL + getProductHashes];
+      let endpoints = [baseURL + customersAPI, baseURL + getProductHashes];
       Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
         ([{ data: customers }, { data: productHashes }]) => {
           setCustomers(customers);
@@ -54,26 +53,9 @@ export default function CSVUploader(props: any) {
     }
 
     getCustomersProductsFromDB();
-
-    // const getCustomersFromDB = async () => {
-    //   await axios(baseUrl + customerAPI).then((response) => {
-    //     let data = Object.values(response.data);
-    //     setCustomers(data);
-    //   });
-    // };
-
-    // getCustomersFromDB();
-  }, []);
-
-  console.log("CUSTOMERS: ", customers);
-  console.log("HASHES: ", productHashes);
+  }, [reload]);
 
   const displayModal = () => {
-    // if (data.dupeCustomers.length > 0) {
-    //   setShowErrorModal(true);
-    //   return;
-    // }
-
     setShowInfoModal(true);
   };
 
@@ -91,29 +73,25 @@ export default function CSVUploader(props: any) {
 
     alert("About to Upload these customers!");
 
-    // console.log("IS THERE CUSTOMERS??? ", Object.values(data.customerData));
-    // console.log("IS THERE PRODUCTS??? ", Object.values(data.productData));
-
-    // IF SAME DATA - DO NOT UPLOAD!!
-
-    // axios
-    //   .all([
-    //     axios.post(
-    //       baseURL + saveCustomersAPI,
-    //       Object.values(data.customerData)
-    //     ),
-    //     axios.post(baseURL + saveProductsAPI, Object.values(data.productData)),
-    //     axios.post(
-    //       baseURL + saveTransactionsAPI,
-    //       Object.values(data.transactionData)
-    //     ),
-    //   ])
-    //   .then(
-    //     axios.spread((data1, data2, data3) => {
-    //       // output of req.
-    //       console.log("data1", data1, "data2", data2, "data3", data3);
-    //     })
-    //   );
+    axios
+      .all([
+        axios.post(
+          baseURL + saveCustomersAPI,
+          Object.values(data.customerData)
+        ),
+        axios.post(baseURL + saveProductsAPI, Object.values(data.productData)),
+        axios.post(
+          baseURL + saveTransactionsAPI,
+          Object.values(data.transactionData)
+        ),
+      ])
+      .then(
+        axios.spread((data1, data2, data3) => {
+          // output of req.
+          console.log("data1", data1, "data2", data2, "data3", data3);
+          setReload(true);
+        })
+      );
   };
 
   const changeHandler = (event: any) => {
@@ -157,10 +135,6 @@ export default function CSVUploader(props: any) {
       },
     });
   };
-
-  console.log("Customer Data: ", data.customerData);
-  console.log("Product Data: ", data.productData);
-  console.log("Transaction Data: ", data.transactionData);
 
   return (
     <ScrollView style={{ flexDirection: "column" }}>

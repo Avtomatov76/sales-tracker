@@ -68,6 +68,7 @@ export default function SectionRenderer(props: any) {
         <CustomButton
           title="Add"
           flag="add"
+          type="button"
           submitForm={() => props.displayModal("add")}
         />
       </View>

@@ -30,7 +30,6 @@ export function processParsedData(
     let isNumeral = strNumerals.includes(numCustomers);
     let partySize = 0;
 
-    //
     let prodHash =
       row.DATE +
       row.NAME +
@@ -144,7 +143,6 @@ function createProductEntry(
   let transaction = {};
 
   if (productHashes.includes(prodHash)) {
-    //console.log("PRESENT");
     return { product, transaction };
   }
 
@@ -208,8 +206,9 @@ function findEntryName(rawEntry: any, flag: any) {
   if (flag === "vendor") options = getVendorOpts();
 
   let found = Object.keys(options).find((x: any) => rawEntry.includes(x));
+  console.log(`FOUND: ${flag}`, found);
 
-  return !found ? "N/A" : options[found];
+  return !found ? "TBD" : options[found];
 }
 
 function checkIfObjEmpty(obj: any) {

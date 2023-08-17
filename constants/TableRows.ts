@@ -95,6 +95,7 @@ const vendorOpts = {
   PICASSO: "PIC",
   WNVACS: "WNV",
   TBD: "TBD",
+  EI: "AER",
   IB: "IBA",
   QR: "QRA",
   NZ: "NZA",
