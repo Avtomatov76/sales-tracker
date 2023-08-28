@@ -100,21 +100,19 @@ export default function TransactionsSummaryCard(props: any) {
       )}
 
       {!props.compare ? null : (
-        <>
-          <Text
-            style={{
-              marginTop: 10,
-              fontSize: 12,
-              color: "grey",
-              fontWeight: "600",
-            }}
-          >
-            Previous year:{" "}
-            <Text style={{ color: "blue" }}>
-              {formatDollarEntry(props.compare[0].commissions)}
-            </Text>
+        <Text
+          style={{
+            marginTop: 10,
+            fontSize: 12,
+            color: "grey",
+            fontWeight: "600",
+          }}
+        >
+          Previous year:{" "}
+          <Text style={{ color: "blue" }}>
+            {formatDollarEntry(props.compare[0].commissions)}
           </Text>
-        </>
+        </Text>
       )}
     </Card>
   );

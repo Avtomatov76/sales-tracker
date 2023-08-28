@@ -4,6 +4,7 @@ import axios from "axios";
 import moment from "moment";
 import CustomButton from "./CustomButton";
 import TransactionModal from "../modals/TransactionModal";
+import TransactionDetailsCard from "../components/cards/transactions/TransactionDetailsCard";
 
 //
 const widthAndHeight = 150;
@@ -11,13 +12,20 @@ const series = [300, 150, 400];
 const sliceColor = ["#fbd203", "#ffb300", "#ff9100"];
 //
 
-export default function TransactionsDetails(props: any) {
+export default function TransactionsList(props: any) {
   const [showModal, setShowModal] = useState(false);
   const [flag, setFlag] = useState("");
+  const [showCard, setShowCard] = useState(false);
+  const [transaction, setTransaction] = useState<any>();
 
   const displayTransactionModal = (flag: string) => {
     setFlag(flag);
     setShowModal(true);
+  };
+
+  const displayTransactionCard = (data: any) => {
+    setTransaction(data);
+    setShowCard(true);
   };
 
   const displayEntry = (e: any, index: any) => {
@@ -25,21 +33,23 @@ export default function TransactionsDetails(props: any) {
       <Pressable
         style={styles.transaction}
         key={index}
-        onPress={() => console.log(e.date)}
+        onPress={() => displayTransactionCard(e)}
+        //onPress={() => console.log(e.date)}
       >
         <Text>{moment(e.date).format("MMM DD, YYYY")} -</Text>
+        <Text>
+          {" "}
+          {e.first_name == "na" ? "" : e.first_name} {e.last_name}
+        </Text>
         <Text> Total: {e.cost} - </Text>
         <Text> Commission: {e.commission}</Text>
         <Text> Received: {e.is_comm_received}</Text>
-        <Text>
-          {" "}
-          Name: {e.first_name} {e.last_name}
-        </Text>
-        <Text> Party Size: {e.party}</Text>
+
+        {/* <Text> Party Size: {e.party}</Text>
         <Text> Phone: {e.phone}</Text>
         <Text> Email: {e.email}</Text>
         <Text> Travel Type: {e.travel_type}</Text>
-        <Text> Vendor: {e.vendor}</Text>
+        <Text> Vendor: {e.vendor}</Text> */}
       </Pressable>
     );
   };
@@ -68,18 +78,38 @@ export default function TransactionsDetails(props: any) {
           paddingBottom: 20,
         }}
       >
-        <Text
-          style={[
-            styles.catTitle,
-            {
-              marginTop: 20,
-              marginBottom: 20,
-              marginLeft: 8,
-            },
-          ]}
-        >
-          Summary
-        </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text
+            style={[
+              styles.catTitle,
+              {
+                marginTop: 20,
+                marginBottom: 20,
+                marginLeft: 8,
+              },
+            ]}
+          >
+            Summary
+          </Text>
+
+          <Text
+            style={{
+              fontSize: 20,
+              marginLeft: 20,
+              alignSelf: "center",
+            }}
+          >
+            {props.numProducts}
+          </Text>
+          <Text
+            style={{
+              marginLeft: 10,
+              alignSelf: "center",
+            }}
+          >
+            transactions
+          </Text>
+        </View>
 
         <View
           style={{
@@ -97,11 +127,21 @@ export default function TransactionsDetails(props: any) {
         </View>
       </View>
 
-      <ScrollView style={styles.scrollView}>
-        {!props.products
-          ? props.data.map((p: any, index: any) => displayEntry(p, index))
-          : props.products.map((p: any, index: any) => displayEntry(p, index))}
-      </ScrollView>
+      {!props.products ? (
+        <ScrollView style={styles.scrollView}>
+          {props.data.map((p: any, index: any) => displayEntry(p, index))}
+        </ScrollView>
+      ) : props.products.length > 0 ? (
+        <ScrollView style={styles.scrollView}>
+          {props.products.map((p: any, index: any) => displayEntry(p, index))}
+        </ScrollView>
+      ) : (
+        <View style={{ alignSelf: "center", marginTop: 30 }}>
+          <Text style={{ fontSize: 20, color: "red" }}>
+            No transactions found!
+          </Text>
+        </View>
+      )}
 
       <TransactionModal
         flag={flag}
@@ -113,47 +153,31 @@ export default function TransactionsDetails(props: any) {
         visible={showModal}
         hideModal={() => setShowModal(false)}
       />
+
+      {showCard && (
+        <TransactionDetailsCard
+          data={transaction}
+          hideCard={() => setShowCard(false)}
+        />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    alignItems: "center",
-  },
-  pieTitle: {
-    fontSize: 20,
-    paddingLeft: 40,
-    paddingRight: 40,
-    //alignSelf: "center",
-    //marginBottom: 20,
-  },
   catTitle: {
     fontSize: 24,
     marginBottom: 20,
-    //paddingLeft: 20,
-    //paddingRight: 40,
     fontWeight: "600",
     color: "#368cbf",
-  },
-  card: {
-    display: "flex",
-    flexDirection: "column", //
-    alignItems: "center",
-    //flex: 1, // <-- change this if adding one more!!
-    paddingTop: 20,
-    height: 350,
-    minWidth: 350,
-    backgroundColor: "#F0F0F0",
-    margin: 5,
   },
   transaction: {
     height: 30,
     marginTop: 2,
+    paddingLeft: 10,
     marginBottom: 2,
     flexDirection: "row",
-    backgroundColor: "#CCC",
+    backgroundColor: "rgb(240, 240, 240)",
     alignItems: "center",
   },
   scrollView: {

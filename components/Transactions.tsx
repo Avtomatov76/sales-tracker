@@ -12,7 +12,7 @@ import moment from "moment";
 import CustomButton from "./CustomButton";
 import ErrorModal from "../modals/ErrorModal";
 import { getProductsData, getProductsForRange } from "../api/endPoints";
-import TransactionsDetails from "./TransactionsDetails";
+import TransactionsList from "./TransactionsList";
 
 export default function Transactions(props: any) {
   const [products, setProducts] = useState<any>();
@@ -72,7 +72,7 @@ export default function Transactions(props: any) {
         <Text>No Transactions</Text>
       </View>
     );
-
+  console.log("products products: ", products);
   return (
     <>
       <View style={{ display: "flex" }}>
@@ -118,11 +118,12 @@ export default function Transactions(props: any) {
 
         <hr style={styles.hr} />
 
-        <TransactionsDetails
+        <TransactionsList
           products={products ? products : null}
           data={data ? data : null}
           startDate={startDate || ""}
           endDate={endDate || ""}
+          numProducts={!products ? data.length : products.length}
         />
       </View>
       {showCalendar ? (

@@ -21,9 +21,7 @@ export default function CustomersDropdown(props: any) {
     setCustomers(customers);
   };
 
-  //
-  //console.log("TYPED STUFF: ", customers);
-  //
+  customers.sort((a, b) => a.last_name.localeCompare(b.last_name));
 
   return (
     <View

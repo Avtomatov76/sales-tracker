@@ -82,8 +82,6 @@ export default function TransactionModal(props: any) {
   };
 
   const handleSubmit = async (formData: any) => {
-    hideModal();
-
     if (formData && !formData.id) {
       formData.id = nanoid();
 
@@ -134,6 +132,8 @@ export default function TransactionModal(props: any) {
     } catch (err) {
       console.log(err);
     }
+
+    hideModal();
   };
 
   return (

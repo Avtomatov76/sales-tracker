@@ -56,6 +56,7 @@ export default function CSVTable(props: any) {
       >
         <CustomButton
           flag="add"
+          type="button"
           submitForm={props.displayModal}
           title="Save Customers"
         />

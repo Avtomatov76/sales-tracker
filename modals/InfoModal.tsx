@@ -103,7 +103,11 @@ export default function InfoModal(props: any) {
                     hideModal={() => props.hideModal()}
                   />
                 </View>
-                <CustomButton flag="add" submitForm={handleSubmit} />
+                <CustomButton
+                  flag="add"
+                  type="text"
+                  submitForm={handleSubmit}
+                />
               </View>
             </View>
           </View>
