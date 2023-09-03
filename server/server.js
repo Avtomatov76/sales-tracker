@@ -10,9 +10,12 @@ const { getAllDestinations } = require("./queries/destinationQueries");
 const {
   getAllProducts,
   getAllProductData,
+  getProductsById,
   getProductsRange,
   getProductsBySupplier,
   getProductHashes,
+  updateProductField,
+  updateProduct,
 } = require("./queries/productQueries");
 const {
   getAllCustomers,
@@ -45,6 +48,7 @@ const {
   getYearToDateSalesQuery,
   getCurrentMonthSalesQuery,
   postTravelType,
+  updateTransaction,
 } = require("./queries/transactionQueries");
 
 const app = express();
@@ -452,6 +456,15 @@ app.get("/api/products-data", async (req, res) => {
   }
 });
 
+app.get("/api/products-id", async (req, res) => {
+  try {
+    const result = await db.pool.query(getProductsById(req.query.id));
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
 app.get("/api/products-range", async (req, res) => {
   try {
     const result = await db.pool.query(
@@ -475,12 +488,26 @@ app.get("/api/products/details", async (req, res) => {
   // }
 });
 
+// UPDATE product field
+app.post("/api/products-field", async (req, res) => {
+  const field = req.body.params.field;
+  const value = req.body.params.value;
+  const id = req.body.params.id;
+
+  console.log("BODY PARAMS: ", req.body);
+
+  try {
+    await db.pool.query(updateProductField(field, value, id));
+    res.send({ result: "ok" });
+  } catch (err) {
+    throw err;
+  }
+});
+
 // POST Multiple products
 app.post("/api/products-save", async (req, res) => {
   const products = req.body;
   if (!products || products.length == 0) return;
-
-  console.log("PRODUCTS: ", products);
 
   let prodArray = [];
   if (products.constructor.name === "Object") {
@@ -503,11 +530,7 @@ app.post("/api/products-save", async (req, res) => {
 
   let values = insertValues(prodArray);
 
-  console.log("PRODUCT VALUES: ", values);
-
   let sql = `INSERT INTO product (product_id, fk_destination_id, fk_type_id, fk_vendor_id, fk_supplier_id, size_of_party, party_info, product_cost, product_comm, is_comm_received, travel_start_date, travel_end_date, hash) VALUES ${values}`;
-
-  //console.log(sql);
 
   try {
     await db.pool.query(sql, products, function (err, data) {
@@ -518,6 +541,18 @@ app.post("/api/products-save", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.send({ result: "Insert Failed!" });
+  }
+});
+
+// UPDATE product
+app.post("/api/products-update", async (req, res) => {
+  //console.log("RECEIVING PRODUCT: ", req.body);
+
+  try {
+    await db.pool.query(updateProduct(req.body));
+    res.send({ result: "ok" });
+  } catch (err) {
+    throw err;
   }
 });
 
@@ -536,7 +571,7 @@ app.post("/api/transactions-save", async (req, res) => {
   const transactions = req.body;
   if (!transactions || transactions.length == 0) return;
 
-  console.log("TRANSACTIONS: ", transactions);
+  //console.log("TRANSACTIONS: ", transactions);
 
   let transArray = [];
   if (transactions.constructor.name === "Object") {
@@ -562,8 +597,6 @@ app.post("/api/transactions-save", async (req, res) => {
 
   let sql = `INSERT INTO transaction (fk_customer_id, fk_product_id, transaction_type, transaction_amount, transaction_date) VALUES ${values}`;
 
-  //console.log(sql);
-
   try {
     await db.pool.query(sql, transactions, function (err, data) {
       if (err) throw err;
@@ -573,6 +606,18 @@ app.post("/api/transactions-save", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.send({ result: "Insert Failed!" });
+  }
+});
+
+// UPDATE transaction
+app.post("/api/transactions-update", async (req, res) => {
+  //console.log("RECEIVING TRANSACTION: ", req.body);
+
+  try {
+    await db.pool.query(updateTransaction(req.body));
+    res.send({ result: "ok" });
+  } catch (err) {
+    throw err;
   }
 });
 

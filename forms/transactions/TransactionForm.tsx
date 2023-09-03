@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { validateCustomer } from "../../functions/customerFunctions";
 import CustomButton from "../../components/CustomButton";
@@ -7,12 +7,42 @@ import CustomersDropdown from "../../dropdowns/CustomersDropdown";
 import ModalHeader from "../../modals/ModalHeader";
 import { validateTransaction } from "../../functions/transactionsFunctions";
 import OutsideClickHandler from "react-outside-click-handler";
+import moment from "moment";
 
 export default function TransactionForm(props: any) {
   const [customerOptions, setCustomerOptions] = useState(false);
   const [error, setError] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<any>();
   const [formValues, setFormValues] = useState<any>();
+
+  const addCustomerFromDB = () => {
+    setCustomerOptions(true);
+  };
+
+  const handleCancel = () => {
+    props.hideModal();
+  };
+
+  useEffect(() => {
+    if (props.flag == "edit")
+      setFormValues({
+        product_id: props.transaction.product_id,
+        transaction_id: props.transaction.transaction_id,
+        total: props.transaction.cost,
+        commission: props.transaction.commission,
+        payment: props.transaction.transaction_type,
+        status: props.transaction.is_comm_received,
+        start: moment(props.transaction.start).format("YYYY-MM-DD"),
+        end: moment(props.transaction.end).format("YYYY-MM-DD"),
+        saleDate: moment(props.transaction.date).format("YYYY-MM-DD"),
+        partySize: props.transaction.party,
+        destination: props.transaction.destination,
+        travelType: props.transaction.travel_type,
+        vendor: props.transaction.vendor_id,
+        supplier: props.transaction.supplier,
+        notes: props.transaction.notes,
+      });
+  }, []);
 
   const selectCustomer = (customer: any) => {
     setSelectedCustomer(customer);
@@ -44,6 +74,10 @@ export default function TransactionForm(props: any) {
       });
   };
 
+  //
+  console.log("UPDATED FORM VALUES!!!! ", formValues, props.flag);
+  //
+
   const submitForm = () => {
     console.log("customer: ", formValues);
     if (!formValues) {
@@ -51,15 +85,17 @@ export default function TransactionForm(props: any) {
       return;
     }
 
-    let { validCustomer, error } = validateCustomer(
-      formValues,
-      props.customers
-    );
+    if (props.flag == "add") {
+      let { validCustomer, error } = validateCustomer(
+        formValues,
+        props.customers
+      );
 
-    if (!validCustomer) {
-      setError(error);
-      console.log("There are erorrs in your form!!");
-      return;
+      if (!validCustomer) {
+        setError(error);
+        console.log("There are erorrs in your form!!");
+        return;
+      }
     }
 
     let { validTransaction, transError } = validateTransaction(
@@ -82,6 +118,7 @@ export default function TransactionForm(props: any) {
     if (props.flag === "add" || props.flag === "edit")
       return (
         <AddUpdateTransaction
+          flag={props.flag}
           customer={selectedCustomer || {}}
           formValues={formValues || ""}
           vendors={!props.vendors ? null : props.vendors}
@@ -95,14 +132,6 @@ export default function TransactionForm(props: any) {
       );
   };
 
-  const addCustomerFromDB = () => {
-    setCustomerOptions(true);
-  };
-
-  const handleCancel = () => {
-    props.hideModal();
-  };
-
   return (
     <View style={styles.modalView}>
       <ModalHeader
@@ -111,26 +140,33 @@ export default function TransactionForm(props: any) {
         onPress={props.hideModal}
       />
 
-      <View style={{ marginLeft: 5, zIndex: 1, marginBottom: 5 }}>
-        {!customerOptions ? (
-          <View style={{ height: 20 }}>
-            <Text style={{ color: "blue" }} onPress={() => addCustomerFromDB()}>
-              &#43; Add customer from DB
-            </Text>
-          </View>
-        ) : (
-          <OutsideClickHandler onOutsideClick={() => setCustomerOptions(false)}>
+      {props.flag == "edit" ? null : (
+        <View style={{ marginLeft: 5, zIndex: 1, marginBottom: 5 }}>
+          {!customerOptions ? (
             <View style={{ height: 20 }}>
-              <CustomersDropdown
-                flag="customer"
-                customers={props.customers}
-                selectCustomer={selectCustomer}
-                hideDropdown={() => setCustomerOptions(false)}
-              />
+              <Text
+                style={{ color: "blue" }}
+                onPress={() => addCustomerFromDB()}
+              >
+                &#43; Add customer from DB
+              </Text>
             </View>
-          </OutsideClickHandler>
-        )}
-      </View>
+          ) : (
+            <OutsideClickHandler
+              onOutsideClick={() => setCustomerOptions(false)}
+            >
+              <View style={{ height: 20 }}>
+                <CustomersDropdown
+                  flag="customer"
+                  customers={props.customers}
+                  selectCustomer={selectCustomer}
+                  hideDropdown={() => setCustomerOptions(false)}
+                />
+              </View>
+            </OutsideClickHandler>
+          )}
+        </View>
+      )}
 
       {displayFormContent()}
 
@@ -145,7 +181,11 @@ export default function TransactionForm(props: any) {
         <View style={{ marginRight: 20 }}>
           <CustomButton hideModal={handleCancel} flag="cancel" type="text" />
         </View>
-        <CustomButton submitForm={submitForm} flag="add" type="text" />
+        <CustomButton
+          submitForm={submitForm}
+          flag={props.flag == "edit" ? "update" : "add"}
+          type="text"
+        />
       </View>
     </View>
   );

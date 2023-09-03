@@ -165,7 +165,7 @@ const showTransactionForm = (props: any) => {
       style={{
         display: "flex",
         flexDirection: "column",
-        marginTop: 20,
+        marginTop: props.flag == "edit" ? 0 : 20,
         zIndex: 1,
       }}
     >
@@ -235,6 +235,9 @@ const showTransactionForm = (props: any) => {
           <Text style={displayLegendStyle("status")}>Comm Status</Text>
 
           <Picker
+            selectedValue={
+              !props.formValues.status ? "" : props.formValues.status
+            }
             style={displayPickerStyle("status")}
             onValueChange={(itemValue, itemIndex) =>
               handleChange(itemValue, "status", "selected")
@@ -263,6 +266,9 @@ const showTransactionForm = (props: any) => {
           <Text style={displayLegendStyle("payment")}>Payment Type</Text>
 
           <Picker
+            selectedValue={
+              !props.formValues.payment ? "" : props.formValues.payment
+            }
             style={displayPickerStyle("payment")}
             onValueChange={(itemValue, itemIndex) =>
               handleChange(itemValue, "payment", "selected")
@@ -334,6 +340,9 @@ const showTransactionForm = (props: any) => {
           <Text style={displayLegendStyle("travelType")}>Type</Text>
 
           <Picker
+            selectedValue={
+              !props.formValues.travelType ? "" : props.formValues.travelType
+            }
             style={displayPickerStyle("travelType")}
             onValueChange={(itemValue, itemIndex) =>
               handleChange(itemValue, "travelType", "selected")
@@ -356,7 +365,11 @@ const showTransactionForm = (props: any) => {
       <View style={{ display: "flex", flexDirection: "row" }}>
         <View style={{ width: "50%" }}>
           <Text style={displayLegendStyle("vendor")}>Vendor</Text>
+
           <Picker
+            selectedValue={
+              !props.formValues.vendor ? "" : props.formValues.vendor
+            }
             style={displayPickerStyle("vendor")}
             onValueChange={(itemValue, itemIndex) =>
               handleChange(itemValue, "vendor", "selected")
@@ -379,6 +392,9 @@ const showTransactionForm = (props: any) => {
           <Text style={displayLegendStyle("supplier")}>Supplier</Text>
 
           <Picker
+            selectedValue={
+              !props.formValues.supplier ? "" : props.formValues.supplier
+            }
             style={displayPickerStyle("supplier")}
             onValueChange={(itemValue, itemIndex) =>
               handleChange(itemValue, "supplier", "selected")
@@ -439,7 +455,7 @@ const showTransactionForm = (props: any) => {
 export default function AddUpdateTransaction(props: any) {
   return (
     <View style={{ width: "100%", marginTop: 10 }}>
-      {showCustomerForm(props)}
+      {props.flag == "edit" ? null : showCustomerForm(props)}
 
       {showTransactionForm(props)}
     </View>

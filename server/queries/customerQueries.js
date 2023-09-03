@@ -18,12 +18,13 @@ WHERE t.fk_customer_id = '${id}'
 
 // Get the latest customer sale/product
 const getCustomerLatestSale = (id) => `
-SELECT p.fk_type_id, p.fk_vendor_id, v.vendor_name, p.fk_supplier_id, s.supplier_name, p.size_of_party, p.product_cost, p.product_comm, p.is_comm_received, MAX(p.travel_start_date) as date
+SELECT p.fk_type_id, p.fk_vendor_id, v.vendor_name, p.fk_supplier_id, s.supplier_name, p.size_of_party, p.product_cost, p.product_comm, p.is_comm_received, p.travel_start_date as date
 FROM product p JOIN transaction t 
 ON p.product_id = t.fk_product_id 
 JOIN vendor v ON p.fk_vendor_id = v.vendor_id
 JOIN supplier s ON p.fk_supplier_id = s.supplier_id
 WHERE t.fk_customer_id = '${id}'
+ORDER BY date DESC LIMIT 1
 `;
 
 const getCustomerCommissions = (id) => `

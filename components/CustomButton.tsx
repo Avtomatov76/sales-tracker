@@ -14,14 +14,16 @@ export default function CustomButton(props: any) {
         </Btn>
       );
 
-    if (props.flag == "add" && props.type == "text")
+    if (
+      (props.flag == "add" && props.type == "text") ||
+      (props.flag == "update" && props.type == "text")
+    )
       return (
         <Text
           style={{ color: "#F27D42", fontWeight: "700", marginRight: 15 }}
-          //onPress={() => console.log("Adding transaction...")}
           onPress={props.submitForm}
         >
-          ADD
+          {props.flag.toUpperCase()}
         </Text>
       );
 
@@ -30,7 +32,6 @@ export default function CustomButton(props: any) {
         <Btn
           mode="contained"
           style={styles.submitBtn}
-          //style={props.btnStyles ? props.btnStyles : styles.submitBtn}
           onPress={props.submitForm}
         >
           {props.title ? props.title : "SUBMIT"}
@@ -59,11 +60,9 @@ export default function CustomButton(props: any) {
         // </Btn>
 
         <View style={{ marginRight: 25 }}>
-          {/* <CustomButton hideModal={props.hideModal} flag="cancel" /> */}
           <Text
             style={{ color: "grey", fontWeight: "700" }}
             onPress={props.hideModal}
-            //onPress={() => console.log("Cancelling transaction...")}
           >
             CANCEL
           </Text>
@@ -81,7 +80,7 @@ const styles = StyleSheet.create({
     height: 35,
     color: "#FFFFFF",
     backgroundColor: "#F27D42", //"#368cbf",
-    borderRadius: 5, //12,
+    borderRadius: 5,
   },
   submitBtn: {
     display: "flex",
@@ -89,17 +88,17 @@ const styles = StyleSheet.create({
     height: 35,
     color: "#FFFFFF",
     backgroundColor: "#F27D42", //"#368cbf", //"#F27D42", //"#368cbf",
-    borderRadius: 5, //12,
+    borderRadius: 5,
   },
   deleteBtn: {
     display: "flex",
     backgroundColor: "red",
-    borderRadius: 5, //12,
+    borderRadius: 5,
   },
   cancelBtn: {
     display: "flex",
     borderWidth: 1,
     borderColor: "#368cbf",
-    borderRadius: 5, //12,
+    borderRadius: 5,
   },
 });

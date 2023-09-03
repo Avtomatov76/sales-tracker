@@ -1,42 +1,96 @@
-import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { useState, useEffect } from "react";
-import TextField from "@material-ui/core/TextField";
+import { View, StyleSheet } from "react-native";
 import axios from "axios";
-import { useQuery, useQueries } from "react-query";
 import LoadingScreen from "./LoadingScreen";
-import ErrorScreen from "./ErrorScreen";
 import GetConfiguration from "../constants/Config";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import moment from "moment";
-import CustomButton from "./CustomButton";
-import ErrorModal from "../modals/ErrorModal";
-import { getProductsData, getProductsForRange } from "../api/endPoints";
+import {
+  getProductsData,
+  getProductsForRange,
+  getProductsById,
+} from "../api/endPoints";
 import TransactionsList from "./TransactionsList";
+import { sortArray } from "../functions/transactionsFunctions";
+import TransactionsHeader from "./TransactionsHeader";
+import NotFound from "./NotFound";
+import { TRANSACTION_END_POINTS } from "../constants/transactionsEndPoints";
 
 export default function Transactions(props: any) {
+  const [customers, setCustomers] = useState<any>([]);
+  const [allProducts, setAllProducts] = useState<any>();
   const [products, setProducts] = useState<any>();
+  const [vendors, setVendors] = useState<any>();
+  const [suppliers, setSuppliers] = useState<any>();
+  const [travelTypes, setTravelTypes] = useState<any>();
+  const [destinations, setDestinations] = useState<any>();
+  const [transactions, setTransactions] = useState<any>();
+
   const [value, onChange] = useState(new Date());
   const [startDate, setStartDate] = useState<any>("");
   const [endDate, setEndDate] = useState<any>("");
   const [showCalendar, setShowCalendar] = useState(false);
   const [stage, setStage] = useState("");
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [selected, setSelected] = useState("default");
+  const [listUpdate, setListUpdate] = useState(false);
 
   const baseURL = GetConfiguration().baseUrl;
 
-  const { isLoading, isError, data, error, refetch } = useQuery(
-    ["products"],
-    () => axios.get(baseURL + getProductsData).then((res) => res.data)
-  );
+  //
+  useEffect(() => {
+    async function getData() {
+      Promise.all(
+        TRANSACTION_END_POINTS.map((endpoint) => axios.get(endpoint))
+      ).then(
+        ([
+          { data: customers },
+          { data: vendors },
+          { data: suppliers },
+          { data: travelTypes },
+          { data: transactions },
+          { data: products },
+          { data: destinations },
+          { data: productData },
+        ]) => {
+          setCustomers(customers), setVendors(vendors);
+          setSuppliers(suppliers);
+          setTravelTypes(travelTypes);
+          setTransactions(transactions);
+          setAllProducts(products);
+          setDestinations(destinations);
+          setProducts(productData);
+        }
+      );
+    }
 
-  if (isLoading) return <LoadingScreen />;
-  if (error) return <ErrorScreen error={error} type="products" />;
+    getData();
+    setListUpdate(false);
+  }, [listUpdate]);
+
+  let sortedCustomers = [];
+  if (customers && customers.length > 0) {
+    sortedCustomers = sortArray(customers, "last_name") || [];
+  }
+
+  if (!products) return <LoadingScreen />;
 
   const handleOnClick = (stage: any) => {
-    //console.log("Stage:", stage);
     setStage(stage);
     setShowCalendar(true);
+  };
+
+  const handleSelection = (option: any, flag: any) => {
+    if (flag == "search") setSelected(option);
+    handleSearch("customer", option);
+  };
+
+  const handleUndoIconPress = async () => {
+    setSelected("default");
+    await axios
+      .get(baseURL + getProductsData)
+      .then((res) => setProducts(res.data));
   };
 
   const handleOnChange = (value: any, stage: any) => {
@@ -48,82 +102,66 @@ export default function Transactions(props: any) {
     setShowCalendar(false);
   };
 
-  const handleSearch = async () => {
-    console.log("SEARCHING...............");
+  const handleSearch = async (flag: any, id = "") => {
+    if (flag == "date") {
+      if (!startDate && !endDate) {
+        setShowErrorModal(true);
+        return;
+      }
 
-    if (!startDate && !endDate) {
-      setShowErrorModal(true);
-      return;
+      const params = {
+        start: !startDate && endDate ? endDate : startDate,
+        end: !endDate && startDate ? startDate : endDate,
+      };
+
+      await axios
+        .get(baseURL + getProductsForRange, { params })
+        .then((res) => setProducts(res.data));
     }
 
-    const params = {
-      start: !startDate && endDate ? endDate : startDate,
-      end: !endDate && startDate ? startDate : endDate,
-    };
+    if (flag == "customer") {
+      const params = {
+        id: id,
+      };
 
-    await axios
-      .get(baseURL + getProductsForRange, { params })
-      .then((res) => setProducts(res.data));
+      await axios
+        .get(baseURL + getProductsById, { params })
+        .then((res) => setProducts(res.data));
+    }
   };
 
-  if (!data)
-    return (
-      <View>
-        <Text>No Transactions</Text>
-      </View>
-    );
-  console.log("products products: ", products);
+  if (!products) return <NotFound message="No transactions found!" />;
+
   return (
     <>
       <View style={{ display: "flex" }}>
-        <View style={styles.header}>
-          <Text style={styles.textField}>Transactions</Text>
-
-          <View style={styles.dateSearch}>
-            <View style={{ display: "flex", marginRight: 20 }}>
-              <TextField
-                size="small"
-                value={startDate}
-                onClick={() => handleOnClick("start")}
-                variant="outlined"
-                label="Select start date"
-                style={{ width: 160 }}
-              />
-            </View>
-            <View style={{ display: "flex", marginRight: 30 }}>
-              <TextField
-                size="small"
-                value={endDate}
-                onClick={() => handleOnClick("end")}
-                variant="outlined"
-                label="Select end date"
-                style={{ width: 160 }}
-              />
-            </View>
-          </View>
-          <View
-            style={{
-              display: "flex",
-              height: "auto",
-              marginBottom: 10,
-            }}
-          >
-            <CustomButton
-              title="Search"
-              submitForm={handleSearch}
-              flag="search"
-            />
-          </View>
-        </View>
+        <TransactionsHeader
+          selected={selected}
+          endDate={endDate}
+          startDate={startDate}
+          handleSelection={handleSelection}
+          handleUndoIconPress={handleUndoIconPress}
+          sortedCustomers={sortedCustomers}
+          handleOnClick={handleOnClick}
+          handleSearch={handleSearch}
+        />
 
         <hr style={styles.hr} />
 
         <TransactionsList
-          products={products ? products : null}
-          data={data ? data : null}
+          refreshTEST={() => setListUpdate(true)}
+          data={products ? products : null}
+          products={allProducts ? allProducts : null}
+          customers={customers ? customers : null}
+          vendors={vendors ? vendors : null}
+          suppliers={suppliers ? suppliers : null}
+          travelTypes={travelTypes ? travelTypes : null}
+          transactions={transactions ? transactions : null}
+          destinations={destinations ? destinations : null}
           startDate={startDate || ""}
           endDate={endDate || ""}
-          numProducts={!products ? data.length : products.length}
+          numProducts={products.length}
+          //updateList={updateList}
         />
       </View>
       {showCalendar ? (
@@ -142,11 +180,6 @@ export default function Transactions(props: any) {
           />
         </View>
       ) : null}
-      {/* <ErrorModal
-        visible={showErrorModal}
-        hideModal={() => setShowErrorModal(false)}
-        recordType="dateMissing"
-      /> */}
     </>
   );
 }
@@ -157,26 +190,5 @@ const styles = StyleSheet.create({
     backgroundColor: "grey",
     border: "none",
     height: 1,
-  },
-  dateSearch: {
-    display: "flex",
-    flexWrap: "wrap",
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  textField: {
-    fontSize: 36,
-    fontWeight: "600",
-    paddingRight: 20,
-    marginRight: "auto",
-    marginBottom: 10,
-  },
-  header: {
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    alignContent: "center",
-    alignItems: "center",
   },
 });

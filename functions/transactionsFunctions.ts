@@ -1,5 +1,6 @@
 import moment from "moment";
 import { nanoid } from "nanoid";
+import { isCallOrNewExpression } from "typescript";
 
 // Sort array alphabetically (asc)
 export function sortArray(array: any, field: any) {
@@ -46,9 +47,8 @@ export const validateTransaction = (formValues: any, products: any) => {
   return { validTransaction: true, transError: false };
 };
 
-export function createProductEntry(formData: any) {
+export function createProductEntry(formData: any, flag: any) {
   if (!formData) {
-    console.log("No form data!!!");
     return;
   }
 
@@ -69,7 +69,7 @@ export function createProductEntry(formData: any) {
   prodHash = prodHash.replace(/\s+/g, "").toLowerCase();
 
   product = {
-    id: productID,
+    id: flag == "edit" ? formData.product_id : productID,
     destinationID: formData.destination.toUpperCase(),
     typeID: formData.travelType,
     vendorID: formData.vendor,
@@ -84,15 +84,16 @@ export function createProductEntry(formData: any) {
     hash: prodHash,
   };
 
-  transaction = createTransactionEntry(formData, productID);
+  transaction = createTransactionEntry(formData, productID, flag);
 
   return { product, transaction };
 }
 
-function createTransactionEntry(formData: any, productID: any) {
+function createTransactionEntry(formData: any, productID: any, flag: any) {
   let transaction = {
+    id: flag == "edit" ? formData.transaction_id : "",
     customerID: formData.id,
-    productID: productID,
+    productID: flag == "edit" ? formData.product_id : productID,
     transactionType: formData.payment,
     transactionAmount: parseFloat(formData.total),
     transactionDate: !formData.saleDate
@@ -101,4 +102,14 @@ function createTransactionEntry(formData: any, productID: any) {
   };
 
   return transaction;
+}
+
+export function checkForDupeDestination(code: any, destinations: any) {
+  let isFound = false;
+
+  destinations.forEach((dest: any) => {
+    if (code.toLowerCase() == dest.destination_id.toLowerCase()) isFound = true;
+  });
+
+  return isFound;
 }

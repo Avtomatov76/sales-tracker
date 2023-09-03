@@ -37,6 +37,7 @@ export const transactionsAPI = "/api/transactions";
 export const getYearToDateSalesAPI = "/api/sales-year";
 export const getCurrentMonthSalesAPI = "/api/sales-month";
 export const saveTransactionsAPI = "/api/transactions-save";
+export const updateTransaction = "/api/transactions-update";
 
 // Products
 export const productsAPI = "/api/products";
@@ -44,3 +45,6 @@ export const saveProductsAPI = "/api/products-save";
 export const getProductHashes = "/api/products-hash";
 export const getProductsData = "/api/products-data";
 export const getProductsForRange = "/api/products-range";
+export const getProductsById = "/api/products-id";
+export const updateProductFieldAPI = "/api/products-field";
+export const updateProduct = "/api/products-update";

@@ -1,4 +1,3 @@
-// GET
 const getAllTransactions = `
 SELECT * FROM transaction`;
 
@@ -16,8 +15,15 @@ INSERT INTO travel_type (type_id)
  VALUES ('cruise')
 `;
 
+const updateTransaction = (values) => `
+UPDATE transaction SET transaction_type='${values.transactionType}', transaction_amount='${values.transactionAmount}',
+transaction_date='${values.transactionDate}'
+WHERE transaction_id='${values.id}'
+`;
+
 module.exports = {
   getAllTransactions,
   getYearToDateSalesQuery,
   getCurrentMonthSalesQuery,
+  updateTransaction,
 };
