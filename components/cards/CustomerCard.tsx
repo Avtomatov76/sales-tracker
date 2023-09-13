@@ -80,8 +80,8 @@ export default function CustomerCard(props: any) {
     //await queryClient.invalidateQueries(["customers"]);
   };
 
-  console.log("Sales: ", sales);
-  console.log("Latest sale: ", latestSale);
+  // console.log("Sales: ", sales);
+  // console.log("Latest sale: ", latestSale);
 
   if (!customer) return null;
 

@@ -18,18 +18,19 @@ export default function ModalHeader(props: any) {
           fontSize: 18,
           fontWeight: "600",
           marginLeft: 5,
-          //marginRight: 5,
         }}
       >
-        {props.flag == "add" ? `New ${props.title}` : `Update ${props.title}`}{" "}
+        {props.flag == "delete"
+          ? "Confirm Delete"
+          : props.flag == "add"
+          ? `New ${props.title}`
+          : `Update ${props.title}`}{" "}
       </Text>
       <Pressable
         style={{
           alignSelf: "flex-end",
-          // marginTop: 10,
           marginBottom: 20,
           marginRight: -20,
-          //paddingLeft: 5,
           paddingRight: 15,
         }}
         onPress={props.onPress}

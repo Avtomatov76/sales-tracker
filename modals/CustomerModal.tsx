@@ -1,3 +1,4 @@
+import { useState } from "react";
 import axios from "axios";
 import { StyleSheet } from "react-native";
 import Modal from "react-native-modal";
@@ -8,6 +9,8 @@ import { getCustomersNames } from "../functions/customerFunctions";
 import { useQueryClient } from "react-query";
 
 export default function CustomerModal(props: any) {
+  const [message, setMessage] = useState("");
+
   const queryClient = useQueryClient();
 
   let customersNames = getCustomersNames(props.customers);
@@ -28,9 +31,16 @@ export default function CustomerModal(props: any) {
     props.hideModal();
   };
 
+  const handleOKpress = () => {
+    setMessage("");
+    hideModal();
+  };
+
   const deleteCustomer = async (id: any) => {
     try {
-      await axios.post(baseUrl + customersAPI + `/${id}`);
+      const res = await axios.post(baseUrl + customersAPI + `/${id}`);
+      console.log(res.data.result);
+      if (res.data) setMessage("Could not delete customer ");
     } catch (err) {
       console.log(err);
     }
@@ -64,6 +74,7 @@ export default function CustomerModal(props: any) {
       <CustomerForm
         flag={props.flag}
         index={props.index}
+        message={message}
         customerId={props.customerId}
         customers={props.customers}
         customer={props.customer}
@@ -72,6 +83,7 @@ export default function CustomerModal(props: any) {
         handleSubmit={handleSubmit}
         deleteCustomer={deleteCustomer}
         hideModal={hideModal}
+        handleOKpress={handleOKpress}
       />
     </Modal>
   );

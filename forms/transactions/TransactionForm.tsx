@@ -23,6 +23,8 @@ export default function TransactionForm(props: any) {
     props.hideModal();
   };
 
+  console.log("********** transactions **********  : ", props.transaction);
+
   useEffect(() => {
     if (props.flag == "edit")
       setFormValues({
@@ -40,6 +42,7 @@ export default function TransactionForm(props: any) {
         travelType: props.transaction.travel_type,
         vendor: props.transaction.vendor_id,
         supplier: props.transaction.supplier,
+        //supplier_name: props.transaction.supplier_name,
         notes: props.transaction.notes,
       });
   }, []);

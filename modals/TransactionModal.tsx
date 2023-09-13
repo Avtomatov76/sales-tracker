@@ -89,6 +89,7 @@ export default function TransactionModal(props: any) {
       }
     }
 
+    //  re-work this --> currently it is not adding a new airport code !!!!!!!!!!!
     let isFoundDest = checkForDupeDestination(
       formData.destination,
       props.destinations

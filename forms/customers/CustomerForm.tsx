@@ -65,11 +65,12 @@ export default function CustomerForm(props: any) {
     if (props.flag === "delete")
       return (
         <ConfirmDelete
+          message={props.message}
           hideModal={props.hideModal}
           customerId={props.customerId}
           customer={props.customer}
-          //submitForm={submitForm()}
           deleteCustomer={props.deleteCustomer}
+          handleOKpress={props.handleOKpress}
         />
       );
 
@@ -94,19 +95,25 @@ export default function CustomerForm(props: any) {
 
       {displayFormContent()}
 
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "flex-end",
-          marginTop: 20,
-          width: "100%",
-        }}
-      >
-        <View style={{ marginRight: 20 }}>
-          <CustomButton hideModal={props.hideModal} flag="cancel" type="text" />
+      {props.flag == "edit" ? (
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            marginTop: 20,
+            width: "100%",
+          }}
+        >
+          <View style={{ marginRight: 20 }}>
+            <CustomButton
+              hideModal={props.hideModal}
+              flag="cancel"
+              type="text"
+            />
+          </View>
+          <CustomButton submitForm={submitForm} flag="add" type="text" />
         </View>
-        <CustomButton submitForm={submitForm} flag="add" type="text" />
-      </View>
+      ) : null}
     </View>
   );
 }

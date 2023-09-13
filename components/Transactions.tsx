@@ -16,6 +16,7 @@ import { sortArray } from "../functions/transactionsFunctions";
 import TransactionsHeader from "./TransactionsHeader";
 import NotFound from "./NotFound";
 import { TRANSACTION_END_POINTS } from "../constants/transactionsEndPoints";
+import CustomButton from "./CustomButton";
 
 export default function Transactions(props: any) {
   const [customers, setCustomers] = useState<any>([]);
@@ -40,6 +41,9 @@ export default function Transactions(props: any) {
 
   //
   useEffect(() => {
+    //if (Object.keys(products).length != 0) return;
+    console.log("A products.....   : ", products);
+
     async function getData() {
       Promise.all(
         TRANSACTION_END_POINTS.map((endpoint) => axios.get(endpoint))
@@ -73,6 +77,19 @@ export default function Transactions(props: any) {
   if (customers && customers.length > 0) {
     sortedCustomers = sortArray(customers, "last_name") || [];
   }
+
+  // test for sorting products
+  const sortProducts = (flag: any) => {
+    console.log("FLAGGGGGGGGGGGGGG: ", flag);
+    let sorted = [];
+    if (flag == "status") sorted = sortArray(products, "is_comm_received");
+    if (flag == "date") sorted = sortArray(products, "date");
+
+    setProducts(sorted);
+    //setAllProducts(sorted);
+    setListUpdate(true);
+  };
+  //
 
   if (!products) return <LoadingScreen />;
 
@@ -161,6 +178,7 @@ export default function Transactions(props: any) {
           startDate={startDate || ""}
           endDate={endDate || ""}
           numProducts={products.length}
+          sortProducts={sortProducts}
           //updateList={updateList}
         />
       </View>

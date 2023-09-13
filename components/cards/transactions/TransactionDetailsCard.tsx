@@ -48,7 +48,25 @@ export default function TransactionDetailsCard(props: any) {
 
     <Card style={styles.card}>
       <View>
-        <Ionicons name="card" size={42} color="#FF5F15" />
+        <View
+          style={{
+            flexDirection: "row",
+            //alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Ionicons name="card" size={52} color="#FF5F15" />
+
+          <Text
+            style={{
+              fontSize: 20,
+              marginRight: 10,
+              fontWeight: "100",
+            }}
+          >
+            {moment(transDetails.date).format("MMM DD, YYYY")}
+          </Text>
+        </View>
 
         <Text style={styles.custName}>
           {transDetails.first_name == "na"
@@ -67,9 +85,9 @@ export default function TransactionDetailsCard(props: any) {
             <Text
               style={{
                 marginRight: 20,
-                fontSize: 22,
-                fontWeight: "600",
-                color: "green",
+                fontSize: 20,
+                fontWeight: "100",
+                //color: "green",
               }}
             >
               {displayPhone(transDetails.phone)}
@@ -78,7 +96,11 @@ export default function TransactionDetailsCard(props: any) {
 
           {!transDetails.email || transDetails.email == "na" ? null : (
             <Text
-              style={{ fontSize: 16, color: "blue" }}
+              style={{
+                fontSize: 16,
+                color: "#368cbf",
+                textDecorationLine: "underline",
+              }}
               onPress={() => Linking.openURL(`mailto:${transDetails.email}`)}
             >
               {transDetails.email}
@@ -88,23 +110,42 @@ export default function TransactionDetailsCard(props: any) {
           {/* <Text style={{ fontSize: 16, color: "grey" }}>|</Text> */}
         </View>
 
-        <Text style={{ fontSize: 16 }}>
-          {moment(transDetails.date).format("MMM DD, YYYY")}
-        </Text>
-
-        <Text>Paid: {formatDollarEntry(transDetails.cost)}</Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={{ color: "grey" }}>Paid:</Text>
+          <Text
+            style={{
+              marginLeft: 5,
+              //color: "green",
+              fontWeight: "600",
+            }}
+          >
+            {formatDollarEntry(transDetails.cost)}
+          </Text>
+        </View>
 
         <View
           style={{
             flexDirection: "row",
-            marginBottom: 20,
+            marginBottom: 10,
             alignItems: "center",
           }}
         >
-          <Text>Commission: {formatDollarEntry(transDetails.commission)}</Text>
-          <Text style={{ marginLeft: 20 }}>Received: </Text>
-          <Text style={{ color: "blue", fontWeight: "600" }}>
-            {transDetails.is_comm_received == "N" ? "No" : "Yes"}
+          <View style={{ flexDirection: "row" }}>
+            <Text style={{ color: "grey" }}>Commission:</Text>
+            <Text style={{ marginLeft: 5, fontWeight: "600" }}>
+              {formatDollarEntry(transDetails.commission)}
+            </Text>
+          </View>
+          <Text style={{ marginLeft: 30, marginRight: 10, color: "grey" }}>
+            Received:
+          </Text>
+          <Text
+            style={{
+              color: transDetails.is_comm_received == "Y" ? "blue" : "red",
+              fontWeight: "600",
+            }}
+          >
+            {transDetails.is_comm_received == "N" ? "NO" : "YES"}
           </Text>
 
           {transDetails.is_comm_received == "Y" ? null : (
@@ -112,16 +153,15 @@ export default function TransactionDetailsCard(props: any) {
               style={{
                 paddingTop: 3,
                 paddingBottom: 3,
-                marginLeft: 20,
+                marginLeft: 30,
                 paddingLeft: 10,
                 paddingRight: 10,
-                borderWidth: 1,
                 borderRadius: 4,
-                borderColor: "grey",
+                backgroundColor: "#368cbf",
               }}
             >
               <Text
-                style={{ color: "green" }}
+                style={{ color: "#FFFFFF" }}
                 onPress={() => changeReceived(transDetails.product_id)}
               >
                 Change to 'Yes'
@@ -129,16 +169,44 @@ export default function TransactionDetailsCard(props: any) {
             </View>
           )}
         </View>
+
+        <View
+          style={{
+            //flexDirection: "row",
+            marginBottom: 20,
+          }}
+        >
+          <View style={{ flexDirection: "row" }}>
+            <Text style={{ color: "grey" }}>Party Size: </Text>
+            <Text style={{ fontWeight: "600" }}>{transDetails.party}</Text>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={{ color: "grey" }}>Travel Type: </Text>
+            <Text style={{ fontWeight: "600" }}>
+              {transDetails.travel_type}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={{ color: "grey" }}>Vendor: </Text>
+            <Text style={{ fontWeight: "600" }}>{transDetails.vendor}</Text>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={{ color: "grey" }}>Supplier: </Text>
+            <Text style={{ fontWeight: "600" }}>
+              {transDetails.supplier_name}
+            </Text>
+          </View>
+        </View>
       </View>
 
       <Card.Actions>
-        <Pressable onPress={() => props.editTransaction(transDetails)}>
-          <Text style={{ color: "grey", fontWeight: "700", marginRight: 20 }}>
-            EDIT
+        <Pressable onPress={props.hideCard}>
+          <Text style={{ color: "grey", fontWeight: "700", marginRight: 30 }}>
+            CLOSE
           </Text>
         </Pressable>
-        <Pressable onPress={props.hideCard}>
-          <Text style={{ color: "red", fontWeight: "700" }}>CLOSE</Text>
+        <Pressable onPress={() => props.editTransaction(transDetails)}>
+          <Text style={{ color: "#FF5F15", fontWeight: "700" }}>EDIT</Text>
         </Pressable>
       </Card.Actions>
     </Card>
@@ -150,7 +218,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     alignSelf: "center",
     width: 450,
-    backgroundColor: "#FFEED2",
+    backgroundColor: "#F5EECE",
     margin: 8,
     padding: 20,
     borderRadius: 5,

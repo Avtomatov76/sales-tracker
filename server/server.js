@@ -103,7 +103,7 @@ app.get("/api/customers/sales/:id", async (req, res) => {
   }
 });
 
-// Get the latest cusstomer sale info
+// Get the latest customer sale info
 app.get("/api/customers/sale/:id", async (req, res) => {
   try {
     const result = await db.pool.query(getCustomerLatestSale(req.params["id"]));
@@ -162,7 +162,8 @@ app.post("/api/customers/:id", async (req, res) => {
     await db.pool.query(deleteCustomer(req.params["id"]));
     res.send({ result: "ok" });
   } catch (err) {
-    throw err;
+    //throw err;
+    res.send({ result: "fail" });
   }
 });
 
@@ -192,20 +193,13 @@ app.get("/api/customers/delete/:id", async (req, res) => {
   }
 });
 
-// POST Multiple customers
-// app.post("/api/customers-save", async (req, res) => {
-//   const customers = req.body;
-//   console.log("CUSTOMERS: ", customers);
-// });
-
 app.post("/api/customers-save", async (req, res) => {
   const customers = req.body;
-  //console.log("CUSTOMERS: ", customers);
 
   if (customers.length == 0) return; //res.send({ result: "No new customers inserted!" });
 
   let values = postCustomers(customers);
-  //console.log("VALUES: ", values);
+
   let sql = `INSERT INTO customer (customer_id, first_name, last_name, street_address, city, state, cust_phone, email) VALUES ${values}`;
 
   try {
@@ -476,18 +470,6 @@ app.get("/api/products-range", async (req, res) => {
   }
 });
 
-app.get("/api/products/details", async (req, res) => {
-  // get params off body
-  // customize calls to DB based on params
-  // handle results
-  // try {
-  //   const result = await db.pool.query(getAllProducts);
-  //   res.send(result);
-  // } catch (err) {
-  //   throw err;
-  // }
-});
-
 // UPDATE product field
 app.post("/api/products-field", async (req, res) => {
   const field = req.body.params.field;
@@ -570,8 +552,6 @@ app.get("/api/transactions", async (req, res) => {
 app.post("/api/transactions-save", async (req, res) => {
   const transactions = req.body;
   if (!transactions || transactions.length == 0) return;
-
-  //console.log("TRANSACTIONS: ", transactions);
 
   let transArray = [];
   if (transactions.constructor.name === "Object") {

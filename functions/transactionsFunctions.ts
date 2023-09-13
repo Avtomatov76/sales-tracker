@@ -6,7 +6,17 @@ import { isCallOrNewExpression } from "typescript";
 export function sortArray(array: any, field: any) {
   if (array.length == 0) return;
 
+  console.log("HITTTTTTTTIING SORT ARRAY: ", array, field);
+
   let sortedArray = [];
+
+  if (field == "is_comm_received") {
+    sortedArray = array.sort((a: any, b: any) => {
+      a[field] - b[field];
+    });
+
+    console.log("sorted array: ", sortedArray);
+  }
 
   sortedArray = array.sort((a: any, b: any) =>
     a[field].localeCompare(b[field])

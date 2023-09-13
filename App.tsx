@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Button, Menu, Divider, Provider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import HomeScreen from "./screens/HomeScreen";
-import Customers from "./components/Customers";
+import Customers from "./components/Customers.1";
 import { Header } from "react-native/Libraries/NewAppScreen";
 import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";

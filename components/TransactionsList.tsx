@@ -5,7 +5,11 @@ import {
   Text,
   View,
   Dimensions,
+  Picker,
+  SafeAreaView,
+  FlatList,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
 import axios from "axios";
 import moment from "moment";
@@ -20,12 +24,14 @@ import TransactionEntry from "./TransactionEntry";
 import OutsideClickHandler from "react-outside-click-handler";
 //
 import Draggable from "react-native-draggable";
+
 //
 
 //
 const widthAndHeight = 150;
 const series = [300, 150, 400];
 const sliceColor = ["#fbd203", "#ffb300", "#ff9100"];
+
 //
 
 export default function TransactionsList(props: any) {
@@ -35,7 +41,12 @@ export default function TransactionsList(props: any) {
   const [transaction, setTransaction] = useState<any>();
   const [refresh, setRefresh] = useState(false);
 
+  const [data, setData] = useState<any>(props.data);
+  const [allProducts, setAllProducts] = useState<any>(props.allProducts);
+
   const baseURL = GetConfiguration().baseUrl;
+
+  //const
 
   const displayTransactionModal = (flag: string) => {
     setFlag(flag);
@@ -126,37 +137,54 @@ export default function TransactionsList(props: any) {
       //onLayout={(event) => getComponentWidth(event)}
     >
       <View style={styles.summary}>
-        <View style={{ flexDirection: "row" }}>
-          <Text
-            style={[
-              styles.catTitle,
-              {
-                marginTop: 20,
-                marginBottom: 20,
-                marginLeft: 8,
-              },
-            ]}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: 10,
+          }}
+        >
+          <View
+            style={{ flexDirection: "row", marginTop: 10, marginBottom: 10 }}
           >
-            Summary
-          </Text>
+            <Text
+              style={{
+                fontSize: 20,
+                alignSelf: "center",
+              }}
+            >
+              {props.numProducts}
+            </Text>
+            <Text
+              style={{
+                marginLeft: 10,
+                alignSelf: "center",
+              }}
+            >
+              transactions
+            </Text>
+          </View>
 
-          <Text
+          <View
             style={{
-              fontSize: 20,
-              marginLeft: 20,
-              alignSelf: "center",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              marginTop: 10,
             }}
           >
-            {props.numProducts}
-          </Text>
-          <Text
-            style={{
-              marginLeft: 10,
-              alignSelf: "center",
-            }}
-          >
-            transactions
-          </Text>
+            {props.selected == "date" || props.selected == "name" ? null : (
+              <Picker
+                //style={styles.textInputSelect}
+                onValueChange={(itemValue) => props.sortProducts(itemValue)}
+              >
+                <Picker.Item label="- Sort by -" value="" />
+
+                <Picker.Item label={"Date"} value="date" />
+                <Picker.Item label={"Status"} value="status" />
+              </Picker>
+            )}
+          </View>
         </View>
 
         <View
@@ -204,6 +232,15 @@ export default function TransactionsList(props: any) {
           </Text>
         </View>
       )}
+
+      <View style={{ width: 150, marginTop: 20 }}>
+        <CustomButton
+          title="Export..."
+          flag="add"
+          type="button"
+          //submitForm={() => displayTransactionModal("add")}
+        />
+      </View>
 
       <TransactionModal
         flag={flag}
@@ -264,7 +301,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     padding: 10,
     borderWidth: 1,
-    borderColor: "blue",
+    borderColor: "grey",
     borderRadius: 5,
   },
   summary: {
@@ -276,5 +313,10 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingLeft: 20,
     paddingBottom: 20,
+  },
+  pdf: {
+    flex: 1,
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
 });

@@ -40,6 +40,10 @@ export default function CommissionsDetails(props: any) {
   const [currYearMonthlyComm, setCurrYearMonthlyComm] = useState<any>();
   const [lastYearMonthlyComm, setLastYearMonthlyComm] = useState<any>();
 
+  //
+  console.log("UNPAID COMMISSIONS: ", unpaidCommissions);
+  //
+
   const commissionCards = [
     {
       title: "Total commissions",

@@ -40,16 +40,23 @@ export default function CustomButton(props: any) {
 
     if (props.flag == "delete")
       return (
-        <Btn
-          mode="contained"
-          style={styles.deleteBtn}
+        <Text
+          style={{ color: "#F27D42", fontWeight: "700", marginRight: 15 }}
           onPress={props.handleDelete}
         >
-          DELETE
-        </Btn>
+          {props.flag.toUpperCase()}
+        </Text>
+
+        // <Btn
+        //   mode="contained"
+        //   style={styles.deleteBtn}
+        //   onPress={props.handleDelete}
+        // >
+        //   DELETE
+        // </Btn>
       );
 
-    if (props.flag == "cancel")
+    if (props.flag == "cancel" || props.flag == "ok")
       return (
         // <Btn
         //   textColor="#368cbf"
@@ -64,7 +71,7 @@ export default function CustomButton(props: any) {
             style={{ color: "grey", fontWeight: "700" }}
             onPress={props.hideModal}
           >
-            CANCEL
+            {props.flag.toUpperCase()}
           </Text>
         </View>
       );
