@@ -1,6 +1,5 @@
 import moment from "moment";
 import { nanoid } from "nanoid";
-import { isCallOrNewExpression } from "typescript";
 
 // Sort array alphabetically (asc)
 export function sortArray(array: any, field: any) {
@@ -10,13 +9,18 @@ export function sortArray(array: any, field: any) {
 
   let sortedArray = [];
 
-  if (field == "is_comm_received") {
-    sortedArray = array.sort((a: any, b: any) => {
-      a[field] - b[field];
-    });
+  // if (field == "is_comm_received") {
+  //   sortedArray = array.sort((a: any, b: any) => {
+  //     a[field] - b[field];
+  //   });
 
-    console.log("sorted array: ", sortedArray);
-  }
+  //   console.log("sorted array: ", sortedArray);
+  // }
+
+  // if (field == "date")
+  //   sortedArray = array.sort((a: any, b: any) =>
+  //     a[field].localeCompare(b[field])
+  //   );
 
   sortedArray = array.sort((a: any, b: any) =>
     a[field].localeCompare(b[field])

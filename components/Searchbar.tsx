@@ -21,12 +21,6 @@ export default function Searchbar(props: any) {
 
   const custObjects = props.objects;
   const options = props.options;
-  //console.log("Options: ", options);
-
-  //
-  // console.log("Customer Names: ", options);
-  // console.log("Customer Objects: ", custObjects);
-  //
 
   const handleSelection = (value: any, event: any) => {
     props.handleSelection(value);
@@ -38,9 +32,7 @@ export default function Searchbar(props: any) {
   };
 
   return (
-    <View
-    //style={styles.searchContainer}
-    >
+    <View>
       <Autocomplete
         //style={styles.searchInput}
         //className={classes.searchInput}

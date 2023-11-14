@@ -2,9 +2,11 @@ import { StyleSheet, Text, View } from "react-native";
 import PieChart from "react-native-pie-chart";
 import { Card } from "react-native-paper";
 import { formatDollarEntry } from "../../../functions/customerFunctions";
+import { getColors } from "../../../constants/Colors";
 
 export default function CommissionsPieCard(props: any) {
   let pieChartData = props.data;
+  let colors = getColors(props.numColors);
 
   const displayPieDetails = (entry: any, index: any) => {
     return (
@@ -22,7 +24,7 @@ export default function CommissionsPieCard(props: any) {
             display: "flex",
             height: 15,
             width: 40,
-            backgroundColor: props.sliceColor[index],
+            backgroundColor: colors[index],
             marginRight: 20,
           }}
         ></View>
@@ -46,7 +48,7 @@ export default function CommissionsPieCard(props: any) {
         <PieChart
           widthAndHeight={props.widthAndHeight}
           series={props.series}
-          sliceColor={props.sliceColor}
+          sliceColor={colors}
           style={{ alignSelf: "center" }} // Possibly customize this as well!!
         />
       </View>
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
   },
   card: {
     display: "flex",
-    flexDirection: "column", //
+    flexDirection: "column",
     alignItems: "center",
     paddingTop: 20,
     height: 350,

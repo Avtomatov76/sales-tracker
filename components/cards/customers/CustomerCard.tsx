@@ -7,13 +7,16 @@ import {
   displayName,
   displayPhone,
   formatDollarEntry,
-} from "../../functions/customerFunctions";
+} from "../../../functions/customerFunctions";
 import axios from "axios";
 import moment from "moment";
-import GetConfiguration from "../../constants/Config";
+import GetConfiguration from "../../../constants/Config";
 import { useQuery, useQueryClient } from "react-query";
 import { Avatar, Button, Card, Text as Txt } from "react-native-paper";
-import { getCustomerSales, getCustomerLatestSale } from "../../api/endPoints";
+import {
+  getCustomerSales,
+  getCustomerLatestSale,
+} from "../../../api/endPoints";
 
 export default function CustomerCard(props: any) {
   const [sales, setSales] = useState<any>();

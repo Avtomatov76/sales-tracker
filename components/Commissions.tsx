@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import TextField from "@material-ui/core/TextField";
 import axios from "axios";
 import { useQuery } from "react-query";
 import LoadingScreen from "./LoadingScreen";
@@ -9,10 +8,10 @@ import GetConfiguration from "../constants/Config";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import moment from "moment";
-import CustomButton from "./CustomButton";
 import ErrorModal from "../modals/ErrorModal";
 import { getTotalCommissions, getCommissionsForRange } from "../api/endPoints";
 import CommissionsDetails from "./CommissionsDetails";
+import TabHeader from "./TabHeader";
 
 export default function Commissions(props: any) {
   const [commissions, setCommissions] = useState<any>();
@@ -72,90 +71,22 @@ export default function Commissions(props: any) {
 
   return (
     <>
-      <View style={{ display: "flex" }}>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            alignContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 36,
-              fontWeight: "600",
-              paddingRight: 20,
-              marginRight: "auto",
-              marginBottom: 10,
-            }}
-          >
-            Commissions
-          </Text>
+      <TabHeader
+        name="Commissions"
+        startDate={startDate}
+        endDate={endDate}
+        handleSearch={handleSearch}
+        handleOnClick={handleOnClick}
+      />
 
-          <View
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 10,
-            }}
-          >
-            <View style={{ display: "flex", marginRight: 20 }}>
-              <TextField
-                size="small"
-                value={startDate}
-                onClick={() => handleOnClick("start")}
-                variant="outlined"
-                label="Select start date"
-                style={{ width: 160 }}
-              />
-            </View>
-            <View style={{ display: "flex", marginRight: 30 }}>
-              <TextField
-                size="small"
-                value={endDate}
-                onClick={() => handleOnClick("end")}
-                variant="outlined"
-                label="Select end date"
-                style={{ width: 160 }}
-              />
-            </View>
-          </View>
-          <View
-            style={{
-              display: "flex",
-              height: "auto",
-              marginBottom: 10,
-            }}
-          >
-            <CustomButton
-              title="Search"
-              submitForm={handleSearch}
-              flag="search"
-            />
-          </View>
-        </View>
+      <CommissionsDetails
+        commissions={
+          commissions && commissions.commissions ? commissions.commissions : 0
+        }
+        startDate={startDate || ""}
+        endDate={endDate || ""}
+      />
 
-        <hr
-          style={{
-            width: "100%",
-            backgroundColor: "grey",
-            border: "none",
-            height: 1,
-          }}
-        />
-
-        <CommissionsDetails
-          commissions={
-            commissions && commissions.commissions ? commissions.commissions : 0
-          }
-          startDate={startDate || ""}
-          endDate={endDate || ""}
-        />
-      </View>
       {showCalendar ? (
         <View
           style={{

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, ScrollView, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import axios from "axios";
 import GetConfiguration from "../constants/Config";
 import {
@@ -9,40 +9,37 @@ import {
   getAllCommTopSuppliers,
   getYearToDateCommTopSuppliers,
   getLastYearCommissions,
+  getAllYearsCommissions,
   getLastYearToDate,
   getLastYearCurrentMonth,
   getUnpaidCommissions,
   getYearToDatePerMonth,
   getLastYearToDatePerMonth,
+  getYearsProductSales,
 } from "../api/endPoints";
 import CommissionsPieCard from "./cards/commissions/CommissionsPieCard";
 import CommissionsSummaryCard from "./cards/commissions/CommissionsSummaryCard";
 import { getSeriesForPie } from "../functions/commissionsFunctions";
 import CommissionsLineChart from "./cards/commissions/CommissionsLineChart";
 import ErrorScreen from "./ErrorScreen";
-import CommissionsBarChart from "./cards/commissions/CommissionsBarChart";
+import CommissionsPieChart from "./cards/commissions/CommissionsPieChart";
 
 const widthAndHeight = 150;
-const series = [300, 150, 400];
-const sliceColor = ["#fbd203", "#ffb300", "#ff9100"];
 
 export default function CommissionsDetails(props: any) {
-  const [chartWidth, setChartWidth] = useState<any>(500);
   const [totalCommissions, setTotalCommissions] = useState<any>();
   const [currMonthComm, setCurrMonthComm] = useState<any>();
   const [yearToDateComm, setYearToDateComm] = useState<any>();
   const [totalSupplierComm, setTotalSupplierComm] = useState<any>();
   const [ytdSupplierComm, setYtdSupplierComm] = useState<any>();
   const [lastYearComm, setLastYearComm] = useState<any>();
+  const [allYearsComm, setAllYearsComm] = useState<any>();
   const [lastYearToDateComm, setLastYearToDate] = useState<any>();
   const [lastYearCurrMonth, setLastYearCurrMonth] = useState<any>();
   const [unpaidCommissions, setUnpaidCommissions] = useState<any>();
   const [currYearMonthlyComm, setCurrYearMonthlyComm] = useState<any>();
   const [lastYearMonthlyComm, setLastYearMonthlyComm] = useState<any>();
-
-  //
-  console.log("UNPAID COMMISSIONS: ", unpaidCommissions);
-  //
+  const [yearsProductSales, setYearsProductSales] = useState<any>();
 
   const commissionCards = [
     {
@@ -120,6 +117,8 @@ export default function CommissionsDetails(props: any) {
         baseURL + getUnpaidCommissions,
         baseURL + getYearToDatePerMonth,
         baseURL + getLastYearToDatePerMonth,
+        baseURL + getAllYearsCommissions,
+        baseURL + getYearsProductSales,
       ];
       Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
         ([
@@ -134,6 +133,8 @@ export default function CommissionsDetails(props: any) {
           { data: unpaidCommissions },
           { data: currYearMonthlyComm },
           { data: lastYearMonthlyComm },
+          { data: allYearsComm },
+          { data: yearsProductSales },
         ]) => {
           setTotalCommissions(totalCommissions);
           setYearToDateComm(yearToDateComm);
@@ -146,19 +147,14 @@ export default function CommissionsDetails(props: any) {
           setUnpaidCommissions(unpaidCommissions);
           setCurrYearMonthlyComm(currYearMonthlyComm);
           setLastYearMonthlyComm(lastYearMonthlyComm);
+          setAllYearsComm(allYearsComm);
+          setYearsProductSales(yearsProductSales);
         }
       );
     }
 
     getCommissions();
   }, []);
-
-  // console.log("Last Year Comm: ", lastYearComm);
-  // console.log("Last Year-To-Date: ", lastYearToDateComm);
-  // console.log("Last Year Current Month: ", lastYearCurrMonth);
-  // console.log("Unpaid Commissions: ", unpaidCommissions);
-  // console.log("This Year Monthly: ", currYearMonthlyComm);
-  // console.log("Last Year Monthly: ", lastYearMonthlyComm);
 
   if (!totalCommissions)
     return (
@@ -226,6 +222,12 @@ export default function CommissionsDetails(props: any) {
         </View>
       </View>
 
+      <View>
+        <Text style={[styles.catTitle, { marginTop: 20, marginBottom: 10 }]}>
+          Data
+        </Text>
+      </View>
+
       <View
         style={{
           display: "flex",
@@ -241,7 +243,14 @@ export default function CommissionsDetails(props: any) {
           currYear={currYearMonthlyComm || null}
           lastYear={lastYearMonthlyComm || null}
         />
-        <CommissionsBarChart width={600} minWidth={300} height={300} />
+        <CommissionsPieChart
+          width={600}
+          minWidth={300}
+          height={300}
+          allYearsComm={allYearsComm}
+          currYear={yearToDateComm}
+          lastYear={lastYearComm}
+        />
       </View>
 
       <View
@@ -251,12 +260,22 @@ export default function CommissionsDetails(props: any) {
           flexDirection: "row",
         }}
       >
+        {!yearsProductSales ? null : (
+          <CommissionsPieCard
+            data={yearsProductSales || []}
+            widthAndHeight={widthAndHeight}
+            series={getSeriesForPie(yearsProductSales)}
+            numColors={yearsProductSales.length}
+            title="Total Sales"
+            titleDetails="per year"
+          />
+        )}
         {!totalSupplierComm ? null : (
           <CommissionsPieCard
             data={totalSupplierComm || []}
             widthAndHeight={widthAndHeight}
             series={getSeriesForPie(totalSupplierComm)}
-            sliceColor={sliceColor}
+            numColors={totalSupplierComm.length}
             title="Top Suppliers"
             titleDetails="historic data"
           />
@@ -267,20 +286,11 @@ export default function CommissionsDetails(props: any) {
             data={ytdSupplierComm || []}
             widthAndHeight={widthAndHeight}
             series={getSeriesForPie(ytdSupplierComm)}
-            sliceColor={sliceColor}
+            numColors={ytdSupplierComm.length}
             title="Top Suppliers"
             titleDetails="year-to-date"
           />
         )}
-
-        <CommissionsPieCard
-          data={ytdSupplierComm || []}
-          widthAndHeight={widthAndHeight}
-          series={getSeriesForPie(ytdSupplierComm)}
-          sliceColor={sliceColor}
-          title="TEST"
-          titleDetails="testing..."
-        />
       </View>
     </View>
   );

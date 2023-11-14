@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import axios from "axios";
 import LoadingScreen from "./LoadingScreen";
 import GetConfiguration from "../constants/Config";
@@ -13,10 +13,9 @@ import {
 } from "../api/endPoints";
 import TransactionsList from "./TransactionsList";
 import { sortArray } from "../functions/transactionsFunctions";
-import TransactionsHeader from "./TransactionsHeader";
+import TabHeader from "./TabHeader";
 import NotFound from "./NotFound";
 import { TRANSACTION_END_POINTS } from "../constants/transactionsEndPoints";
-import CustomButton from "./CustomButton";
 
 export default function Transactions(props: any) {
   const [customers, setCustomers] = useState<any>([]);
@@ -42,7 +41,7 @@ export default function Transactions(props: any) {
   //
   useEffect(() => {
     //if (Object.keys(products).length != 0) return;
-    console.log("A products.....   : ", products);
+    //console.log("A products.....   : ", products);
 
     async function getData() {
       Promise.all(
@@ -80,7 +79,6 @@ export default function Transactions(props: any) {
 
   // test for sorting products
   const sortProducts = (flag: any) => {
-    console.log("FLAGGGGGGGGGGGGGG: ", flag);
     let sorted = [];
     if (flag == "status") sorted = sortArray(products, "is_comm_received");
     if (flag == "date") sorted = sortArray(products, "date");
@@ -145,6 +143,9 @@ export default function Transactions(props: any) {
         .get(baseURL + getProductsById, { params })
         .then((res) => setProducts(res.data));
     }
+
+    // Testing
+    //setTransSelected(false);
   };
 
   if (!products) return <NotFound message="No transactions found!" />;
@@ -152,7 +153,8 @@ export default function Transactions(props: any) {
   return (
     <>
       <View style={{ display: "flex" }}>
-        <TransactionsHeader
+        <TabHeader
+          name="Transactions"
           selected={selected}
           endDate={endDate}
           startDate={startDate}
@@ -163,10 +165,9 @@ export default function Transactions(props: any) {
           handleSearch={handleSearch}
         />
 
-        <hr style={styles.hr} />
-
         <TransactionsList
           refreshTEST={() => setListUpdate(true)}
+          //transSelected={transSelected}
           data={products ? products : null}
           products={allProducts ? allProducts : null}
           customers={customers ? customers : null}
@@ -201,12 +202,3 @@ export default function Transactions(props: any) {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  hr: {
-    width: "100%",
-    backgroundColor: "grey",
-    border: "none",
-    height: 1,
-  },
-});

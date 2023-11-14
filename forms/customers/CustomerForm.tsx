@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { nanoid } from "nanoid";
 import AddUpdateCustomer from "./AddUpdateCustomer";
-import CustomerCard from "../../components/cards/CustomerCard";
+import CustomerCard from "../../components/cards/customers/CustomerCard";
 import { validateCustomer } from "../../functions/customerFunctions";
 import ConfirmDelete from "./ConfirmDelete";
 import CustomButton from "../../components/CustomButton";
@@ -95,7 +95,7 @@ export default function CustomerForm(props: any) {
 
       {displayFormContent()}
 
-      {props.flag == "edit" ? (
+      {props.flag == "edit" || props.flag == "add" ? (
         <View
           style={{
             flexDirection: "row",

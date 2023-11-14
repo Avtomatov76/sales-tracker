@@ -1,83 +1,55 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   StyleSheet,
   ScrollView,
   Text,
   View,
   Dimensions,
+  useWindowDimensions,
   Picker,
-  SafeAreaView,
-  FlatList,
-  Pressable,
-  TouchableOpacity,
 } from "react-native";
 import axios from "axios";
-import moment from "moment";
-import CustomButton from "./CustomButton";
 import TransactionModal from "../modals/TransactionModal";
 import TransactionDetailsCard from "../components/cards/transactions/TransactionDetailsCard";
-import { formatDollarEntry } from "../functions/customerFunctions";
 import { updateProductFieldAPI } from "../api/endPoints";
 import GetConfiguration from "../constants/Config";
 import NotFound from "./NotFound";
-import TransactionEntry from "./TransactionEntry";
+import ListEntry from "./ListEntry";
 import OutsideClickHandler from "react-outside-click-handler";
-//
 import Draggable from "react-native-draggable";
-
-//
-
-//
-const widthAndHeight = 150;
-const series = [300, 150, 400];
-const sliceColor = ["#fbd203", "#ffb300", "#ff9100"];
-
-//
+import SubHeader from "./SubHeader";
 
 export default function TransactionsList(props: any) {
   const [showModal, setShowModal] = useState(false);
   const [flag, setFlag] = useState("");
   const [showCard, setShowCard] = useState(false);
   const [transaction, setTransaction] = useState<any>();
-  const [refresh, setRefresh] = useState(false);
+  const [selected, setSelected] = useState(null);
 
-  const [data, setData] = useState<any>(props.data);
-  const [allProducts, setAllProducts] = useState<any>(props.allProducts);
-
+  const { height, width } = useWindowDimensions();
   const baseURL = GetConfiguration().baseUrl;
-
-  //const
 
   const displayTransactionModal = (flag: string) => {
     setFlag(flag);
     setShowModal(true);
   };
 
-  const displayTransactionCard = (data: any) => {
+  const displayTransactionCard = (data: any, index: any) => {
+    handleSelection(index);
     setTransaction(data);
     setShowCard(true);
   };
 
   const handleRefresh = () => {
     console.log("Refreshing.........................");
-    //setRefresh(!refresh);
     props.refreshTEST();
   };
 
   const editTransaction = (transaction: any) => {
-    // console.log("--- EDITING TRANSACTION --- : ", transaction);
-
     setFlag("edit");
+    handleSelection(null);
     setShowCard(false);
     setShowModal(true);
-
-    // Show Transaction Modal
-
-    // Display a Modal with transaction format
-    // Populate current transaction data in form
-    // if cancel --> clear the form and clode Edit Modal
-    // If 'Save' is clicked --> validate the form (display errors if needed)
-    // Submit form to the DB updating product, transaction tables, destination, etc tables
   };
 
   const updateProductField = async (field: any, value: string, id: string) => {
@@ -95,35 +67,19 @@ export default function TransactionsList(props: any) {
       console.log(err);
     }
 
-    //props.updateList();
     handleRefresh();
     setShowCard(true);
   };
 
-  // const displayEntry = (e: any, index: any) => {
-  //   return (
-  //     <Pressable
-  //       style={styles.transaction}
-  //       key={index}
-  //       onPress={() => displayTransactionCard(e)}
-  //     >
-  //       <Text>{moment(e.date).format("MMM DD, YYYY")} -</Text>
-  //       <Text>
-  //         {" "}
-  //         {e.first_name == "na" ? "" : e.first_name} {e.last_name}
-  //       </Text>
-  //       <Text> Total: {formatDollarEntry(e.cost)} - </Text>
-  //       <Text> Commission: {formatDollarEntry(e.commission)}</Text>
-  //       <Text> Received: {e.is_comm_received}</Text>
+  const handleSelection = (index: any) => {
+    setSelected(index);
+    console.log(`INDEX coming in.....: ${index} SELECTED: ${selected}`);
+  };
 
-  //       {/* <Text> Party Size: {e.party}</Text>
-  //       <Text> Phone: {e.phone}</Text>
-  //       <Text> Email: {e.email}</Text>
-  //       <Text> Travel Type: {e.travel_type}</Text>
-  //       <Text> Vendor: {e.vendor}</Text> */}
-  //     </Pressable>
-  //   );
-  // };
+  const handleHideCard = () => {
+    handleSelection(null);
+    setShowCard(false);
+  };
 
   if (props.data.length == 0)
     return <NotFound message="No transactions found!" />;
@@ -136,77 +92,22 @@ export default function TransactionsList(props: any) {
       }}
       //onLayout={(event) => getComponentWidth(event)}
     >
-      <View style={styles.summary}>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginBottom: 10,
-          }}
-        >
-          <View
-            style={{ flexDirection: "row", marginTop: 10, marginBottom: 10 }}
-          >
-            <Text
-              style={{
-                fontSize: 20,
-                alignSelf: "center",
-              }}
-            >
-              {props.numProducts}
-            </Text>
-            <Text
-              style={{
-                marginLeft: 10,
-                alignSelf: "center",
-              }}
-            >
-              transactions
-            </Text>
-          </View>
-
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              marginTop: 10,
-            }}
-          >
-            {props.selected == "date" || props.selected == "name" ? null : (
-              <Picker
-                //style={styles.textInputSelect}
-                onValueChange={(itemValue) => props.sortProducts(itemValue)}
-              >
-                <Picker.Item label="- Sort by -" value="" />
-
-                <Picker.Item label={"Date"} value="date" />
-                <Picker.Item label={"Status"} value="status" />
-              </Picker>
-            )}
-          </View>
-        </View>
-
-        <View
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            flexDirection: "row",
-          }}
-        >
-          <CustomButton
-            title="Add"
-            flag="add"
-            type="button"
-            submitForm={() => displayTransactionModal("add")}
-          />
-        </View>
-      </View>
+      <SubHeader
+        flag="transactions"
+        selected={props.selected}
+        numEntries={props.numProducts}
+        sortProducts={props.sortProducts}
+        submitForm={() => displayTransactionModal("add")}
+      />
 
       {!props.allProducts ? (
-        <ScrollView style={styles.scrollView}>
+        <ScrollView
+          style={[styles.scrollView, { width: width > 1000 ? "50%" : "100%" }]}
+        >
           {props.data.map((p: any, index: any) => (
-            <TransactionEntry
+            <ListEntry
+              flag="transactions"
+              selected={selected}
               key={index}
               product={p}
               index={index}
@@ -215,9 +116,13 @@ export default function TransactionsList(props: any) {
           ))}
         </ScrollView>
       ) : props.allProducts.length > 0 ? (
-        <ScrollView style={styles.scrollView}>
+        <ScrollView
+          style={[styles.scrollView, { width: width > 1000 ? "50%" : "100%" }]}
+        >
           {props.allProducts.map((p: any, index: any) => (
-            <TransactionEntry
+            <ListEntry
+              flag="transactions"
+              selected={selected}
               key={index}
               product={p}
               index={index}
@@ -233,14 +138,14 @@ export default function TransactionsList(props: any) {
         </View>
       )}
 
-      <View style={{ width: 150, marginTop: 20 }}>
+      {/* <View style={{ width: 150, marginTop: 20 }}>
         <CustomButton
           title="Export..."
           flag="add"
           type="button"
           //submitForm={() => displayTransactionModal("add")}
         />
-      </View>
+      </View> */}
 
       <TransactionModal
         flag={flag}
@@ -259,7 +164,7 @@ export default function TransactionsList(props: any) {
       />
 
       {showCard && (
-        <OutsideClickHandler onOutsideClick={() => setShowCard(false)}>
+        <OutsideClickHandler onOutsideClick={() => handleHideCard()}>
           <Draggable
             x={Dimensions.get("window").width / 2}
             y={Dimensions.get("window").height / 6}
@@ -269,7 +174,7 @@ export default function TransactionsList(props: any) {
               refreshTEST={props.refreshTEST}
               updateProductField={updateProductField}
               editTransaction={editTransaction}
-              hideCard={() => setShowCard(false)}
+              hideCard={() => handleHideCard()}
             />
           </Draggable>
         </OutsideClickHandler>
@@ -296,13 +201,12 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     display: "flex",
-    maxHeight: 350,
-    width: "auto",
-    marginTop: 20,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "grey",
-    borderRadius: 5,
+    maxHeight: 550,
+    width: "50%",
+    marginTop: 30,
+    paddingTop: 10,
+    paddingRight: 10,
+    paddingBottom: 10,
   },
   summary: {
     display: "flex",
@@ -311,8 +215,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
     marginTop: 20,
     paddingRight: 20,
-    paddingLeft: 20,
-    paddingBottom: 20,
+    paddingLeft: 15,
+    paddingTop: 15,
+    paddingBottom: 15,
+    borderRadius: 5,
   },
   pdf: {
     flex: 1,

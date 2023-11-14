@@ -2,11 +2,11 @@ import moment from "moment";
 import { View, Text, StyleSheet } from "react-native";
 import { formatDollarEntry } from "../functions/customerFunctions";
 
-export default function TransactionEntry(props: any) {
+export default function VendorEntry(props: any) {
   return (
     <View style={styles.entry}>
       <View style={styles.mainText}>
-        <Text style={styles.lastName}>{props.displayName}</Text>
+        <Text style={styles.lastName}>{props.vendor.vendor_name}</Text>
         <Text
           style={{
             alignSelf: "flex-end",
@@ -16,7 +16,7 @@ export default function TransactionEntry(props: any) {
           {moment(props.productDate).format("MMM DD, YYYY")}
         </Text>
       </View>
-      <View style={styles.subText}>
+      {/* <View style={styles.subText}>
         <View style={{ flexDirection: "row" }}>
           <Text style={{ color: "grey" }}>Paid: </Text>
           <Text style={styles.amount}>
@@ -41,7 +41,7 @@ export default function TransactionEntry(props: any) {
             {props.isCommReceived}
           </Text>
         </View>
-      </View>
+      </View> */}
       <View style={styles.hairline} />
     </View>
   );

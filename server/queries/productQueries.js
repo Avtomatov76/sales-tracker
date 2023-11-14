@@ -6,6 +6,13 @@ const getProductHashes = `
 SELECT hash FROM product
 `;
 
+const getAllYearsProductSales = `
+SELECT EXTRACT(YEAR FROM t.transaction_date) AS name, ROUND(SUM(p.product_cost), 2) AS total FROM product p
+JOIN transaction t ON p.product_id=t.fk_product_id
+GROUP BY EXTRACT(YEAR FROM t.transaction_date)
+ORDER BY EXTRACT(YEAR FROM t.transaction_date);
+`;
+
 const getAllProductData = `
 SELECT p.product_id, t.transaction_id, t.transaction_date AS date, p.travel_start_date AS start, 
 p.travel_end_date AS end, ROUND(p.product_cost, 2) AS cost, t.transaction_type,
@@ -85,6 +92,7 @@ module.exports = {
   getAllProducts,
   getProductHashes,
   getAllProductData,
+  getAllYearsProductSales,
   getProductsByName,
   getProductsById,
   getProductsBySupplier,

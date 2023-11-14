@@ -11,18 +11,20 @@ import { MONTHS } from "../../../constants/Months";
 import moment from "moment";
 
 let chartConfig = {
-  backgroundColor: "#1F2F98",
-  backgroundGradientFrom: "#15AAFF",
-  backgroundGradientTo: "#ADF7F2",
+  backgroundColor: "#4CBB17", //"#1F2F98",
+  backgroundGradientFrom: "#ADD8E6", //"#FFFDE7", //"#15AAFF",
+  backgroundGradientTo: "#FFF9C4", //"#ADF7F2",
 
   decimalPlaces: 0, // optional, defaults to 2dp
-  color: (opacity = 1) => `rgba(98,109,182, ${opacity})`,
-  labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+  //color: (opacity = 1) => `rgba(98,109,182, ${opacity})`,
+  color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`,
+  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, //(opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
   propsForDots: {
     r: "6",
     strokeWidth: "2",
-    stroke: "#1F2F98", //"#ffa726",
+    stroke: "#000000", //"#1F2F98", //"#ffa726",
   },
+  useShadowColorFromDataSet: true,
 };
 
 let year = moment().year();
@@ -41,15 +43,17 @@ export default function CommissionsLineChart(props: any) {
     labels: monthsToShow,
     datasets: [
       {
-        data: currYearArr,
-        colors: [(opacity = 1) => `#BE95FF`],
+        data: lastYearArr,
+        //colors: [(opacity = 1) => `#78A9FF`],
+        color: (opacity = 0.5) => "#A782EC",
       },
       {
-        data: lastYearArr,
-        colors: [(opacity = 1) => `#78A9FF`],
+        data: currYearArr,
+        //colors: [(opacity = 1) => `#BE95FF`],
+        color: (opacity = 1) => "#4CBB17",
       },
     ],
-    legend: [`Year-to-date Comparison (${year - 1} - ${year})`],
+    legend: [`${year - 1}`, `${year}`], //[`Year-to-date Comparison (${year - 1} - ${year})`],
     useShadowColorFromDataset: true,
   };
 
@@ -74,7 +78,7 @@ export default function CommissionsLineChart(props: any) {
         display: "flex",
         minWidth: 400,
         marginTop: 10,
-        marginRight: 10,
+        marginRight: 15,
       }}
     >
       <LineChart

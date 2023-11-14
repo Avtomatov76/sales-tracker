@@ -109,7 +109,7 @@ export default function CommissionsSummaryCard(props: any) {
               fontWeight: "600",
             }}
           >
-            Previous year:{" "}
+            Previous year-to-date:{" "}
             <Text style={{ color: "blue" }}>
               {formatDollarEntry(props.compare[0].commissions)}
             </Text>

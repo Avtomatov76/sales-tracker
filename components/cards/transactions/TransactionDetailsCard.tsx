@@ -9,7 +9,7 @@ export default function TransactionDetailsCard(props: any) {
   const [transDetails, setTransDetails] = useState(props.data);
   const [refresh, setRefresh] = useState(false);
 
-  console.log("CHECKING PROPS----------------: ", props.data);
+  //console.log("CHECKING PROPS----------------: ", props.data);
 
   useEffect(() => {
     setTransDetails(props.data);

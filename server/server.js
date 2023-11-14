@@ -16,6 +16,7 @@ const {
   getProductHashes,
   updateProductField,
   updateProduct,
+  getAllYearsProductSales,
 } = require("./queries/productQueries");
 const {
   getAllCustomers,
@@ -42,6 +43,7 @@ const {
   getMonthlyCommissionsYTDPrevious,
   getMonthlyCommissionsYTDCurrent,
   getYearToDateCommVendors,
+  getCommissionsAllYears,
 } = require("./queries/commissionQueries");
 const {
   getAllTransactions,
@@ -371,6 +373,16 @@ app.get("/api/commissions-lastYear", async (req, res) => {
   }
 });
 
+// GET commissions for all years
+app.get("/api/commissions-years", async (req, res) => {
+  try {
+    const result = await db.pool.query(getCommissionsAllYears);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
 // GET commissions for the last year-to-date period  getCommissionsLastYearToDate,
 app.get("/api/commissions-lastYTD", async (req, res) => {
   try {
@@ -425,6 +437,15 @@ app.get("/api/commissions-vendors", async (req, res) => {
 app.get("/api/products", async (req, res) => {
   try {
     const result = await db.pool.query(getAllProducts);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+app.get("/api/products-sales", async (req, res) => {
+  try {
+    const result = await db.pool.query(getAllYearsProductSales);
     res.send(result);
   } catch (err) {
     throw err;

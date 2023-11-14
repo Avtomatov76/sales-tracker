@@ -14,8 +14,8 @@ export default function Sidebar(props: any) {
 
   const tabs = [
     "Dashboard",
-    "Transactions",
     "Commissions",
+    "Transactions",
     "Customers",
     "Vendors",
     "Suppliers",
