@@ -21,9 +21,21 @@ transaction_date='${values.transactionDate}'
 WHERE transaction_id='${values.id}'
 `;
 
+const deleteTransaction = (id) => `
+DELETE FROM transaction 
+WHERE transaction_id = '${id}'
+`;
+
+const deleteTransactionByProdId = (id) => `
+DELETE FROM transaction 
+WHERE fk_product_id = '${id}'
+`;
+
 module.exports = {
   getAllTransactions,
   getYearToDateSalesQuery,
   getCurrentMonthSalesQuery,
   updateTransaction,
+  deleteTransaction,
+  deleteTransactionByProdId,
 };

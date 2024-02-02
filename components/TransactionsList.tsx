@@ -6,33 +6,67 @@ import {
   View,
   Dimensions,
   useWindowDimensions,
-  Picker,
 } from "react-native";
 import axios from "axios";
 import TransactionModal from "../modals/TransactionModal";
 import TransactionDetailsCard from "../components/cards/transactions/TransactionDetailsCard";
-import { updateProductFieldAPI } from "../api/endPoints";
+import { productsAPI, updateProductFieldAPI } from "../api/endPoints";
 import GetConfiguration from "../constants/Config";
 import NotFound from "./NotFound";
 import ListEntry from "./ListEntry";
 import OutsideClickHandler from "react-outside-click-handler";
 import Draggable from "react-native-draggable";
 import SubHeader from "./SubHeader";
+import { useQueryClient } from "react-query";
 
 export default function TransactionsList(props: any) {
   const [showModal, setShowModal] = useState(false);
   const [flag, setFlag] = useState("");
+  const [action, setAction] = useState("");
   const [showCard, setShowCard] = useState(false);
   const [transaction, setTransaction] = useState<any>();
   const [selected, setSelected] = useState(null);
+  const [message, setMessage] = useState("");
+  const [product, setProduct] = useState<any>();
 
   const { height, width } = useWindowDimensions();
   const baseURL = GetConfiguration().baseUrl;
+
+  const queryClient = useQueryClient();
 
   const displayTransactionModal = (flag: string) => {
     setFlag(flag);
     setShowModal(true);
   };
+
+  const removeTransaction = (flag: any, product: any) => {
+    console.log(
+      "----------------- SHOW MODAL TO REMOVE TRANSACTION ----------------- : ",
+      flag,
+      product
+    );
+    setProduct(product);
+    setFlag("delete");
+    setShowModal(true);
+  };
+
+  //
+  const deleteProduct = async (id: any) => {
+    console.log(
+      "SHOWING FRIKKIN PRODUCT ID FROM CONFIRM DELETE COMPONENT ---------------------- : ",
+      id
+    );
+    // try {
+    //   const res = await axios.post(baseURL + productsAPI + `/${id}`);
+    //   console.log(res.data.result);
+    //   if (res.data) setMessage("Could not delete customer ");
+    // } catch (err) {
+    //   console.log(err);
+    // }
+
+    // await queryClient.invalidateQueries(["products"]);
+  };
+  //
 
   const displayTransactionCard = (data: any, index: any) => {
     handleSelection(index);
@@ -112,6 +146,7 @@ export default function TransactionsList(props: any) {
               product={p}
               index={index}
               displayTransactionCard={displayTransactionCard}
+              removeTransaction={removeTransaction}
             />
           ))}
         </ScrollView>
@@ -127,6 +162,7 @@ export default function TransactionsList(props: any) {
               product={p}
               index={index}
               displayTransactionCard={displayTransactionCard}
+              removeTransaction={removeTransaction}
             />
           ))}
         </ScrollView>
@@ -149,8 +185,10 @@ export default function TransactionsList(props: any) {
 
       <TransactionModal
         flag={flag}
+        action={action}
         refresh={handleRefresh}
-        //allProducts={props.allProducts}
+        message={message}
+        product={product}
         products={props.data}
         customers={props.customers}
         vendors={props.vendors}
@@ -159,6 +197,7 @@ export default function TransactionsList(props: any) {
         transactions={props.transactions}
         transaction={transaction || {}}
         destinations={props.destinations}
+        deleteProduct={deleteProduct}
         visible={showModal}
         hideModal={() => setShowModal(false)}
       />

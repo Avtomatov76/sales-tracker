@@ -28,6 +28,7 @@ const {
   postCustomers,
   deleteCustomer,
   getCustomerLatestSale,
+  deleteProduct,
 } = require("./queries/customerQueries");
 const {
   getCommissionsForDateRange,
@@ -51,6 +52,8 @@ const {
   getCurrentMonthSalesQuery,
   postTravelType,
   updateTransaction,
+  deleteTransaction,
+  deleteTransactionByProdId,
 } = require("./queries/transactionQueries");
 
 const app = express();
@@ -357,7 +360,15 @@ app.get("/api/commissions-suppliers-total", async (req, res) => {
 app.get("/api/commissions-suppliers-year", async (req, res) => {
   try {
     const result = await db.pool.query(getYearToDateCommTopSuppliers);
-    res.send(result);
+
+    if (result.length == 0) {
+      let noDataArr = [
+        { name: "Expedia.com", total: 1 },
+        { name: "Picasso Travel", total: 1 },
+        { name: "Travel Planners Intl", total: 1 },
+      ];
+      res.send(noDataArr);
+    } else res.send(result);
   } catch (err) {
     throw err;
   }
@@ -488,6 +499,18 @@ app.get("/api/products-range", async (req, res) => {
     res.send(result);
   } catch (err) {
     throw err;
+  }
+});
+
+// DELETE Product
+app.post("/api/products/:id", async (req, res) => {
+  try {
+    await db.pool.query(deleteTransactionByProdId(req.params["id"]));
+    await db.pool.query(deleteProduct(req.params["id"]));
+    res.send({ result: "ok" });
+  } catch (err) {
+    //throw err;
+    res.send({ result: "fail" });
   }
 });
 

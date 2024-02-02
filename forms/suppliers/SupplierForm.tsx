@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { nanoid } from "nanoid";
-import AddUpdateCustomer from "./AddUpdateCustomer";
+//import AddUpdateCustomer from "./AddUpdateCustomer";
 import CustomerCard from "../../components/cards/customers/CustomerCard";
 import { validateCustomer } from "../../functions/customerFunctions";
-import ConfirmDelete from "../../modals/ConfirmDelete";
+//import ConfirmDelete from "./ConfirmDelete";
 import CustomButton from "../../components/CustomButton";
 import ModalHeader from "../../modals/ModalHeader";
+import AddUpdateSupplier from "./AddUpdateSupplier";
 
-export default function CustomerForm(props: any) {
+export default function SupplierForm(props: any) {
   const [error, setError] = useState(false);
   const [formValues, setFormValues] = useState({
     id: props.initialValues.id,
@@ -62,22 +63,21 @@ export default function CustomerForm(props: any) {
     if (props.flag === "details")
       return <CustomerCard customer={props.customer} />;
 
-    if (props.flag === "delete")
-      return (
-        <ConfirmDelete
-          flag="customer"
-          message={props.message}
-          hideModal={props.hideModal}
-          recordId={props.customerId}
-          record={props.customer}
-          deleteRecord={props.deleteCustomer}
-          handleOKpress={props.handleOKpress}
-        />
-      );
+    // if (props.flag === "delete")
+    //   return (
+    //     <ConfirmDelete
+    //       message={props.message}
+    //       hideModal={props.hideModal}
+    //       customerId={props.customerId}
+    //       customer={props.customer}
+    //       deleteCustomer={props.deleteCustomer}
+    //       handleOKpress={props.handleOKpress}
+    //     />
+    //   );
 
     if (props.flag === "add" || props.flag === "edit")
       return (
-        <AddUpdateCustomer
+        <AddUpdateSupplier
           formValues={formValues}
           error={error}
           handleOnChange={handleOnChange}
@@ -90,7 +90,7 @@ export default function CustomerForm(props: any) {
     <View style={styles.modalView}>
       <ModalHeader
         flag={props.flag}
-        title="Customer"
+        title="Supplier"
         onPress={props.hideModal}
       />
 

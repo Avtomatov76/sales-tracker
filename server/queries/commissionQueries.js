@@ -16,6 +16,10 @@ const currYear = new Date().getFullYear();
 const currMonthStart = moment().startOf("month").format("YYYY-MM-DD");
 const currMonthEnd = moment().endOf("month").format("YYYY-MM-DD");
 
+//
+//console.log("currYear, currMonthStart, currMonthEnd");
+//
+
 // GET commissions for all years
 const getCommissionsAllYears = `
 SELECT EXTRACT(YEAR FROM t.transaction_date) AS year, ROUND(SUM(p.product_comm), 2) AS commissions FROM product p

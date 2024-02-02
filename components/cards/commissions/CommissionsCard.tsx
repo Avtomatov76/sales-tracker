@@ -100,6 +100,12 @@ export default function CommissionsCard(props: any) {
   };
 
   return (
+    <View>
+      <Text>NONE!!!</Text>
+    </View>
+  );
+
+  return (
     <Card style={{ width: "100%" }}>
       {/* <Card.Cover
         source={{ uri: "https://picsum.photos/700" }}
@@ -254,7 +260,7 @@ export default function CommissionsCard(props: any) {
               </Text>
               <PieChart
                 widthAndHeight={widthAndHeight}
-                series={series}
+                series={series || []}
                 sliceColor={sliceColor}
               />
             </View>
@@ -295,7 +301,7 @@ export default function CommissionsCard(props: any) {
               </Text>
               <PieChart
                 widthAndHeight={widthAndHeight}
-                series={series}
+                series={series || []}
                 sliceColor={sliceColor}
               />
             </View>

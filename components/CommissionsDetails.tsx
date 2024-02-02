@@ -32,6 +32,7 @@ export default function CommissionsDetails(props: any) {
   const [yearToDateComm, setYearToDateComm] = useState<any>();
   const [totalSupplierComm, setTotalSupplierComm] = useState<any>();
   const [ytdSupplierComm, setYtdSupplierComm] = useState<any>();
+  const [yearsProductSales, setYearsProductSales] = useState<any>();
   const [lastYearComm, setLastYearComm] = useState<any>();
   const [allYearsComm, setAllYearsComm] = useState<any>();
   const [lastYearToDateComm, setLastYearToDate] = useState<any>();
@@ -39,7 +40,6 @@ export default function CommissionsDetails(props: any) {
   const [unpaidCommissions, setUnpaidCommissions] = useState<any>();
   const [currYearMonthlyComm, setCurrYearMonthlyComm] = useState<any>();
   const [lastYearMonthlyComm, setLastYearMonthlyComm] = useState<any>();
-  const [yearsProductSales, setYearsProductSales] = useState<any>();
 
   const commissionCards = [
     {
@@ -181,10 +181,11 @@ export default function CommissionsDetails(props: any) {
           marginTop: 20,
           paddingRight: 20,
           paddingLeft: 20,
-          paddingBottom: 20,
+          paddingTop: 10,
+          paddingBottom: 10,
         }}
       >
-        <Text
+        {/* <Text
           style={[
             styles.catTitle,
             {
@@ -195,7 +196,7 @@ export default function CommissionsDetails(props: any) {
           ]}
         >
           Summary
-        </Text>
+        </Text> */}
 
         <View
           style={{
@@ -222,18 +223,19 @@ export default function CommissionsDetails(props: any) {
         </View>
       </View>
 
-      <View>
-        <Text style={[styles.catTitle, { marginTop: 20, marginBottom: 10 }]}>
+      {/* <View>
+        <Text style={[styles.catTitle, { marginTop: 20, marginBottom: 5 }]}>
           Data
         </Text>
-      </View>
+      </View> */}
 
       <View
         style={{
           display: "flex",
-          flex: 1,
+          //flex: 1,
           flexDirection: "row",
           flexWrap: "wrap",
+          marginTop: 5,
         }}
       >
         <CommissionsLineChart
@@ -244,12 +246,13 @@ export default function CommissionsDetails(props: any) {
           lastYear={lastYearMonthlyComm || null}
         />
         <CommissionsPieChart
+          type="years"
           width={600}
           minWidth={300}
           height={300}
           allYearsComm={allYearsComm}
-          currYear={yearToDateComm}
-          lastYear={lastYearComm}
+          currYear={yearToDateComm || null}
+          lastYear={lastYearComm || null}
         />
       </View>
 
@@ -262,9 +265,10 @@ export default function CommissionsDetails(props: any) {
       >
         {!yearsProductSales ? null : (
           <CommissionsPieCard
+            type="sales"
             data={yearsProductSales || []}
             widthAndHeight={widthAndHeight}
-            series={getSeriesForPie(yearsProductSales)}
+            series={getSeriesForPie(yearsProductSales) || []}
             numColors={yearsProductSales.length}
             title="Total Sales"
             titleDetails="per year"
@@ -272,9 +276,10 @@ export default function CommissionsDetails(props: any) {
         )}
         {!totalSupplierComm ? null : (
           <CommissionsPieCard
+            type="suppliers"
             data={totalSupplierComm || []}
             widthAndHeight={widthAndHeight}
-            series={getSeriesForPie(totalSupplierComm)}
+            series={getSeriesForPie(totalSupplierComm) || []}
             numColors={totalSupplierComm.length}
             title="Top Suppliers"
             titleDetails="historic data"
@@ -283,9 +288,10 @@ export default function CommissionsDetails(props: any) {
 
         {!ytdSupplierComm ? null : (
           <CommissionsPieCard
+            type="suppliers"
             data={ytdSupplierComm || []}
             widthAndHeight={widthAndHeight}
-            series={getSeriesForPie(ytdSupplierComm)}
+            series={getSeriesForPie(ytdSupplierComm) || []}
             numColors={ytdSupplierComm.length}
             title="Top Suppliers"
             titleDetails="year-to-date"

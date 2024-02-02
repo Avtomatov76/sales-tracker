@@ -8,6 +8,7 @@ import ModalHeader from "../../modals/ModalHeader";
 import { validateTransaction } from "../../functions/transactionsFunctions";
 import OutsideClickHandler from "react-outside-click-handler";
 import moment from "moment";
+import ConfirmDelete from "../../modals/ConfirmDelete";
 
 export default function TransactionForm(props: any) {
   const [customerOptions, setCustomerOptions] = useState(false);
@@ -118,7 +119,19 @@ export default function TransactionForm(props: any) {
   };
 
   const displayFormContent = () => {
-    if (props.flag === "add" || props.flag === "edit")
+    if (props.flag == "delete")
+      return (
+        <ConfirmDelete
+          flag="transaction"
+          message="" //{props.message}
+          hideModal={props.hideModal}
+          record={props.product}
+          deleteRecord={props.deleteProduct}
+          handleOKpress={props.handleOKpress}
+        />
+      );
+
+    if (props.flag == "add" || props.flag == "edit")
       return (
         <AddUpdateTransaction
           flag={props.flag}
@@ -143,7 +156,7 @@ export default function TransactionForm(props: any) {
         onPress={props.hideModal}
       />
 
-      {props.flag == "edit" ? null : (
+      {props.flag == "edit" || props.flag == "delete" ? null : (
         <View style={{ marginLeft: 5, zIndex: 1, marginBottom: 5 }}>
           {!customerOptions ? (
             <View style={{ height: 20 }}>
@@ -173,23 +186,25 @@ export default function TransactionForm(props: any) {
 
       {displayFormContent()}
 
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "flex-end",
-          marginTop: 20,
-          width: "100%",
-        }}
-      >
-        <View style={{ marginRight: 20 }}>
-          <CustomButton hideModal={handleCancel} flag="cancel" type="text" />
+      {props.flag == "edit" || props.flag == "add" ? (
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            marginTop: 20,
+            width: "100%",
+          }}
+        >
+          <View style={{ marginRight: 20 }}>
+            <CustomButton hideModal={handleCancel} flag="cancel" type="text" />
+          </View>
+          <CustomButton
+            submitForm={submitForm}
+            flag={props.flag == "edit" ? "update" : "add"}
+            type="text"
+          />
         </View>
-        <CustomButton
-          submitForm={submitForm}
-          flag={props.flag == "edit" ? "update" : "add"}
-          type="text"
-        />
-      </View>
+      ) : null}
     </View>
   );
 }

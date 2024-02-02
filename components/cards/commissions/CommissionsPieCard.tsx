@@ -6,7 +6,7 @@ import { getColors } from "../../../constants/Colors";
 
 export default function CommissionsPieCard(props: any) {
   let pieChartData = props.data;
-  let colors = getColors(props.numColors);
+  let colors = getColors(props.numColors, pieChartData, props.type);
 
   const displayPieDetails = (entry: any, index: any) => {
     return (
@@ -23,18 +23,27 @@ export default function CommissionsPieCard(props: any) {
           style={{
             display: "flex",
             height: 15,
-            width: 40,
+            width: 15,
+            borderRadius: 50,
             backgroundColor: colors[index],
-            marginRight: 20,
+            marginRight: 10,
           }}
         ></View>
         <Text style={{ fontSize: 14 }}>{entry.name + " - "}</Text>
-        <Text style={{ color: "green", fontSize: 14 }}>
+        <Text style={{ color: "green", fontSize: 14, fontWeight: "600" }}>
           {formatDollarEntry(entry.total)}
         </Text>
       </View>
     );
   };
+
+  //
+  // return (
+  //   <View>
+  //     <Text>NONE!!! - A</Text>
+  //   </View>
+  // );
+  //
 
   return (
     <Card style={styles.card}>
@@ -47,7 +56,7 @@ export default function CommissionsPieCard(props: any) {
         </Text>
         <PieChart
           widthAndHeight={props.widthAndHeight}
-          series={props.series}
+          series={props.series || []}
           sliceColor={colors}
           style={{ alignSelf: "center" }} // Possibly customize this as well!!
         />

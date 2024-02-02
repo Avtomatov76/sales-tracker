@@ -88,6 +88,11 @@ is_comm_received='${values.isCommReceived}', travel_start_date='${values.tvlStar
 WHERE product_id='${values.id}'
 `;
 
+const deleteProduct = (id) => `
+DELETE FROM product 
+WHERE product_id = '${id}'
+`;
+
 module.exports = {
   getAllProducts,
   getProductHashes,
@@ -99,4 +104,5 @@ module.exports = {
   getProductsRange,
   updateProductField,
   updateProduct,
+  deleteProduct,
 };

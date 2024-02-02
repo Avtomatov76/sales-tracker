@@ -3,6 +3,8 @@ import TransactionEntry from "./TransactionEntry";
 import CustomerEntry from "./CustomerEntry";
 import React from "react";
 import VendorEntry from "./VendorEntry";
+import SupplierEntry from "./SupplierEntry";
+import { getAvatarColor } from "../constants/Colors";
 
 export default function ListEntry(props: any) {
   let flag = props.flag.toLowerCase();
@@ -43,10 +45,24 @@ export default function ListEntry(props: any) {
         />
       );
 
+    if (flag == "suppliers")
+      return (
+        <SupplierEntry
+          supplier={props.supplier}
+          // displayName={displayName(props.product)}
+          // productDate={props.product.date}
+          // productCost={props.product.cost}
+          // productCommission={props.product.commission}
+          // isCommReceived={props.product.is_comm_received}
+        />
+      );
+
     if (flag == "transactions")
       return (
         <TransactionEntry
           displayName={displayName(props.product)}
+          removeTransaction={props.removeTransaction}
+          product={props.product}
           productDate={props.product.date}
           productCost={props.product.cost}
           productCommission={props.product.commission}
@@ -82,6 +98,8 @@ export default function ListEntry(props: any) {
         return props.product.last_name.substring(0, 2);
       case "vendors":
         return props.vendor.vendor_id.substring(0, 2);
+      case "suppliers":
+        return props.supplier.supplier_name.substring(0, 2);
       default:
         console.log("Error: type received not matching any of the cases!!");
     }
@@ -91,16 +109,16 @@ export default function ListEntry(props: any) {
     <Pressable
       style={
         props.index == props.selected
-          ? [styles.transaction, { backgroundColor: "rgb(240, 240, 240)" }]
+          ? [styles.transaction, { backgroundColor: "rgb(255, 249, 196)" }]
           : styles.transaction
       }
       onPress={() => handleOnPress()}
     >
-      <View style={styles.avatar}>
+      <View style={[styles.avatar, { backgroundColor: getAvatarColor() }]}>
         <Text
           style={{
             fontSize: 24,
-            color: "grey",
+            //color: "grey",
           }}
         >
           {displayInitials(props.flag)}
@@ -126,7 +144,8 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 50,
-    backgroundColor: "rgb(222, 236, 249)",
+    opacity: 0.7,
+    // backgroundColor: getAvatarColor(), //"rgb(222, 236, 249)",
     marginRight: 15,
   },
 });

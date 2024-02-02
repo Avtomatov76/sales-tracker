@@ -1,4 +1,5 @@
 export const getSeriesForPie = (array: any) => {
+  //console.log("SHOW MW ARRAY: ", array);
   if (!array) return;
 
   let series = [];

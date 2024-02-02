@@ -1,6 +1,6 @@
 import axios from "axios";
 import { nanoid } from "nanoid";
-import { StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import Modal from "react-native-modal";
 import GetConfiguration from "../constants/Config";
 import { getCustomersNames } from "../functions/customerFunctions";
@@ -26,6 +26,13 @@ export default function TransactionModal(props: any) {
   const hideModal = () => {
     props.hideModal();
   };
+
+  //
+  console.log(
+    "------------------  ACTION, ACTION, ACTION  ------------------ : ",
+    props.action
+  );
+  //
 
   // const checkForDupeDestination = (code: any) => {
   //   let isFound = false;
@@ -114,6 +121,10 @@ export default function TransactionModal(props: any) {
     hideModal();
   };
 
+  //
+  console.log("FLAG from TRANSACTION MODA: ", props.flag);
+  //
+
   return (
     <Modal
       isVisible={props.visible}
@@ -121,6 +132,20 @@ export default function TransactionModal(props: any) {
       backdropColor="rgba(0, 0, 0, 0.3)"
       onBackdropPress={hideModal}
     >
+      {/* {props.flag == "delete" ? (
+        // <View>
+        //   <Text>ABOUT TO DELETE A RECORD!!!!!!</Text>
+        // </View>
+
+        <ConfirmDelete
+          message="TEST TEST TEST" //{props.message}
+          hideModal={props.hideModal}
+          customerId={"props.customerId"}
+          customer={"props.customer"}
+          deleteCustomer={"props.deleteCustomer"}
+          handleOKpress={props.handleOKpress}
+        />
+      ) : ( */}
       <TransactionForm
         flag={props.flag}
         transaction={props.transaction}
@@ -132,12 +157,15 @@ export default function TransactionModal(props: any) {
         suppliers={!props.suppliers ? null : props.suppliers}
         travelTypes={!props.travelTypes ? null : props.travelTypes}
         transactions={!props.transactions ? null : props.transactions}
+        product={!props.product ? null : props.product}
         products={!props.products ? null : props.products}
+        deleteProduct={props.deleteProduct}
         destinations={!props.destinations ? null : props.destinations}
         customersNames={customersNames}
         handleSubmit={handleSubmit}
         hideModal={hideModal}
       />
+      {/* )} */}
     </Modal>
   );
 }

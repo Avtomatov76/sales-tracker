@@ -61,7 +61,7 @@ export default function Vendors(props: any) {
         {!vendors ? (
           <View style={{ alignSelf: "center", marginTop: 30 }}>
             <Text style={{ fontSize: 20, color: "red" }}>
-              No transactions found!
+              No vendors found!
             </Text>
           </View>
         ) : vendors.length > 0 ? (
@@ -85,7 +85,7 @@ export default function Vendors(props: any) {
         ) : (
           <View style={{ alignSelf: "center", marginTop: 30 }}>
             <Text style={{ fontSize: 20, color: "red" }}>
-              No transactions found!
+              No vendors found!
             </Text>
           </View>
         )}

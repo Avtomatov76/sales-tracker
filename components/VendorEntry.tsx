@@ -56,15 +56,15 @@ const styles = StyleSheet.create({
   },
   entry: {
     display: "flex",
-    justifyContent: "center",
     height: "100%",
     width: "90%",
     flexDirection: "column",
     paddingRight: 10,
+    justifyContent: "space-between",
   },
   mainText: {
     display: "flex",
-    flex: 1,
+    marginTop: 20,
     flexDirection: "row",
     justifyContent: "space-between",
   },

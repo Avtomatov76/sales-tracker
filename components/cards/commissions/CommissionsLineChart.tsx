@@ -1,14 +1,8 @@
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart,
-} from "react-native-chart-kit";
+import { LineChart } from "react-native-chart-kit";
 import { View, Text, Dimensions } from "react-native";
 import { MONTHS } from "../../../constants/Months";
 import moment from "moment";
+import { Card } from "react-native-paper";
 
 let chartConfig = {
   backgroundColor: "#4CBB17", //"#1F2F98",
@@ -35,6 +29,8 @@ export default function CommissionsLineChart(props: any) {
 
   let currYear = props.currYear;
   let lastYear = props.lastYear.slice(0, numMonths);
+
+  //console.log("A, B : ", currYear, lastYear, monthsToShow);
 
   let currYearArr = flattenArray(currYear) || [];
   let lastYearArr = flattenArray(lastYear) || [];
@@ -69,13 +65,14 @@ export default function CommissionsLineChart(props: any) {
     return flatArr;
   }
 
-  console.log("Current YTD: ", currYearArr);
-  console.log("Previous YTD: ", lastYearArr);
+  //console.log("Current YTD: ", currYearArr);
+  //console.log("Previous YTD: ", lastYearArr);
 
   return (
-    <View
+    <Card
       style={{
         display: "flex",
+        //flex: 1,
         minWidth: 400,
         marginTop: 10,
         marginRight: 15,
@@ -97,6 +94,6 @@ export default function CommissionsLineChart(props: any) {
         //withShadow={true}
         //withOuterLines
       />
-    </View>
+    </Card>
   );
 }
