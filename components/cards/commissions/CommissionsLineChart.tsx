@@ -1,8 +1,8 @@
 import { LineChart } from "react-native-chart-kit";
-import { View, Text, Dimensions } from "react-native";
 import { MONTHS } from "../../../constants/Months";
 import moment from "moment";
 import { Card } from "react-native-paper";
+import ErrorScreen from "../../ErrorScreen";
 
 let chartConfig = {
   backgroundColor: "#4CBB17", //"#1F2F98",
@@ -10,9 +10,8 @@ let chartConfig = {
   backgroundGradientTo: "#FFF9C4", //"#ADF7F2",
 
   decimalPlaces: 0, // optional, defaults to 2dp
-  //color: (opacity = 1) => `rgba(98,109,182, ${opacity})`,
   color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`,
-  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, //(opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
   propsForDots: {
     r: "6",
     strokeWidth: "2",
@@ -24,32 +23,42 @@ let chartConfig = {
 let year = moment().year();
 
 export default function CommissionsLineChart(props: any) {
-  let numMonths = props.currYear.length || 0;
+  let numMonths =
+    props.chartForYear == "default" || props.chartForYear == year
+      ? props.currYear.length
+      : 12;
   let monthsToShow = MONTHS.slice(0, numMonths);
 
   let currYear = props.currYear;
   let lastYear = props.lastYear.slice(0, numMonths);
-
-  //console.log("A, B : ", currYear, lastYear, monthsToShow);
 
   let currYearArr = flattenArray(currYear) || [];
   let lastYearArr = flattenArray(lastYear) || [];
 
   let data = {
     labels: monthsToShow,
-    datasets: [
-      {
-        data: lastYearArr,
-        //colors: [(opacity = 1) => `#78A9FF`],
-        color: (opacity = 0.5) => "#A782EC",
-      },
-      {
-        data: currYearArr,
-        //colors: [(opacity = 1) => `#BE95FF`],
-        color: (opacity = 1) => "#4CBB17",
-      },
-    ],
-    legend: [`${year - 1}`, `${year}`], //[`Year-to-date Comparison (${year - 1} - ${year})`],
+    datasets:
+      props.chartForYear == "default"
+        ? [
+            {
+              data: lastYearArr,
+              color: (opacity = 0.5) => "#A782EC",
+            },
+            {
+              data: currYearArr,
+              color: (opacity = 1) => "#4CBB17",
+            },
+          ]
+        : [
+            {
+              data: props.monthlyCommYear,
+              color: (opacity = 0.5) => "#A782EC",
+            },
+          ],
+    legend:
+      props.chartForYear == "default"
+        ? [`${year - 1}`, `${year}`]
+        : [`${props.chartForYear}`],
     useShadowColorFromDataset: true,
   };
 
@@ -65,35 +74,42 @@ export default function CommissionsLineChart(props: any) {
     return flatArr;
   }
 
-  //console.log("Current YTD: ", currYearArr);
-  //console.log("Previous YTD: ", lastYearArr);
+  const displayChart = () => {
+    if (props.chartForYear != "default" && props.monthlyCommYear.length == 0)
+      return (
+        <ErrorScreen
+          error="No commission information was found for this chart!"
+          type="server"
+        />
+      );
 
-  return (
-    <Card
-      style={{
-        display: "flex",
-        //flex: 1,
-        minWidth: 400,
-        marginTop: 10,
-        marginRight: 15,
-      }}
-    >
+    return (
       <LineChart
         bezier
         data={data}
         width={props.width}
         height={props.height}
         yAxisLabel="$"
-        //yAxisSuffix="k"
         yAxisInterval={1} // optional, defaults to 1
         style={{
           borderRadius: 5,
         }}
         chartConfig={chartConfig}
         fromZero={true}
-        //withShadow={true}
-        //withOuterLines
       />
+    );
+  };
+
+  return (
+    <Card
+      style={{
+        display: "flex",
+        minWidth: 400,
+        marginTop: 10,
+        marginRight: 15,
+      }}
+    >
+      {displayChart()}
     </Card>
   );
 }

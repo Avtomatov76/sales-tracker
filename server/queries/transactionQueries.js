@@ -31,6 +31,10 @@ DELETE FROM transaction
 WHERE fk_product_id = '${id}'
 `;
 
+const getAllYears = `
+SELECT DISTINCT SUBSTR(transaction_date, 1, 4) AS year FROM transaction;
+`;
+
 module.exports = {
   getAllTransactions,
   getYearToDateSalesQuery,
@@ -38,4 +42,5 @@ module.exports = {
   updateTransaction,
   deleteTransaction,
   deleteTransactionByProdId,
+  getAllYears,
 };

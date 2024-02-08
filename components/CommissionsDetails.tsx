@@ -1,28 +1,19 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View, Image, Pressable } from "react-native";
+import OutsideClickHandler from "react-outside-click-handler";
 import axios from "axios";
-import GetConfiguration from "../constants/Config";
-import {
-  getTotalCommissions,
-  getCommissionsCurrMonth,
-  getCommissionsYearToDate,
-  getAllCommTopSuppliers,
-  getYearToDateCommTopSuppliers,
-  getLastYearCommissions,
-  getAllYearsCommissions,
-  getLastYearToDate,
-  getLastYearCurrentMonth,
-  getUnpaidCommissions,
-  getYearToDatePerMonth,
-  getLastYearToDatePerMonth,
-  getYearsProductSales,
-} from "../api/endPoints";
 import CommissionsPieCard from "./cards/commissions/CommissionsPieCard";
 import CommissionsSummaryCard from "./cards/commissions/CommissionsSummaryCard";
-import { getSeriesForPie } from "../functions/commissionsFunctions";
+import {
+  getCommForYearSelected,
+  getCommissionCards,
+  getEndpoints,
+  getSeriesForPie,
+} from "../functions/commissionsFunctions";
 import CommissionsLineChart from "./cards/commissions/CommissionsLineChart";
 import ErrorScreen from "./ErrorScreen";
 import CommissionsPieChart from "./cards/commissions/CommissionsPieChart";
+import CommissionsChartYear from "./cards/commissions/CommissionsChartYear";
 
 const widthAndHeight = 150;
 
@@ -40,57 +31,20 @@ export default function CommissionsDetails(props: any) {
   const [unpaidCommissions, setUnpaidCommissions] = useState<any>();
   const [currYearMonthlyComm, setCurrYearMonthlyComm] = useState<any>();
   const [lastYearMonthlyComm, setLastYearMonthlyComm] = useState<any>();
+  const [chartOptionsDisplay, setChartOptionsDisplay] = useState(false);
+  const [allYearsNumeric, setAllYearsNumeric] = useState<any>();
+  const [chartForYear, setChartForYear] = useState<any>("default");
+  const [allCommEntries, setAllCommEntries] = useState<any>();
+  const [commForYearSelected, setCommForYearSelected] = useState<any>();
 
-  const commissionCards = [
-    {
-      title: "Total commissions",
-      data: totalCommissions || null,
-      type: "",
-      color: "#FDE0E0",
-      icon: "total",
-      iconColor: "#FF0000",
-    },
-    {
-      title: "Year-to-date",
-      data: yearToDateComm || null,
-      compare: lastYearToDateComm || null,
-      type: "YYYY",
-      color: "#ECFADC",
-      icon: "year",
-      iconColor: "#1FF438",
-    },
-    {
-      title: "Current month",
-      data: currMonthComm || null,
-      compare: lastYearCurrMonth || null,
-      type: "MMMM",
-      color: "#FFEED2",
-      icon: "month",
-      iconColor: "#FF5F15",
-    },
-    {
-      title: "Unpaid Commissions",
-      data: unpaidCommissions || null,
-      type: "MMMM",
-      color: "#FEC9C3",
-      iconColor: "#8B0000",
-      icon: "unpaid",
-    },
-    {
-      title: "",
-      type: "MMMM",
-      color: "#ECE6FF",
-      iconColor: "#791f87",
-      icon: "search",
-    },
-    {
-      title: "", // <-- Change to valid box
-      type: "MMMM",
-      color: "#ECE6FF",
-      iconColor: "#791f87",
-      icon: "search",
-    },
-  ];
+  const commissionCards = getCommissionCards(
+    totalCommissions,
+    yearToDateComm,
+    lastYearToDateComm,
+    currMonthComm,
+    lastYearCurrMonth,
+    unpaidCommissions
+  );
 
   // const getComponentWidth = (event: any) => {
   //   let width = event.nativeEvent.layout.width;
@@ -101,60 +55,65 @@ export default function CommissionsDetails(props: any) {
   const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
-  const baseURL = GetConfiguration().baseUrl;
-
   useEffect(() => {
     async function getCommissions() {
-      let endpoints = [
-        baseURL + getTotalCommissions,
-        baseURL + getCommissionsYearToDate,
-        baseURL + getCommissionsCurrMonth,
-        baseURL + getAllCommTopSuppliers,
-        baseURL + getYearToDateCommTopSuppliers,
-        baseURL + getLastYearCommissions,
-        baseURL + getLastYearToDate,
-        baseURL + getLastYearCurrentMonth,
-        baseURL + getUnpaidCommissions,
-        baseURL + getYearToDatePerMonth,
-        baseURL + getLastYearToDatePerMonth,
-        baseURL + getAllYearsCommissions,
-        baseURL + getYearsProductSales,
-      ];
-      Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-        ([
-          { data: totalCommissions },
-          { data: yearToDateComm },
-          { data: currMonthComm },
-          { data: totalSupplierComm },
-          { data: ytdSupplierComm },
-          { data: lastYearComm },
-          { data: lastYearToDateComm },
-          { data: lastYearCurrMonth },
-          { data: unpaidCommissions },
-          { data: currYearMonthlyComm },
-          { data: lastYearMonthlyComm },
-          { data: allYearsComm },
-          { data: yearsProductSales },
-        ]) => {
-          setTotalCommissions(totalCommissions);
-          setYearToDateComm(yearToDateComm);
-          setCurrMonthComm(currMonthComm);
-          setTotalSupplierComm(totalSupplierComm);
-          setYtdSupplierComm(ytdSupplierComm);
-          setLastYearComm(lastYearComm);
-          setLastYearToDate(lastYearToDateComm);
-          setLastYearCurrMonth(lastYearCurrMonth);
-          setUnpaidCommissions(unpaidCommissions);
-          setCurrYearMonthlyComm(currYearMonthlyComm);
-          setLastYearMonthlyComm(lastYearMonthlyComm);
-          setAllYearsComm(allYearsComm);
-          setYearsProductSales(yearsProductSales);
-        }
-      );
+      const endpoints = getEndpoints();
+
+      try {
+        Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
+          ([
+            { data: totalCommissions },
+            { data: yearToDateComm },
+            { data: currMonthComm },
+            { data: totalSupplierComm },
+            { data: ytdSupplierComm },
+            { data: lastYearComm },
+            { data: lastYearToDateComm },
+            { data: lastYearCurrMonth },
+            { data: unpaidCommissions },
+            { data: currYearMonthlyComm },
+            { data: lastYearMonthlyComm },
+            { data: allYearsComm },
+            { data: yearsProductSales },
+            { data: allYearsNumeric },
+            { data: allCommEntries },
+          ]) => {
+            setTotalCommissions(totalCommissions);
+            setYearToDateComm(yearToDateComm);
+            setCurrMonthComm(currMonthComm);
+            setTotalSupplierComm(totalSupplierComm);
+            setYtdSupplierComm(ytdSupplierComm);
+            setLastYearComm(lastYearComm);
+            setLastYearToDate(lastYearToDateComm);
+            setLastYearCurrMonth(lastYearCurrMonth);
+            setUnpaidCommissions(unpaidCommissions);
+            setCurrYearMonthlyComm(currYearMonthlyComm);
+            setLastYearMonthlyComm(lastYearMonthlyComm);
+            setAllYearsComm(allYearsComm);
+            setYearsProductSales(yearsProductSales);
+            setAllYearsNumeric(allYearsNumeric);
+            setAllCommEntries(allCommEntries);
+          }
+        );
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     }
 
     getCommissions();
   }, []);
+
+  const getChartDisplayOptions = () => {
+    setChartOptionsDisplay(!chartOptionsDisplay);
+  };
+
+  const handleSelection = (year: any) => {
+    setChartOptionsDisplay(false);
+    setChartForYear(year);
+
+    let commArray = getCommForYearSelected(year, allCommEntries);
+    setCommForYearSelected(commArray);
+  };
 
   if (!totalCommissions)
     return (
@@ -170,7 +129,6 @@ export default function CommissionsDetails(props: any) {
         flexDirection: "column",
         justifyContent: "space-between",
       }}
-      //onLayout={(event) => getComponentWidth(event)}
     >
       <View
         style={{
@@ -185,19 +143,6 @@ export default function CommissionsDetails(props: any) {
           paddingBottom: 10,
         }}
       >
-        {/* <Text
-          style={[
-            styles.catTitle,
-            {
-              marginTop: 20,
-              marginBottom: 20,
-              marginLeft: 8,
-            },
-          ]}
-        >
-          Summary
-        </Text> */}
-
         <View
           style={{
             display: "flex",
@@ -223,16 +168,9 @@ export default function CommissionsDetails(props: any) {
         </View>
       </View>
 
-      {/* <View>
-        <Text style={[styles.catTitle, { marginTop: 20, marginBottom: 5 }]}>
-          Data
-        </Text>
-      </View> */}
-
       <View
         style={{
           display: "flex",
-          //flex: 1,
           flexDirection: "row",
           flexWrap: "wrap",
           marginTop: 5,
@@ -242,9 +180,37 @@ export default function CommissionsDetails(props: any) {
           width={600}
           minWidth={300}
           height={300}
+          chartForYear={chartForYear}
+          monthlyCommYear={commForYearSelected || []}
           currYear={currYearMonthlyComm || null}
           lastYear={lastYearMonthlyComm || null}
         />
+
+        {chartOptionsDisplay == true ? (
+          <View style={styles.dropdown}>
+            <OutsideClickHandler
+              onOutsideClick={() => setChartOptionsDisplay(false)}
+            >
+              <CommissionsChartYear handleSelection={handleSelection} />
+              {allYearsNumeric.map((year: any, index: any) => (
+                <CommissionsChartYear
+                  key={index}
+                  year={year}
+                  index={index}
+                  handleSelection={handleSelection}
+                />
+              ))}
+            </OutsideClickHandler>
+          </View>
+        ) : (
+          <Pressable style={styles.hamburger} onPress={getChartDisplayOptions}>
+            <Image
+              source={require("../assets/icons/hamburger-menu.png")}
+              style={{ height: 18, width: 18 }}
+            />
+          </Pressable>
+        )}
+
         <CommissionsPieChart
           type="years"
           width={600}
@@ -303,29 +269,41 @@ export default function CommissionsDetails(props: any) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: "flex",
+  hamburger: {
+    height: 30,
+    width: 30,
+    position: "absolute",
+    marginTop: 20,
+    marginLeft: 10,
+    backgroundColor: "#f27d42", //"red",
+    borderRadius: 50,
     alignItems: "center",
+    justifyContent: "center",
+    padding: 5,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
-  pieTitle: {
-    fontSize: 20,
-    paddingLeft: 40,
-    paddingRight: 40,
-  },
-  catTitle: {
-    fontSize: 24,
-    marginBottom: 20,
-    fontWeight: "600",
-    color: "#368cbf",
-  },
-  card: {
-    display: "flex",
-    flexDirection: "column", //
-    alignItems: "center",
-    paddingTop: 20,
-    height: 350,
-    minWidth: 350,
-    backgroundColor: "#F0F0F0",
-    margin: 5,
+  dropdown: {
+    position: "absolute",
+    marginTop: 20,
+    marginLeft: 10,
+    flexDirection: "column",
+    borderRadius: 4,
+    backgroundColor: "#FFFFFF",
+    padding: 5,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });

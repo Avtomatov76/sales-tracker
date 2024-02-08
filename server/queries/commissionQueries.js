@@ -16,10 +16,6 @@ const currYear = new Date().getFullYear();
 const currMonthStart = moment().startOf("month").format("YYYY-MM-DD");
 const currMonthEnd = moment().endOf("month").format("YYYY-MM-DD");
 
-//
-//console.log("currYear, currMonthStart, currMonthEnd");
-//
-
 // GET commissions for all years
 const getCommissionsAllYears = `
 SELECT EXTRACT(YEAR FROM t.transaction_date) AS year, ROUND(SUM(p.product_comm), 2) AS commissions FROM product p
@@ -145,7 +141,25 @@ ORDER BY v.vendor_name;
 // GET unpaid commissions
 const getUnpaidCommissions = `
 SELECT CONCAT("$", ROUND(SUM(product_comm),2)) as commissions FROM product
-WHERE is_comm_received = 'N'
+WHERE is_comm_received = 'N';
+`;
+
+// GET all individual commission amounts
+const getEveryCommission = `
+SELECT p.product_comm AS commissions, transaction_date AS date
+FROM product p
+JOIN transaction t ON p.product_id=t.fk_product_id;
+`;
+
+// GET all monthly commissions for all years
+const getMonthlyCommAllYears = `
+SELECT YEAR(t.transaction_date) AS year,
+       MONTH(t.transaction_date) AS month,
+       SUM(p.product_comm) AS monthly_sum
+FROM product p
+JOIN transaction t ON p.product_id=t.fk_product_id
+GROUP BY YEAR(t.transaction_date), MONTH(t.transaction_date)
+ORDER BY YEAR(t.transaction_date), MONTH(t.transaction_date);
 `;
 
 module.exports = {
@@ -165,4 +179,6 @@ module.exports = {
   getMonthlyCommissionsYTDPrevious,
   getMonthlyCommissionsYTDCurrent,
   getCommissionsAllYears,
+  getEveryCommission,
+  getMonthlyCommAllYears,
 };

@@ -32,6 +32,7 @@ export const getLastYearCurrentMonth = "/api/commissions-lastCurrent";
 export const getUnpaidCommissions = "/api/commissions-unpaid";
 export const getYearToDatePerMonth = "/api/commissions-monthlyCurrent";
 export const getLastYearToDatePerMonth = "/api/commissions-monthlyLast";
+export const getCommissionsEntries = "/api/commissions-entries";
 
 // Transactions
 export const transactionsAPI = "/api/transactions";
@@ -39,6 +40,7 @@ export const getYearToDateSalesAPI = "/api/sales-year";
 export const getCurrentMonthSalesAPI = "/api/sales-month";
 export const saveTransactionsAPI = "/api/transactions-save";
 export const updateTransaction = "/api/transactions-update";
+export const getYears = "/api/transactions-years";
 
 // Products
 export const productsAPI = "/api/products";

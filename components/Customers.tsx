@@ -95,7 +95,7 @@ export default function Customers(props: any) {
     if (!value) return;
 
     let customer = data.find(
-      (c: any) => c.last_name.toLowerCase() === value.toLowerCase()
+      (c: any) => c.last_name.toLowerCase() == value.toLowerCase()
     );
 
     setCustomer(customer);

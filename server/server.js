@@ -45,6 +45,8 @@ const {
   getMonthlyCommissionsYTDCurrent,
   getYearToDateCommVendors,
   getCommissionsAllYears,
+  getEveryCommission,
+  getMonthlyCommAllYears,
 } = require("./queries/commissionQueries");
 const {
   getAllTransactions,
@@ -54,6 +56,7 @@ const {
   updateTransaction,
   deleteTransaction,
   deleteTransactionByProdId,
+  getAllYears,
 } = require("./queries/transactionQueries");
 
 const app = express();
@@ -275,6 +278,21 @@ app.post("/api/destinations", async (req, res) => {
 });
 
 // GET Transaction
+app.get("/api/transactions-years", async (req, res) => {
+  let years = [];
+  try {
+    const result = await db.pool.query(getAllYears);
+
+    result.forEach((el) => {
+      years.push(el.year);
+    });
+
+    res.send(years);
+  } catch (err) {
+    throw err;
+  }
+});
+
 app.get("/api/sales-year", async (req, res) => {
   try {
     const result = await db.pool.query(getYearToDateSalesQuery);
@@ -297,6 +315,16 @@ app.get("/api/sales-month", async (req, res) => {
 app.get("/api/commissions", async (req, res) => {
   try {
     const result = await db.pool.query(getAllCommissions);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// GET montly commissions for all years
+app.get("/api/commissions-entries", async (req, res) => {
+  try {
+    const result = await db.pool.query(getMonthlyCommAllYears);
     res.send(result);
   } catch (err) {
     throw err;
