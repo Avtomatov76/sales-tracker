@@ -1,107 +1,39 @@
-import { useState, useEffect } from "react";
+import { useState, useContext } from "react";
 import { StyleSheet, View, Image, Pressable } from "react-native";
 import OutsideClickHandler from "react-outside-click-handler";
-import axios from "axios";
 import CommissionsPieCard from "./cards/commissions/CommissionsPieCard";
 import CommissionsSummaryCard from "./cards/commissions/CommissionsSummaryCard";
 import {
   getCommForYearSelected,
   getCommissionCards,
-  getEndpoints,
   getSeriesForPie,
 } from "../functions/commissionsFunctions";
 import CommissionsLineChart from "./cards/commissions/CommissionsLineChart";
 import ErrorScreen from "./ErrorScreen";
 import CommissionsPieChart from "./cards/commissions/CommissionsPieChart";
 import CommissionsChartYear from "./cards/commissions/CommissionsChartYear";
+import { MyContext } from "../MyContext";
 
 const widthAndHeight = 150;
 
 export default function CommissionsDetails(props: any) {
-  const [totalCommissions, setTotalCommissions] = useState<any>();
-  const [currMonthComm, setCurrMonthComm] = useState<any>();
-  const [yearToDateComm, setYearToDateComm] = useState<any>();
-  const [totalSupplierComm, setTotalSupplierComm] = useState<any>();
-  const [ytdSupplierComm, setYtdSupplierComm] = useState<any>();
-  const [yearsProductSales, setYearsProductSales] = useState<any>();
-  const [lastYearComm, setLastYearComm] = useState<any>();
-  const [allYearsComm, setAllYearsComm] = useState<any>();
-  const [lastYearToDateComm, setLastYearToDate] = useState<any>();
-  const [lastYearCurrMonth, setLastYearCurrMonth] = useState<any>();
-  const [unpaidCommissions, setUnpaidCommissions] = useState<any>();
-  const [currYearMonthlyComm, setCurrYearMonthlyComm] = useState<any>();
-  const [lastYearMonthlyComm, setLastYearMonthlyComm] = useState<any>();
   const [chartOptionsDisplay, setChartOptionsDisplay] = useState(false);
-  const [allYearsNumeric, setAllYearsNumeric] = useState<any>();
   const [chartForYear, setChartForYear] = useState<any>("default");
-  const [allCommEntries, setAllCommEntries] = useState<any>();
   const [commForYearSelected, setCommForYearSelected] = useState<any>();
 
-  const commissionCards = getCommissionCards(
-    totalCommissions,
-    yearToDateComm,
-    lastYearToDateComm,
-    currMonthComm,
-    lastYearCurrMonth,
-    unpaidCommissions
-  );
+  const dbData = useContext(MyContext);
 
-  // const getComponentWidth = (event: any) => {
-  //   let width = event.nativeEvent.layout.width;
-  //   if (width >= 450) setChartWidth(width);
-  //   if (width < 450) setChartWidth(450);
-  // };
+  const commissionCards = getCommissionCards(
+    dbData.commissions,
+    dbData.ytdCommissions,
+    dbData.prevYtdCommissions,
+    dbData.currMonthCommission,
+    dbData.prevYearCurrMonthCommissions,
+    dbData.commissionsDue
+  );
 
   const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
-
-  useEffect(() => {
-    async function getCommissions() {
-      const endpoints = getEndpoints();
-
-      try {
-        Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-          ([
-            { data: totalCommissions },
-            { data: yearToDateComm },
-            { data: currMonthComm },
-            { data: totalSupplierComm },
-            { data: ytdSupplierComm },
-            { data: lastYearComm },
-            { data: lastYearToDateComm },
-            { data: lastYearCurrMonth },
-            { data: unpaidCommissions },
-            { data: currYearMonthlyComm },
-            { data: lastYearMonthlyComm },
-            { data: allYearsComm },
-            { data: yearsProductSales },
-            { data: allYearsNumeric },
-            { data: allCommEntries },
-          ]) => {
-            setTotalCommissions(totalCommissions);
-            setYearToDateComm(yearToDateComm);
-            setCurrMonthComm(currMonthComm);
-            setTotalSupplierComm(totalSupplierComm);
-            setYtdSupplierComm(ytdSupplierComm);
-            setLastYearComm(lastYearComm);
-            setLastYearToDate(lastYearToDateComm);
-            setLastYearCurrMonth(lastYearCurrMonth);
-            setUnpaidCommissions(unpaidCommissions);
-            setCurrYearMonthlyComm(currYearMonthlyComm);
-            setLastYearMonthlyComm(lastYearMonthlyComm);
-            setAllYearsComm(allYearsComm);
-            setYearsProductSales(yearsProductSales);
-            setAllYearsNumeric(allYearsNumeric);
-            setAllCommEntries(allCommEntries);
-          }
-        );
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    }
-
-    getCommissions();
-  }, []);
 
   const getChartDisplayOptions = () => {
     setChartOptionsDisplay(!chartOptionsDisplay);
@@ -111,11 +43,11 @@ export default function CommissionsDetails(props: any) {
     setChartOptionsDisplay(false);
     setChartForYear(year);
 
-    let commArray = getCommForYearSelected(year, allCommEntries);
+    let commArray = getCommForYearSelected(year, dbData.commissionEntries);
     setCommForYearSelected(commArray);
   };
 
-  if (!totalCommissions)
+  if (!dbData.commissions)
     return (
       <ErrorScreen
         error="No commission information found in the database!"
@@ -182,8 +114,8 @@ export default function CommissionsDetails(props: any) {
           height={300}
           chartForYear={chartForYear}
           monthlyCommYear={commForYearSelected || []}
-          currYear={currYearMonthlyComm || null}
-          lastYear={lastYearMonthlyComm || null}
+          currYear={dbData.currYearMonthlyCommissions || null}
+          lastYear={dbData.prevYearMonthlyCommissions || null}
         />
 
         {chartOptionsDisplay == true ? (
@@ -192,7 +124,7 @@ export default function CommissionsDetails(props: any) {
               onOutsideClick={() => setChartOptionsDisplay(false)}
             >
               <CommissionsChartYear handleSelection={handleSelection} />
-              {allYearsNumeric.map((year: any, index: any) => (
+              {dbData.numericValuesAllYears.map((year: any, index: any) => (
                 <CommissionsChartYear
                   key={index}
                   year={year}
@@ -216,9 +148,9 @@ export default function CommissionsDetails(props: any) {
           width={600}
           minWidth={300}
           height={300}
-          allYearsComm={allYearsComm}
-          currYear={yearToDateComm || null}
-          lastYear={lastYearComm || null}
+          allYearsComm={dbData.yearlyCommissions}
+          currYear={dbData.ytdCommissions || null}
+          lastYear={dbData.prevYearCommissions || null}
         />
       </View>
 
@@ -229,36 +161,37 @@ export default function CommissionsDetails(props: any) {
           flexDirection: "row",
         }}
       >
-        {!yearsProductSales ? null : (
+        {!dbData.yearlySales ? null : (
           <CommissionsPieCard
             type="sales"
-            data={yearsProductSales || []}
             widthAndHeight={widthAndHeight}
-            series={getSeriesForPie(yearsProductSales) || []}
-            numColors={yearsProductSales.length}
+            data={dbData.yearlySales || []}
+            series={getSeriesForPie(dbData.yearlySales) || []}
+            numColors={dbData.yearlySales.length}
             title="Total Sales"
             titleDetails="per year"
           />
         )}
-        {!totalSupplierComm ? null : (
+
+        {!dbData.suppliersCommissions ? null : (
           <CommissionsPieCard
             type="suppliers"
-            data={totalSupplierComm || []}
             widthAndHeight={widthAndHeight}
-            series={getSeriesForPie(totalSupplierComm) || []}
-            numColors={totalSupplierComm.length}
+            data={dbData.suppliersCommissions || []}
+            series={getSeriesForPie(dbData.suppliersCommissions) || []}
+            numColors={dbData.suppliersCommissions.length}
             title="Top Suppliers"
             titleDetails="historic data"
           />
         )}
 
-        {!ytdSupplierComm ? null : (
+        {!dbData.ytdSuppliersCommissions ? null : (
           <CommissionsPieCard
             type="suppliers"
-            data={ytdSupplierComm || []}
             widthAndHeight={widthAndHeight}
-            series={getSeriesForPie(ytdSupplierComm) || []}
-            numColors={ytdSupplierComm.length}
+            data={dbData.ytdSuppliersCommissions || []}
+            series={getSeriesForPie(dbData.ytdSuppliersCommissions) || []}
+            numColors={dbData.ytdSuppliersCommissions.length}
             title="Top Suppliers"
             titleDetails="year-to-date"
           />
@@ -275,7 +208,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     marginTop: 20,
     marginLeft: 10,
-    backgroundColor: "#f27d42", //"red",
+    backgroundColor: "#f27d42",
     borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",

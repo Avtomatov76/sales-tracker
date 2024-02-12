@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { useContext } from "react";
+import { MyContext } from "../MyContext";
+import { View, Text, StyleSheet } from "react-native";
 import TabHeader from "./TabHeader";
-import axios from "axios";
-import { productsAPI, transactionsAPI } from "../api/endPoints";
-import GetConfiguration from "../constants/Config";
 import ErrorScreen from "./ErrorScreen";
 import {
+  getHighestMonthComm,
+  getMonth,
   getSumOfEntries,
   getYearToDateCommissions,
   getYearToDateSales,
@@ -13,42 +13,27 @@ import {
 import { formatDollarEntry } from "../functions/customerFunctions";
 
 export default function Dashboard(props: any) {
-  const baseURL = GetConfiguration().baseUrl;
-  const [allProducts, setAllProducts] = useState<any>();
-  const [allTransactions, setAllTransactions] = useState<any>();
-  //const [allCommissions, setAllCommissions] = useState<any>();
+  const dbData = useContext(MyContext);
 
-  //
-  let allSales = 0;
-  let ytdSales = 0;
-  let allCommissions = 0;
-  let ytdCommissions = 0;
-  //
-  useEffect(() => {
-    async function getDashboardData() {
-      let endpoints = [baseURL + productsAPI, baseURL + transactionsAPI];
-      Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-        ([{ data: allProducts }, { data: allTransactions }]) => {
-          setAllProducts(allProducts);
-          setAllTransactions(allTransactions);
-        }
-      );
-    }
+  // let allSales = 0;
+  // let ytdSales = 0;
+  // let allCommissions = 0;
+  // let ytdCommissions = 0;
+  // let highestMonthComm = ""
 
-    getDashboardData();
-  }, []);
+  let allSales = getSumOfEntries(dbData.products, "product_cost");
+  let ytdSales = getYearToDateSales(dbData.transactions);
+  let allCommissions = getSumOfEntries(dbData.products, "product_comm");
+  let ytdCommissions = getYearToDateCommissions(
+    dbData.products,
+    dbData.transactions
+  );
+  let highestMonthCommEntry = getHighestMonthComm(dbData.commissionEntries);
 
-  if (allProducts && allTransactions) {
-    allSales = getSumOfEntries(allProducts, "product_cost");
-    ytdSales = getYearToDateSales(allTransactions);
-    allCommissions = getSumOfEntries(allProducts, "product_comm");
-    ytdCommissions = getYearToDateCommissions(allProducts, allTransactions);
-  }
+  //console.log(dbData.commissionEntries);
+  console.log(highestMonthCommEntry);
 
-  console.log("ALL PRODUCT DATA: ", allProducts);
-  //console.log("ALL TRANSACTIONS DATA: ", allTransactions);
-
-  if (!allProducts && !allTransactions)
+  if (!allSales && !allCommissions)
     return (
       <ErrorScreen
         error="No product information found in the database!"
@@ -96,19 +81,36 @@ export default function Dashboard(props: any) {
           <View style={{ flexDirection: "row" }}>
             <Text>Year-to-date revenue margin:&nbsp;</Text>
             <Text style={{ color: "green", fontWeight: "bold" }}>
-              {((ytdCommissions * 100) / ytdSales).toFixed(3)}&#37;
+              {((parseInt(ytdCommissions) * 100) / parseInt(ytdSales)).toFixed(
+                3
+              )}
+              &#37;
             </Text>
           </View>
 
           <View style={{ flexDirection: "row" }}>
             <Text>Historic revenue margin:&nbsp;</Text>
             <Text style={{ color: "green", fontWeight: "bold" }}>
-              {((allCommissions * 100) / allSales).toFixed(3)}&#37;
+              {((parseInt(allCommissions) * 100) / parseInt(allSales)).toFixed(
+                3
+              )}
+              &#37;
             </Text>
           </View>
 
-          <Text>Best month in sales and commissions</Text>
-          <Text>Best week in sales and commissions</Text>
+          <Text>
+            Best month in sales and commissions:&nbsp;
+            <Text>{getMonth(highestMonthCommEntry)}</Text>&nbsp;
+            <Text style={{ color: "green", fontWeight: "bold" }}>
+              {formatDollarEntry(
+                parseInt(highestMonthCommEntry["monthly_sum"].toFixed(2))
+              )}
+            </Text>
+          </Text>
+          <Text>
+            Best week in sales and commissions -- RUSLAN AGE --
+            {/* {personOBJ.age} */}
+          </Text>
           <Text>Best day in sales and commissions</Text>
           <Text>3 most popular destinations</Text>
           <Text>5 largest sales details and commissions</Text>
