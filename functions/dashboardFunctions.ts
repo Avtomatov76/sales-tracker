@@ -1,3 +1,5 @@
+import { FULL_MONTHS } from "../constants/Months";
+
 export const getSumOfEntries = (entries: any, fieldName: any) => {
   if (!entries || entries.length == 0) return;
 
@@ -7,7 +9,7 @@ export const getSumOfEntries = (entries: any, fieldName: any) => {
     sum += e[fieldName];
   });
 
-  return sum.toFixed(2); //Math.round(sum);
+  return sum.toFixed(2);
 };
 
 export const getYearToDateSales = (entries: any) => {
@@ -44,35 +46,23 @@ export const getYearToDateCommissions = (products: any, transactions: any) => {
     if (transactionsArr.includes(p.product_id)) sum += p.product_comm;
   });
 
-  return sum.toFixed(2); //Math.round(sum);
+  return sum.toFixed(2);
 };
 
-export const getHighestMonthComm = (commissions: any) => {
-  let maxComm = commissions[0].monthly_sum;
+export const getHighestComm = (commissions: any, type: any) => {
+  let maxComm = commissions[0][type];
   let maxCommEntry = {};
 
-  commissions.forEach((e: any, index: any) => {
-    if (e.monthly_sum > maxComm) maxCommEntry = e;
+  commissions.forEach((e: any) => {
+    if (e[type] > maxComm) {
+      maxComm = e[type];
+      maxCommEntry = e;
+    }
   });
 
   return maxCommEntry;
 };
 
 export const getMonth = (commEntry: any) => {
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sept",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  return months[commEntry.month - 1];
+  return FULL_MONTHS[commEntry.month - 1];
 };

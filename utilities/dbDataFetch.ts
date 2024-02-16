@@ -19,6 +19,8 @@ export async function fetchData() {
   let numericValuesAllYears: any[];
   let commissionEntries: any[];
   let yearlyCommissions: any[];
+  let everyCommissionEntry: any[];
+  let commissionsPerCustomer: any[];
 
   let endpoints = getEndpoints();
 
@@ -42,6 +44,8 @@ export async function fetchData() {
         { data: allYearsNumeric },
         { data: allCommEntries },
         { data: yearsCommissions },
+        { data: everyCommission },
+        { data: customersCommissions },
       ]) => {
         products = allProducts;
         transactions = allTransactions;
@@ -60,6 +64,8 @@ export async function fetchData() {
         numericValuesAllYears = allYearsNumeric;
         commissionEntries = allCommEntries;
         yearlyCommissions = yearsCommissions;
+        everyCommissionEntry = everyCommission;
+        commissionsPerCustomer = customersCommissions;
       }
     );
   } catch (error) {
@@ -84,5 +90,7 @@ export async function fetchData() {
     numericValuesAllYears: numericValuesAllYears,
     commissionEntries: commissionEntries,
     yearlyCommissions: yearlyCommissions,
+    everyCommissionEntry: everyCommissionEntry,
+    commissionsPerCustomer: commissionsPerCustomer,
   };
 }

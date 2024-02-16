@@ -4,22 +4,20 @@ import { View, Text, StyleSheet } from "react-native";
 import TabHeader from "./TabHeader";
 import ErrorScreen from "./ErrorScreen";
 import {
-  getHighestMonthComm,
+  getHighestComm,
   getMonth,
   getSumOfEntries,
   getYearToDateCommissions,
   getYearToDateSales,
 } from "../functions/dashboardFunctions";
 import { formatDollarEntry } from "../functions/customerFunctions";
+import DashboardCommList from "./cards/dashboard/DashboardCommList";
+import CommissionsSummaryCard from "./cards/commissions/CommissionsSummaryCard";
 
 export default function Dashboard(props: any) {
   const dbData = useContext(MyContext);
 
-  // let allSales = 0;
-  // let ytdSales = 0;
-  // let allCommissions = 0;
-  // let ytdCommissions = 0;
-  // let highestMonthComm = ""
+  console.log("--- DATABASE OBJECT --- : ", dbData);
 
   let allSales = getSumOfEntries(dbData.products, "product_cost");
   let ytdSales = getYearToDateSales(dbData.transactions);
@@ -28,10 +26,21 @@ export default function Dashboard(props: any) {
     dbData.products,
     dbData.transactions
   );
-  let highestMonthCommEntry = getHighestMonthComm(dbData.commissionEntries);
+  let highestMonthCommEntry = getHighestComm(
+    dbData.commissionEntries,
+    "monthly_sum"
+  );
+  let highestDayCommEntry = getHighestComm(
+    dbData.everyCommissionEntry,
+    "commission"
+  );
+  let commissionsList = dbData.commissionsPerCustomer.slice(0, 11);
 
   //console.log(dbData.commissionEntries);
-  console.log(highestMonthCommEntry);
+  //console.log("HIGHEST MONTH COMMISSION: ", highestMonthCommEntry);
+
+  //console.log("HIGHEST DAY COMMISSION: ", highestDayCommEntry);
+  console.log(Date.now());
 
   if (!allSales && !allCommissions)
     return (
@@ -76,6 +85,23 @@ export default function Dashboard(props: any) {
             </Text>
           </View>
         </View>
+
+        <CommissionsSummaryCard
+          // key={index}
+          // data={card.data}
+          // type={card.type}
+          // color={card.color}
+          // iconColor={card.iconColor}
+          // icon={card.icon}
+          title="Summary"
+          icon="total"
+          color="#FDE0E0"
+          iconColor="#FF0000"
+          startDate={props.startDate}
+          endDate={props.endDate}
+          commissions={props.commissions}
+        />
+
         <View style={{ marginTop: 20 }}>
           <Text style={{ marginBottom: 10, fontWeight: "bold" }}>Metrics</Text>
           <View style={{ flexDirection: "row" }}>
@@ -100,7 +126,11 @@ export default function Dashboard(props: any) {
 
           <Text>
             Best month in sales and commissions:&nbsp;
-            <Text>{getMonth(highestMonthCommEntry)}</Text>&nbsp;
+            <Text style={{ color: "blue", fontWeight: "bold" }}>
+              {getMonth(highestMonthCommEntry)},&nbsp;
+              {highestMonthCommEntry["year"]}&nbsp;-&nbsp;
+            </Text>
+            &nbsp;
             <Text style={{ color: "green", fontWeight: "bold" }}>
               {formatDollarEntry(
                 parseInt(highestMonthCommEntry["monthly_sum"].toFixed(2))
@@ -108,14 +138,27 @@ export default function Dashboard(props: any) {
             </Text>
           </Text>
           <Text>
-            Best week in sales and commissions -- RUSLAN AGE --
-            {/* {personOBJ.age} */}
+            Best day in sales and commissions:&nbsp;
+            <Text style={{ color: "blue", fontWeight: "bold" }}>
+              {highestDayCommEntry["date"]}&nbsp;-&nbsp;
+            </Text>
+            &nbsp;
+            <Text style={{ color: "green", fontWeight: "bold" }}>
+              {formatDollarEntry(
+                parseInt(highestDayCommEntry["commission"].toFixed(2))
+              )}
+            </Text>
           </Text>
-          <Text>Best day in sales and commissions</Text>
           <Text>3 most popular destinations</Text>
           <Text>5 largest sales details and commissions</Text>
-          <Text>Highest grossing customer(s)</Text>
+          <Text style={{ marginBottom: 10 }}>Highest grossing customer(s)</Text>
+          {!commissionsList
+            ? null
+            : commissionsList.map((c: any, index: any) => (
+                <DashboardCommList key={index} customer={c} />
+              ))}
         </View>
+
         <View style={{ marginTop: 20 }}>
           <Text style={{ marginBottom: 10, fontWeight: "bold" }}>Analysis</Text>
           <Text>

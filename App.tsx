@@ -5,6 +5,7 @@ import HomeScreen from "./screens/HomeScreen";
 import { fetchData } from "./utilities/dbDataFetch";
 import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
+import LoginScreen from "./screens/LoginScreen";
 
 const queryClient = new QueryClient({});
 
@@ -24,12 +25,31 @@ export default function App() {
     }
   }, []);
 
+  function getUserData(user: any) {
+    if (user.auth_id) {
+      user.auth = "ok";
+      setDbData({
+        ...dbData,
+        user: user,
+      });
+    } else
+      setDbData({
+        ...dbData,
+        user: { auth: "failed" },
+      });
+  }
+
+  console.log(dbData);
+
   if (!dbData)
     return (
       <View>
         <Text>GETTING DATA STILL....</Text>
       </View>
     );
+
+  if (!dbData.user || !dbData.user.auth_id || dbData.auth)
+    return <LoginScreen getUserData={getUserData} user={dbData.user} />;
 
   return (
     <QueryClientProvider client={queryClient}>

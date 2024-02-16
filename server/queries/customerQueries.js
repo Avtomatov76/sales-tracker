@@ -44,6 +44,13 @@ const getCustomerRecentSales = (id) => `
 // WHERE customer_id = ${id}
 `;
 
+const getCommissionsPerCustomer = `
+SELECT c.last_name, c.first_name, SUM(p.product_comm) AS commission, DATE_FORMAT(t.transaction_date, '%Y-%m-%d') AS date FROM customer c
+JOIN transaction t ON c.customer_id=t.fk_customer_id
+JOIN product p ON p.product_id=t.fk_product_id
+GROUP BY c.last_name ORDER BY commission DESC
+`;
+
 // DELETE
 const deleteCustomer = (id) => `
 DELETE FROM customer 
@@ -93,4 +100,5 @@ module.exports = {
   postCustomers,
   updateCustomer,
   deleteCustomer,
+  getCommissionsPerCustomer,
 };

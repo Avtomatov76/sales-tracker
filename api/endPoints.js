@@ -16,6 +16,7 @@ export const saveCustomersAPI = "/api/customers-save";
 export const getCustomerSales = "/api/customers/sales/";
 export const getCustomerLatestSale = "/api/customers/sale/";
 export const getCustomerCommissions = "/api/customers/commissions/";
+export const getCommissionsPerCustomer = "/api/customers-commissions";
 
 // Commissions
 export const getTotalCommissions = "/api/commissions";
@@ -33,6 +34,7 @@ export const getUnpaidCommissions = "/api/commissions-unpaid";
 export const getYearToDatePerMonth = "/api/commissions-monthlyCurrent";
 export const getLastYearToDatePerMonth = "/api/commissions-monthlyLast";
 export const getCommissionsEntries = "/api/commissions-entries";
+export const getEveryCommissionEntry = "/api/commissions-every";
 
 // Transactions
 export const transactionsAPI = "/api/transactions";
@@ -52,3 +54,6 @@ export const getProductsById = "/api/products-id";
 export const updateProductFieldAPI = "/api/products-field";
 export const updateProduct = "/api/products-update";
 export const getYearsProductSales = "/api/products-sales";
+
+// AUTH
+export const authAPI = "/api/auth";

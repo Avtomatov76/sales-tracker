@@ -104,9 +104,11 @@ export default function CommissionsLineChart(props: any) {
     <Card
       style={{
         display: "flex",
+        height: 340,
         minWidth: 400,
         marginTop: 10,
         marginRight: 15,
+        borderRadius: 5,
       }}
     >
       {displayChart()}

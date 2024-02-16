@@ -147,7 +147,7 @@ export default function CommissionsDetails(props: any) {
           type="years"
           width={600}
           minWidth={300}
-          height={300}
+          //height={300}
           allYearsComm={dbData.yearlyCommissions}
           currYear={dbData.ytdCommissions || null}
           lastYear={dbData.prevYearCommissions || null}

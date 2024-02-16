@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
     //flex: 1,
     //flexDirection: "row",
     minWidth: 400,
+    height: 340,
     backgroundColor: "#FFFFF0", //"#FFF9C4", //"#F0F0F0",
     marginTop: 10,
     marginRight: 15,

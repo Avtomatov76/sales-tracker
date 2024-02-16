@@ -145,10 +145,9 @@ WHERE is_comm_received = 'N';
 `;
 
 // GET all individual commission amounts
-const getEveryCommission = `
-SELECT p.product_comm AS commissions, transaction_date AS date
-FROM product p
-JOIN transaction t ON p.product_id=t.fk_product_id;
+const getEveryCommissionEntry = `
+SELECT DATE_FORMAT(t.transaction_date, '%Y-%m-%d') AS date, t.transaction_amount AS amount, p.product_comm AS commission FROM transaction t
+JOIN product p ON t.fk_product_id=p.product_id;
 `;
 
 // GET all monthly commissions for all years
@@ -179,6 +178,6 @@ module.exports = {
   getMonthlyCommissionsYTDPrevious,
   getMonthlyCommissionsYTDCurrent,
   getCommissionsAllYears,
-  getEveryCommission,
+  getEveryCommissionEntry,
   getMonthlyCommAllYears,
 };

@@ -16,6 +16,8 @@ import {
   getCommissionsEntries,
   productsAPI,
   transactionsAPI,
+  getEveryCommissionEntry,
+  getCommissionsPerCustomer,
 } from "../api/endPoints";
 import GetConfiguration from "../constants/Config";
 
@@ -123,6 +125,8 @@ export const getEndpoints = () => {
     baseURL + getYears,
     baseURL + getCommissionsEntries,
     baseURL + getAllYearsCommissions,
+    baseURL + getEveryCommissionEntry,
+    baseURL + getCommissionsPerCustomer,
   ];
 
   return endPointArray;

@@ -1,13 +1,18 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import moment from "moment";
+import { MyContext } from "../MyContext";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { Chip } from "react-native-paper";
 
 export default function Header(props: any) {
-  const [inputStyle, setInputStyle] = useState();
+  const context = useContext(MyContext);
 
   const handleShowMenu = () => {
     props.showMenu();
+  };
+
+  const showUser = (user: any) => {
+    return user.first_name + " " + user.last_name;
   };
 
   return (
@@ -34,13 +39,6 @@ export default function Header(props: any) {
         <Text style={styles.title}>Sales Tracker</Text>
       </View>
 
-      {/* <View style={styles.searchContainer}>
-          <Image
-            source={require("../assets/icons/search.png")}
-            style={styles.searchIcon}
-          />
-          <TextInput placeholder="Search" style={styles.navSearch} />
-        </View> */}
       <View
         style={{
           display: "flex",
@@ -48,25 +46,19 @@ export default function Header(props: any) {
           justifyContent: "center",
           alignItems: "center",
           padding: 5,
-          // marginBottom: 10,
         }}
       >
         <Text style={styles.navEl}>
           Last Sign-in:{" "}
-          {/* <Text style={{ fontSize: 14, color: "orange", marginLeft: 10 }}>
-              {moment().format("DD MMMM, HH:MM")}
-            </Text> */}
           <Chip
             mode="flat"
             textStyle={{
               fontSize: 14,
-              color: "#FFFFFF", //"#368cbf", //"orange",
-              //fontWeight: "bold",
-              //backgroundColor: "#FFFFFF",
+              color: "#FFFFFF",
             }}
             style={{
-              backgroundColor: "#f27d42", //"#FFFFFF",
-              borderRadius: 5, //20,
+              backgroundColor: "#f27d42",
+              borderRadius: 5,
               marginLeft: 10,
             }}
           >
@@ -80,49 +72,21 @@ export default function Header(props: any) {
           justifyContent: "center",
           alignContent: "center",
           padding: 5,
-          // marginBottom: 10,
         }}
       >
         <Text
           style={{
             fontSize: 24,
-            //fontWeight: "bold",
             color: "#ffffff",
             marginTop: -5,
           }}
         >
-          Ruslan Kalashnikov
+          {showUser(context.user)}
         </Text>
       </View>
     </View>
   );
 }
-
-// {showSidebar ? (
-//   <View style={{ position: "absolute", top: 100, left: 100 }}>
-//     <Sidebar
-//       navigate={props.navigate}
-//       screen="small"
-//       hide={() => setShowSidebar(false)}
-//     />
-//   </View>
-// ) : null}
-
-// const testMenu = () => {
-//   return (
-//     <View>
-//       <Button
-//         mode="contained"
-//         style={{ width: 150 }}
-//         onPress={() => setShowSidebar(!showSidebar)}
-//       >
-//         TEST MENU!!
-//       </Button>
-//     </View>
-//   );
-// };
-
-//const [showSidebar, setShowSidebar] = useState(false);
 
 const styles = StyleSheet.create({
   container: {
@@ -145,25 +109,6 @@ const styles = StyleSheet.create({
   navEl: {
     fontSize: 14,
     color: "#FFFFFF",
-  },
-  searchContainer: {
-    flexDirection: "row",
-    backgroundColor: "#FFFFFF",
-    marginRight: "2rem",
-    paddingLeft: ".75rem",
-    paddingRight: ".75rem",
-    borderRadius: 30,
-  },
-  navSearch: {
-    fontSize: 14,
-    color: "#000000",
-    padding: ".5rem",
-    marginLeft: ".5rem",
-  },
-  searchIcon: {
-    alignSelf: "center",
-    height: 18,
-    width: 18,
   },
   menu: {
     marginTop: 3,

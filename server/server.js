@@ -29,6 +29,7 @@ const {
   deleteCustomer,
   getCustomerLatestSale,
   deleteProduct,
+  getCommissionsPerCustomer,
 } = require("./queries/customerQueries");
 const {
   getCommissionsForDateRange,
@@ -45,7 +46,7 @@ const {
   getMonthlyCommissionsYTDCurrent,
   getYearToDateCommVendors,
   getCommissionsAllYears,
-  getEveryCommission,
+  getEveryCommissionEntry,
   getMonthlyCommAllYears,
 } = require("./queries/commissionQueries");
 const {
@@ -58,6 +59,10 @@ const {
   deleteTransactionByProdId,
   getAllYears,
 } = require("./queries/transactionQueries");
+const {
+  authorizeUser,
+  updateLoginTimestamp,
+} = require("./queries/authQueries");
 
 const app = express();
 const port = process.env.PORT || 8080; //19006; //...http://192.168.0.223:19006 const port = process.env.PORT || 5000;
@@ -66,6 +71,36 @@ const bodyParser = require("body-parser");
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// Auth a user
+app.post("/api/auth", async (req, res) => {
+  const credentials = req.body;
+
+  try {
+    let result = await db.pool.query(
+      authorizeUser(credentials.username, credentials.password),
+      function (err, data) {
+        if (err) throw err;
+        console.log("User has been authorized successfully");
+      }
+    );
+    console.log("RESULT: ------------------ ", result[0]);
+
+    if (result.length > 0) {
+      await db.pool.query(
+        updateLoginTimestamp(credentials.username, credentials.password),
+        function (err, data) {
+          if (err) throw err;
+          console.log("User login timestamp update failed");
+        }
+      );
+      res.send(result[0]);
+    } else res.status(404).send("User not found");
+  } catch (err) {
+    console.error(err);
+    res.send({ result: "Authorization Failed!" });
+  }
+});
 
 // POST Travel Type
 app.post("/api/travel/types", async (req, res) => {
@@ -88,6 +123,16 @@ app.post("/api/travel/types", async (req, res) => {
 app.get("/api/customers/:id", async (req, res) => {
   try {
     const result = await db.pool.query(getCustomer(req.params["id"]));
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// GET total commissions per each customer
+app.get("/api/customers-commissions", async (req, res) => {
+  try {
+    const result = await db.pool.query(getCommissionsPerCustomer);
     res.send(result);
   } catch (err) {
     throw err;
@@ -416,6 +461,16 @@ app.get("/api/commissions-lastYear", async (req, res) => {
 app.get("/api/commissions-years", async (req, res) => {
   try {
     const result = await db.pool.query(getCommissionsAllYears);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// GET every commission entry
+app.get("/api/commissions-every", async (req, res) => {
+  try {
+    const result = await db.pool.query(getEveryCommissionEntry);
     res.send(result);
   } catch (err) {
     throw err;
