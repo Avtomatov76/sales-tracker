@@ -1,18 +1,32 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import moment from "moment";
+import { MyContext } from "../MyContext";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { Chip } from "react-native-paper";
 
 export default function Header(props: any) {
-  const [inputStyle, setInputStyle] = useState();
+  const context = useContext(MyContext);
 
   const handleShowMenu = () => {
     props.showMenu();
   };
 
+  const showUser = (user: any) => {
+    return user.first_name + " " + user.last_name;
+  };
+
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          marginRight: "auto",
+          padding: 5,
+          paddingRight: 30,
+        }}
+      >
         {props.screenSize ? (
           <Pressable onPress={handleShowMenu}>
             <Image
@@ -24,96 +38,68 @@ export default function Header(props: any) {
 
         <Text style={styles.title}>Sales Tracker</Text>
       </View>
-      <View style={{ flexDirection: "row" }}>
-        {/* <View style={styles.searchContainer}>
-          <Image
-            source={require("../assets/icons/search.png")}
-            style={styles.searchIcon}
-          />
-          <TextInput placeholder="Search" style={styles.navSearch} />
-        </View> */}
-        <View
-          style={{
-            marginRight: "2rem",
-            justifyContent: "center",
-            alignItems: "center",
-            //alignSelf: "center",
-          }}
-        >
-          <Text style={styles.navEl}>
-            Last Sign-in:{" "}
-            {/* <Text style={{ fontSize: 14, color: "orange", marginLeft: 10 }}>
-              {moment().format("DD MMMM, HH:MM")}
-            </Text> */}
-            <Chip
-              mode="flat"
-              textStyle={{
-                fontSize: 14,
-                color: "#FFFFFF", //"#368cbf", //"orange",
-                //fontWeight: "bold",
-                //backgroundColor: "#FFFFFF",
-              }}
-              style={{
-                backgroundColor: "#f27d42", //"#FFFFFF",
-                borderRadius: 20,
-                marginLeft: 10,
-              }}
-            >
-              {moment().format("DD MMMM, hh:mm A")}
-            </Chip>
-          </Text>
-        </View>
-        <View style={{ justifyContent: "center", alignContent: "center" }}>
-          <Text
+
+      <View
+        style={{
+          display: "flex",
+          marginRight: "2rem",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 5,
+        }}
+      >
+        <Text style={styles.navEl}>
+          Last Sign-in:{" "}
+          <Chip
+            mode="flat"
+            textStyle={{
+              fontSize: 14,
+              color: "#FFFFFF",
+            }}
             style={{
-              fontSize: 24,
-              //fontWeight: "bold",
-              color: "#ffffff",
-              marginTop: -5,
+              backgroundColor: "#f27d42",
+              borderRadius: 5,
+              marginLeft: 10,
             }}
           >
-            Ruslan Kalashnikov
-          </Text>
-        </View>
+            {moment().format("DD MMMM, hh:mm A")}
+          </Chip>
+        </Text>
+      </View>
+      <View
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignContent: "center",
+          padding: 5,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 24,
+            color: "#ffffff",
+            marginTop: -5,
+          }}
+        >
+          {showUser(context.user)}
+        </Text>
       </View>
     </View>
   );
 }
 
-// {showSidebar ? (
-//   <View style={{ position: "absolute", top: 100, left: 100 }}>
-//     <Sidebar
-//       navigate={props.navigate}
-//       screen="small"
-//       hide={() => setShowSidebar(false)}
-//     />
-//   </View>
-// ) : null}
-
-// const testMenu = () => {
-//   return (
-//     <View>
-//       <Button
-//         mode="contained"
-//         style={{ width: 150 }}
-//         onPress={() => setShowSidebar(!showSidebar)}
-//       >
-//         TEST MENU!!
-//       </Button>
-//     </View>
-//   );
-// };
-
-//const [showSidebar, setShowSidebar] = useState(false);
-
 const styles = StyleSheet.create({
   container: {
-    height: "10%",
+    display: "flex",
+    height: "auto",
+    flexWrap: "wrap",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingLeft: "3rem",
-    paddingRight: "3rem",
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingLeft: 35,
+    paddingRight: 35,
     backgroundColor: "#368cbf",
   },
   title: {
@@ -123,25 +109,6 @@ const styles = StyleSheet.create({
   navEl: {
     fontSize: 14,
     color: "#FFFFFF",
-  },
-  searchContainer: {
-    flexDirection: "row",
-    backgroundColor: "#FFFFFF",
-    marginRight: "2rem",
-    paddingLeft: ".75rem",
-    paddingRight: ".75rem",
-    borderRadius: 30,
-  },
-  navSearch: {
-    fontSize: 14,
-    color: "#000000",
-    padding: ".5rem",
-    marginLeft: ".5rem",
-  },
-  searchIcon: {
-    alignSelf: "center",
-    height: 18,
-    width: 18,
   },
   menu: {
     marginTop: 3,

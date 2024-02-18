@@ -1,24 +1,25 @@
 import { View, Text, StyleSheet, Pressable, Modal } from "react-native";
 import { Button } from "react-native-paper";
+import CustomButton from "../components/CustomButton";
 
 export default function ErrorModal(props: any) {
   const hideModal = () => {
     props.hideModal();
   };
 
-  let list = props.list;
+  //let list = props.list;
 
-  const displayList = () => {
-    return (
-      <View>
-        {list.map((entry: any, index: any) => (
-          <Text key={index} style={{ color: "red" }}>
-            {entry}
-          </Text>
-        ))}
-      </View>
-    );
-  };
+  // const displayList = () => {
+  //   return (
+  //     <View>
+  //       {list.map((entry: any, index: any) => (
+  //         <Text key={index} style={{ color: "red" }}>
+  //           {entry}
+  //         </Text>
+  //       ))}
+  //     </View>
+  //   );
+  // };
 
   return (
     <View style={styles.centeredView}>
@@ -57,7 +58,21 @@ export default function ErrorModal(props: any) {
                 WARNING!
               </Text>
 
-              {props.recordType == "customers" ? (
+              <View>
+                <Text
+                  style={{
+                    color: "grey",
+                    fontSize: 24,
+                    textAlign: "center",
+                    marginTop: 20,
+                    marginBottom: 30,
+                  }}
+                >
+                  {props.error}
+                </Text>
+              </View>
+
+              {/* {props.recordType == "customers" ? (
                 <>
                   <Text
                     style={{
@@ -86,18 +101,14 @@ export default function ErrorModal(props: any) {
                     No date range has been selected!
                   </Text>
                 </View>
-              )}
+              )} */}
 
-              <View style={{ marginTop: 20, width: "100%" }}>
-                <Button
-                  mode="contained"
-                  //color="#f27d42"
-                  //buttonColor="#f27d42"
-                  style={styles.btn}
-                  onPress={() => props.hideModal()}
-                >
-                  Close
-                </Button>
+              <View style={{ marginTop: 20 }}>
+                <CustomButton
+                  flag="cancel"
+                  title="Close"
+                  hideModal={() => props.hideModal()}
+                />
               </View>
             </View>
           </View>
@@ -115,7 +126,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     backgroundColor: "white",
-    borderRadius: 20,
+    borderRadius: 12,
     paddingTop: 15,
     paddingLeft: 35,
     paddingRight: 35,
@@ -128,22 +139,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-  },
-  btn: {
-    width: "100%",
-    //width: 100,
-    //backgroundColor: "#ffffff",
-  },
-  text: {
-    //height: "80%",
-    marginBottom: 10,
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
-    borderWidth: 1,
-    borderRadius: 10,
-    borderColor: "purple",
-    overflow: "hidden",
   },
 });

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 
 export default function Sidebar(props: any) {
   const [active, setActive] = useState(
@@ -14,13 +14,22 @@ export default function Sidebar(props: any) {
 
   const tabs = [
     "Dashboard",
-    "Transactions",
     "Commissions",
+    "Transactions",
     "Customers",
     "Vendors",
     "Suppliers",
     "Uploader",
   ];
+
+  const icons = {
+    commissions: require("../assets/icons/money.png"),
+    customers: require("../assets/icons/customer.png"),
+    transactions: require("../assets/icons/transaction.png"),
+    vendors: require("../assets/icons/vendor.png"),
+    suppliers: require("../assets/icons/supplier.png"),
+    uploader: require("../assets/icons/upload.png"),
+  };
 
   function displayTabs() {
     const tabsArray = [];
@@ -31,40 +40,45 @@ export default function Sidebar(props: any) {
           key={index}
           style={{
             marginBottom:
-              index === 0 && props.screenSize === "large" ? 50 : null,
+              index == 0 && props.screenSize === "large" ? 50 : null,
           }}
         >
-          {active === tab.toLowerCase() ? (
-            <Text
-              onPress={() => handlePress(tab.toLowerCase())}
-              style={
-                props.screenSize === "large"
+          <Pressable
+            style={
+              props.screenSize == "large"
+                ? active == tab.toLowerCase()
                   ? styles.tabActive
-                  : [styles.tabActive, styles.tabSmall]
-              }
-            >
-              {tab}
-            </Text>
-          ) : (
+                  : styles.tabDefault
+                : active == tab.toLowerCase()
+                ? [styles.tabActive, styles.tabSmall]
+                : [styles.tabDefault, styles.tabSmall]
+            }
+            onPress={() => handlePress(tab.toLowerCase())}
+          >
+            <Image
+              style={{
+                alignSelf: "center",
+                marginRight: 20,
+                width: 20,
+                height: 20,
+              }}
+              source={icons[tab.toLowerCase()]}
+            />
             <Text
-              onPress={() => handlePress(tab.toLowerCase())}
-              style={
-                props.screenSize === "large"
-                  ? styles.tabDefault
-                  : [styles.tabDefault, styles.tabSmall]
-              }
+              style={{
+                fontSize: 20,
+                fontWeight: active != tab.toLowerCase() ? "100" : "400",
+              }}
             >
               {tab}
             </Text>
-          )}
+          </Pressable>
         </View>
       )
     );
 
     return tabsArray;
   }
-
-  console.log("______________________restarted______________________");
 
   return (
     <View
@@ -81,8 +95,9 @@ export default function Sidebar(props: any) {
 
 const styles = StyleSheet.create({
   containerLarge: {
-    flex: 1,
-    paddingTop: "3rem", // change
+    display: "flex",
+    width: 250,
+    paddingTop: 45, // change
     flexDirection: "column",
     backgroundColor: "#FFFFFF",
     borderRightWidth: 1,
@@ -90,17 +105,12 @@ const styles = StyleSheet.create({
   },
   containerSmall: {
     flex: 1,
-    width: 190,
-    //paddingTop: "3rem", // change
+    width: 250,
     flexDirection: "column",
     backgroundColor: "#FFFFFF",
     borderLeftWidth: 3,
-    //borderRightWidth: 1,
-    //borderBottomWidth: 1,
     borderLeftColor: "#f27d42",
-    //borderRightColor: "#368cbf",
-    //borderBottomColor: "#368cbf",
-    paddingTop: 10,
+    marginTop: 20,
     paddingBottom: 10,
     shadowColor: "#000",
     shadowOffset: {
@@ -113,26 +123,30 @@ const styles = StyleSheet.create({
   },
   tabActive: {
     flex: 1,
-    width: "90%", // 90%
+    flexDirection: "row",
+    width: "90%",
     height: 50,
-    backgroundColor: "#DEECF9", //"#368cbf", // "#f27d42",
-    color: "#000000", //"#FFFFFF",
+    backgroundColor: "#DEECF9",
+    color: "#000000",
     fontSize: 20,
     alignSelf: "center",
     borderRadius: 4,
-    paddingLeft: 50,
+    borderRightWidth: 5,
+    borderRightColor: "purple",
+    paddingLeft: 15,
     paddingTop: 8,
     paddingBottom: 10,
   },
   tabDefault: {
     flex: 1,
-    width: "90%", // 90%
+    flexDirection: "row",
+    width: "90%",
     height: 50,
-    color: "#808080", //"#000000",
+    color: "#808080",
     fontSize: 20,
     alignSelf: "center",
     borderRadius: 10,
-    paddingLeft: 50,
+    paddingLeft: 15,
     paddingTop: 8,
     paddingBottom: 10,
   },

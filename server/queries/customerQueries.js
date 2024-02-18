@@ -18,12 +18,13 @@ WHERE t.fk_customer_id = '${id}'
 
 // Get the latest customer sale/product
 const getCustomerLatestSale = (id) => `
-SELECT p.fk_type_id, p.fk_vendor_id, v.vendor_name, p.fk_supplier_id, s.supplier_name, p.size_of_party, p.product_cost, p.product_comm, p.is_comm_received, MAX(p.travel_start_date) as date
+SELECT p.fk_type_id, p.fk_vendor_id, v.vendor_name, p.fk_supplier_id, s.supplier_name, p.size_of_party, p.product_cost, p.product_comm, p.is_comm_received, p.travel_start_date as date
 FROM product p JOIN transaction t 
 ON p.product_id = t.fk_product_id 
 JOIN vendor v ON p.fk_vendor_id = v.vendor_id
 JOIN supplier s ON p.fk_supplier_id = s.supplier_id
 WHERE t.fk_customer_id = '${id}'
+ORDER BY date DESC LIMIT 1
 `;
 
 const getCustomerCommissions = (id) => `
@@ -41,6 +42,13 @@ const getCustomerProductcs = (id) => `
 const getCustomerRecentSales = (id) => `
 // SELECT * from customer
 // WHERE customer_id = ${id}
+`;
+
+const getCommissionsPerCustomer = `
+SELECT c.last_name, c.first_name, SUM(p.product_comm) AS commission, DATE_FORMAT(t.transaction_date, '%Y-%m-%d') AS date FROM customer c
+JOIN transaction t ON c.customer_id=t.fk_customer_id
+JOIN product p ON p.product_id=t.fk_product_id
+GROUP BY c.last_name ORDER BY commission DESC
 `;
 
 // DELETE
@@ -92,4 +100,5 @@ module.exports = {
   postCustomers,
   updateCustomer,
   deleteCustomer,
+  getCommissionsPerCustomer,
 };

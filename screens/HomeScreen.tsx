@@ -23,8 +23,6 @@ export default function HomeScreen(props: any) {
     setScreen(screen);
   }
 
-  console.log("Screen", screen);
-
   return (
     <View style={styles.container}>
       <Header
@@ -70,8 +68,7 @@ export default function HomeScreen(props: any) {
 const styles = StyleSheet.create({
   container: {
     display: "flex",
-    flexDirection: "column",
     minHeight: "100vh",
-    backgroundColor: "grey",
+    flexDirection: "column",
   },
 });

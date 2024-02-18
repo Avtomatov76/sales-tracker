@@ -1,18 +1,17 @@
+import { useState } from "react";
 import axios from "axios";
 import { StyleSheet } from "react-native";
 import Modal from "react-native-modal";
-import CustomerForm from "../forms/CustomerForm";
-import { customerAPI } from "../api/endPoints";
+import CustomerForm from "../forms/customers/CustomerForm";
+import { customersAPI } from "../api/endPoints";
 import GetConfiguration from "../constants/Config";
 import { getCustomersNames } from "../functions/customerFunctions";
 import { useQueryClient } from "react-query";
 
 export default function CustomerModal(props: any) {
-  const queryClient = useQueryClient();
+  const [message, setMessage] = useState("");
 
-  //
-  console.log(props);
-  //
+  const queryClient = useQueryClient();
 
   let customersNames = getCustomersNames(props.customers);
   let baseUrl = GetConfiguration().baseUrl;
@@ -32,9 +31,16 @@ export default function CustomerModal(props: any) {
     props.hideModal();
   };
 
+  const handleOKpress = () => {
+    setMessage("");
+    hideModal();
+  };
+
   const deleteCustomer = async (id: any) => {
     try {
-      await axios.post(baseUrl + customerAPI + `/${id}`);
+      const res = await axios.post(baseUrl + customersAPI + `/${id}`);
+      console.log(res.data.result);
+      if (res.data) setMessage("Could not delete customer ");
     } catch (err) {
       console.log(err);
     }
@@ -47,9 +53,9 @@ export default function CustomerModal(props: any) {
 
     try {
       if (props.flag === "edit")
-        await axios.put(baseUrl + customerAPI, formdata);
+        await axios.put(baseUrl + customersAPI, formdata);
       else if (props.flag === "add") {
-        await axios.post(baseUrl + customerAPI, Object.values(formdata));
+        await axios.post(baseUrl + customersAPI, Object.values(formdata));
       }
     } catch (err) {
       console.log(err);
@@ -68,6 +74,7 @@ export default function CustomerModal(props: any) {
       <CustomerForm
         flag={props.flag}
         index={props.index}
+        message={message}
         customerId={props.customerId}
         customers={props.customers}
         customer={props.customer}
@@ -76,6 +83,7 @@ export default function CustomerModal(props: any) {
         handleSubmit={handleSubmit}
         deleteCustomer={deleteCustomer}
         hideModal={hideModal}
+        handleOKpress={handleOKpress}
       />
     </Modal>
   );
