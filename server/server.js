@@ -6,7 +6,10 @@ var JSONbig = require("json-bigint");
 const { getAllSuppliers } = require("./queries/supplierQueries");
 const { getAllVendors } = require("./queries/vendorQueries");
 const { getAllTravelTypes } = require("./queries/typeQueries");
-const { getAllDestinations } = require("./queries/destinationQueries");
+const {
+  getAllDestinations,
+  getSalesPerDestination,
+} = require("./queries/destinationQueries");
 const {
   getAllProducts,
   getAllProductData,
@@ -64,6 +67,10 @@ const {
   updateLoginTimestamp,
 } = require("./queries/authQueries");
 
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
+
 const app = express();
 const port = process.env.PORT || 8080; //19006; //...http://192.168.0.223:19006 const port = process.env.PORT || 5000;
 const bodyParser = require("body-parser");
@@ -84,7 +91,6 @@ app.post("/api/auth", async (req, res) => {
         console.log("User has been authorized successfully");
       }
     );
-    console.log("RESULT: ------------------ ", result[0]);
 
     if (result.length > 0) {
       await db.pool.query(
@@ -297,10 +303,20 @@ app.get("/api/types", async (req, res) => {
   }
 });
 
-// GET Destination
+// GET Destinations
 app.get("/api/destinations", async (req, res) => {
   try {
     const result = await db.pool.query(getAllDestinations);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// GET Sales per Destinations
+app.get("/api/destinations-sales", async (req, res) => {
+  try {
+    const result = await db.pool.query(getSalesPerDestination);
     res.send(result);
   } catch (err) {
     throw err;

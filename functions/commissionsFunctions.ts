@@ -96,14 +96,29 @@ export const getCommissionCards = (
       iconColor: "#791f87",
       icon: "search",
     },
-    {
-      title: "", // <-- Change to valid box
-      type: "MMMM",
-      color: "#ECE6FF",
-      iconColor: "#791f87",
-      icon: "search",
-    },
   ];
+};
+
+export const getCommissionEndpoints = () => {
+  const endPointArray = [
+    baseURL + getTotalCommissions,
+    baseURL + getCommissionsYearToDate,
+    baseURL + getCommissionsCurrMonth,
+    baseURL + getAllCommTopSuppliers,
+    baseURL + getYearToDateCommTopSuppliers,
+    baseURL + getLastYearCommissions,
+    baseURL + getLastYearToDate,
+    baseURL + getLastYearCurrentMonth,
+    baseURL + getUnpaidCommissions,
+    baseURL + getYearToDatePerMonth,
+    baseURL + getLastYearToDatePerMonth,
+    baseURL + getYearsProductSales,
+    baseURL + getYears,
+    baseURL + getCommissionsEntries,
+    baseURL + getAllYearsCommissions,
+  ];
+
+  return endPointArray;
 };
 
 export const getEndpoints = () => {

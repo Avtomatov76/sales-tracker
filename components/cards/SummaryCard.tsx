@@ -2,9 +2,9 @@ import { StyleSheet, Text, View } from "react-native";
 import moment from "moment";
 import { Card } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { formatDollarEntry } from "../../../functions/customerFunctions";
+import { formatDollarEntry } from "../../functions/customerFunctions";
 
-export default function CommissionsSummaryCard(props: any) {
+export default function SummaryCard(props: any) {
   const getIcon = () => {
     if (!props.icon) return;
 
@@ -19,6 +19,10 @@ export default function CommissionsSummaryCard(props: any) {
         return "calendar";
       case "unpaid":
         return "cash";
+      case "cash":
+        return "cash";
+      case "metrics":
+        return "analytics";
       default:
         return "search";
     }
@@ -68,6 +72,8 @@ export default function CommissionsSummaryCard(props: any) {
             {formatDollarEntry(props.commissions)}
           </Text>
         )
+      ) : props.tab == "dashboard" ? (
+        <Text style={styles.pieTitle}>{props.data}</Text>
       ) : (
         <Text style={styles.pieTitle}>
           {!props.data || props.data[0].commissions == null
@@ -75,6 +81,10 @@ export default function CommissionsSummaryCard(props: any) {
             : formatDollarEntry(props.data[0].commissions)}
         </Text>
       )}
+
+      {props.tab == "dashboard" && props.date != "" ? (
+        <Text style={{ color: "blue", fontWeight: "600" }}>{props.date}</Text>
+      ) : null}
 
       {props.compare ? getComparisonData() : null}
 
@@ -91,7 +101,8 @@ export default function CommissionsSummaryCard(props: any) {
             </Text>
           </Text>
         ) : null
-      ) : props.icon == "total" || props.icon == "unpaid" ? (
+      ) : props.tab == "dashboard" ||
+        (props.tab == "commissions" && props.icon == "total") ? (
         <Text style={{ fontSize: 16 }}>{props.title}</Text>
       ) : (
         <Text style={{ fontSize: 16 }}>

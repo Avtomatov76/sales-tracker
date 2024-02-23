@@ -9,8 +9,6 @@ export default function TransactionDetailsCard(props: any) {
   const [transDetails, setTransDetails] = useState(props.data);
   const [refresh, setRefresh] = useState(false);
 
-  //console.log("CHECKING PROPS----------------: ", props.data);
-
   useEffect(() => {
     setTransDetails(props.data);
     setRefresh(false);
@@ -33,25 +31,16 @@ export default function TransactionDetailsCard(props: any) {
   console.log(" ----------------  REFRESH  --------------- :", refresh);
 
   const changeReceived = (id: string) => {
-    console.log("CHANGING RECEIVED TO 'YES'");
-
-    console.log("---  Product ID  --- : ", id);
     props.updateProductField("is_comm_received", "Y", id);
     props.refreshTEST();
-    //setRefresh(true);
   };
 
   return (
-    // <View>
-    //   <Text>TEST TEST TEST</Text>
-    // </View>
-
     <Card style={styles.card}>
       <View>
         <View
           style={{
             flexDirection: "row",
-            //alignItems: "center",
             justifyContent: "space-between",
           }}
         >
@@ -87,7 +76,6 @@ export default function TransactionDetailsCard(props: any) {
                 marginRight: 20,
                 fontSize: 20,
                 fontWeight: "100",
-                //color: "green",
               }}
             >
               {displayPhone(transDetails.phone)}
@@ -106,8 +94,6 @@ export default function TransactionDetailsCard(props: any) {
               {transDetails.email}
             </Text>
           )}
-
-          {/* <Text style={{ fontSize: 16, color: "grey" }}>|</Text> */}
         </View>
 
         <View style={{ flexDirection: "row" }}>
@@ -115,7 +101,6 @@ export default function TransactionDetailsCard(props: any) {
           <Text
             style={{
               marginLeft: 5,
-              //color: "green",
               fontWeight: "600",
             }}
           >
@@ -149,19 +134,9 @@ export default function TransactionDetailsCard(props: any) {
           </Text>
 
           {transDetails.is_comm_received == "Y" ? null : (
-            <View
-              style={{
-                paddingTop: 3,
-                paddingBottom: 3,
-                marginLeft: 30,
-                paddingLeft: 10,
-                paddingRight: 10,
-                borderRadius: 4,
-                backgroundColor: "#368cbf",
-              }}
-            >
+            <View style={styles.commStatusBtn}>
               <Text
-                style={{ color: "#FFFFFF" }}
+                style={{ color: "#FFFFFF", fontWeight: "600" }}
                 onPress={() => changeReceived(transDetails.product_id)}
               >
                 Change to 'Yes'
@@ -172,13 +147,24 @@ export default function TransactionDetailsCard(props: any) {
 
         <View
           style={{
-            //flexDirection: "row",
             marginBottom: 20,
           }}
         >
           <View style={{ flexDirection: "row" }}>
             <Text style={{ color: "grey" }}>Party Size: </Text>
             <Text style={{ fontWeight: "600" }}>{transDetails.party}</Text>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={{ color: "grey" }}>Trip start date: </Text>
+            <Text style={{ fontWeight: "600" }}>
+              {moment(transDetails.start).format("MMM DD, YYYY")}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={{ color: "grey" }}>Trip end date: </Text>
+            <Text style={{ fontWeight: "600" }}>
+              {moment(transDetails.end).format("MMM DD, YYYY")}
+            </Text>
           </View>
           <View style={{ flexDirection: "row" }}>
             <Text style={{ color: "grey" }}>Travel Type: </Text>
@@ -228,5 +214,22 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 24,
     fontWeight: "700",
+  },
+  commStatusBtn: {
+    paddingTop: 3,
+    paddingBottom: 3,
+    marginLeft: 30,
+    paddingLeft: 10,
+    paddingRight: 10,
+    borderRadius: 12, //4,
+    backgroundColor: "red", //"#368cbf",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });

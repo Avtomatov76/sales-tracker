@@ -3,6 +3,14 @@
 // rgb(254,248,76) - yellow
 // rgba(252,185,0,1) - kinda yellow
 
+export const cardColors = [
+  "#FDE0E0",
+  "#ECFADC",
+  "#FFEED2",
+  "#ECE6FF",
+  "#FEC9C3",
+];
+
 // Max number of suppliers, years, sales, etc should correspond to the number of colors
 const suppliers = ["Expedia.com", "Picasso Travel", "Travel Planners Intl"];
 

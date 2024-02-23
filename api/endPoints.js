@@ -3,6 +3,7 @@ export const vendorsAPI = "/api/vendors";
 
 // Destination
 export const destinationsAPI = "/api/destinations";
+export const getSalesPerDestination = "/api/destinations-sales";
 
 // Suppliers
 export const suppliersAPI = "/api/suppliers";

@@ -40,33 +40,23 @@ export default function TransactionsList(props: any) {
   };
 
   const removeTransaction = (flag: any, product: any) => {
-    console.log(
-      "----------------- SHOW MODAL TO REMOVE TRANSACTION ----------------- : ",
-      flag,
-      product
-    );
     setProduct(product);
     setFlag("delete");
     setShowModal(true);
   };
 
-  //
   const deleteProduct = async (id: any) => {
-    console.log(
-      "SHOWING FRIKKIN PRODUCT ID FROM CONFIRM DELETE COMPONENT ---------------------- : ",
-      id
-    );
-    // try {
-    //   const res = await axios.post(baseURL + productsAPI + `/${id}`);
-    //   console.log(res.data.result);
-    //   if (res.data) setMessage("Could not delete customer ");
-    // } catch (err) {
-    //   console.log(err);
-    // }
+    try {
+      const res = await axios.post(baseURL + productsAPI + `/${id}`);
+      console.log(res.data.result);
+      if (res.data) setMessage("Could not delete customer ");
+    } catch (err) {
+      console.log(err);
+    }
 
-    // await queryClient.invalidateQueries(["products"]);
+    setShowModal(false);
+    handleRefresh();
   };
-  //
 
   const displayTransactionCard = (data: any, index: any) => {
     handleSelection(index);
@@ -87,8 +77,6 @@ export default function TransactionsList(props: any) {
   };
 
   const updateProductField = async (field: any, value: string, id: string) => {
-    console.log(field + " " + value + " " + id);
-
     const params = {
       field: field,
       value: value,
@@ -107,7 +95,6 @@ export default function TransactionsList(props: any) {
 
   const handleSelection = (index: any) => {
     setSelected(index);
-    console.log(`INDEX coming in.....: ${index} SELECTED: ${selected}`);
   };
 
   const handleHideCard = () => {

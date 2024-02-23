@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View } from "react-native";
 import axios from "axios";
 import { useQuery } from "react-query";
 import LoadingScreen from "./LoadingScreen";
@@ -62,11 +62,12 @@ export default function Commissions(props: any) {
       .then((res) => setCommissions(res.data[0]));
   };
 
-  if (!data[0].commissions)
+  if (!data[0].commissions || isLoading)
     return (
-      <View>
-        <Text>No Commissions</Text>
-      </View>
+      <ErrorScreen
+        error="No commission information found in the database!"
+        type="server"
+      />
     );
 
   return (

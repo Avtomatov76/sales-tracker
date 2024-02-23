@@ -5,7 +5,19 @@ import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { Chip } from "react-native-paper";
 
 export default function Header(props: any) {
-  const context = useContext(MyContext);
+  const context = {
+    //  REMOVE THAT AFTER TESTING !!!!!!!!!!!!!!!!!!!
+    user: {
+      auth: "ok",
+      auth_id: 1,
+      first_name: "Ruslan",
+      last_name: "Kalashnikov",
+      login_timestamp: "1708396150110",
+      user_email: "rjandson1@hotmail.com",
+      user_name: "rjandson1",
+      user_pwd: "Ruslank@1976",
+    },
+  }; //useContext(MyContext);
 
   const handleShowMenu = () => {
     props.showMenu();

@@ -1,9 +1,53 @@
 import axios from "axios";
-import { getEndpoints } from "../functions/commissionsFunctions";
+import {
+  getCommissionEndpoints,
+  getEndpoints,
+} from "../functions/commissionsFunctions";
+import { getDashboardEndpoints } from "../functions/dashboardFunctions";
 
-export async function fetchData() {
+export async function fetchDashboardData() {
   let products: any[];
   let transactions: any[];
+  let commissionEntries: any[];
+  let everyCommissionEntry: any[];
+  let commissionsPerCustomer: any[];
+  let salesPerDestination: any[];
+
+  let endpoints = getDashboardEndpoints();
+
+  try {
+    await Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
+      ([
+        { data: allProducts },
+        { data: allTransactions },
+        { data: allCommEntries },
+        { data: everyCommission },
+        { data: customersCommissions },
+        { data: destinationSales },
+      ]) => {
+        products = allProducts;
+        transactions = allTransactions;
+        commissionEntries = allCommEntries;
+        everyCommissionEntry = everyCommission;
+        commissionsPerCustomer = customersCommissions;
+        salesPerDestination = destinationSales;
+      }
+    );
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+
+  return {
+    products: products,
+    transactions: transactions,
+    commissionEntries: commissionEntries,
+    everyCommissionEntry: everyCommissionEntry,
+    commissionsPerCustomer: commissionsPerCustomer,
+    salesPerDestination: salesPerDestination,
+  };
+}
+
+export async function fetchCommissionData() {
   let commissions: any[];
   let ytdCommissions: any[];
   let currMonthCommission: any[];
@@ -19,16 +63,12 @@ export async function fetchData() {
   let numericValuesAllYears: any[];
   let commissionEntries: any[];
   let yearlyCommissions: any[];
-  let everyCommissionEntry: any[];
-  let commissionsPerCustomer: any[];
 
-  let endpoints = getEndpoints();
+  let endpoints = getCommissionEndpoints();
 
   try {
     await Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
       ([
-        { data: allProducts },
-        { data: allTransactions },
         { data: totalCommissions },
         { data: yearToDateComm },
         { data: currMonthComm },
@@ -44,11 +84,7 @@ export async function fetchData() {
         { data: allYearsNumeric },
         { data: allCommEntries },
         { data: yearsCommissions },
-        { data: everyCommission },
-        { data: customersCommissions },
       ]) => {
-        products = allProducts;
-        transactions = allTransactions;
         commissions = totalCommissions;
         ytdCommissions = yearToDateComm;
         currMonthCommission = currMonthComm;
@@ -64,8 +100,6 @@ export async function fetchData() {
         numericValuesAllYears = allYearsNumeric;
         commissionEntries = allCommEntries;
         yearlyCommissions = yearsCommissions;
-        everyCommissionEntry = everyCommission;
-        commissionsPerCustomer = customersCommissions;
       }
     );
   } catch (error) {
@@ -73,8 +107,6 @@ export async function fetchData() {
   }
 
   return {
-    products: products,
-    transactions: transactions,
     commissions: commissions,
     ytdCommissions: ytdCommissions,
     currMonthCommission: currMonthCommission,
@@ -90,7 +122,5 @@ export async function fetchData() {
     numericValuesAllYears: numericValuesAllYears,
     commissionEntries: commissionEntries,
     yearlyCommissions: yearlyCommissions,
-    everyCommissionEntry: everyCommissionEntry,
-    commissionsPerCustomer: commissionsPerCustomer,
   };
 }
