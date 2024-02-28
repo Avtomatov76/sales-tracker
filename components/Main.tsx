@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     paddingLeft: 40,
     paddingRight: 40,
     flexDirection: "column",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FFFFFF", //"#F0F0F0",
     //backgroundColor: "#E8E9EB", // <-- Added a shade of grey
   },
 });

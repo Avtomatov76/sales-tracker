@@ -3,31 +3,9 @@ import moment from "moment";
 import { Card } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { formatDollarEntry } from "../../functions/customerFunctions";
+import { getIcon } from "../../functions/commissionsFunctions";
 
 export default function SummaryCard(props: any) {
-  const getIcon = () => {
-    if (!props.icon) return;
-
-    switch (props.icon) {
-      case "chart":
-        return "stats-chart";
-      case "year":
-        return "time";
-      case "total":
-        return "archive";
-      case "month":
-        return "calendar";
-      case "unpaid":
-        return "cash";
-      case "cash":
-        return "cash";
-      case "metrics":
-        return "analytics";
-      default:
-        return "search";
-    }
-  };
-
   const getComparisonData = () => {
     let currYear = props.data[0].commissions || null;
     let prevYear = props.compare[0].commissions || null;
@@ -55,7 +33,7 @@ export default function SummaryCard(props: any) {
 
   return (
     <Card style={[styles.card, { backgroundColor: props.color }]}>
-      <Ionicons name={getIcon()} size={42} color={props.iconColor} />
+      <Ionicons name={getIcon(props.icon)} size={42} color={props.iconColor} />
 
       {props.icon == "search" ? (
         !props.commissions || props.commissions == 0 ? (

@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import TabHeader from "./TabHeader";
 import ErrorScreen from "./ErrorScreen";
 import {
@@ -10,9 +10,11 @@ import {
   getYearToDateSales,
 } from "../functions/dashboardFunctions";
 import DashboardList from "./cards/dashboard/DashboardList";
-import SummaryCard from "./cards/SummaryCard";
 import LoadingScreen from "./LoadingScreen";
 import { fetchDashboardData } from "../utilities/dbDataFetch";
+import DashboardTile from "./cards/dashboard/DashboardTile";
+
+const windowWidth = Dimensions.get("window").width;
 
 export default function Dashboard(props: any) {
   const { isLoading, isError, data, error, refetch } = useQuery(
@@ -24,8 +26,6 @@ export default function Dashboard(props: any) {
   if (error) return <ErrorScreen error={error} type="commissions" />;
 
   let dashboardCards: any[] = [];
-  let salesCards: any[] = [];
-  let metricsCards: any[] = [];
   let allSales = getSumOfEntries(data.products, "product_cost");
   let ytdSales = getYearToDateSales(data.transactions);
   let allCommissions = getSumOfEntries(data.products, "product_comm");
@@ -53,9 +53,6 @@ export default function Dashboard(props: any) {
       highestMonthCommEntry,
       highestCommission
     );
-
-    salesCards = dashboardCards.slice(0, 4);
-    metricsCards = dashboardCards.slice(4);
   }
 
   if ((!allSales && !allCommissions) || isLoading)
@@ -70,14 +67,18 @@ export default function Dashboard(props: any) {
     <View style={{ display: "flex" }}>
       <TabHeader name="Dashboard" />
 
-      <View style={styles.summary}>
-        {/* <Text style={{ marginBottom: 10, fontWeight: "bold" }}>Sales</Text> */}
+      <View style={[styles.summary, { padding: 20 }]}>
         <View
-          style={{ display: "flex", flexWrap: "wrap", flexDirection: "row" }}
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            flexDirection: "row",
+          }}
         >
-          {salesCards.map((e: any, index: any) => (
-            <SummaryCard
+          {dashboardCards.map((e: any, index: any) => (
+            <DashboardTile
               key={index}
+              index={index}
               title={e.title}
               color="#DEF3FD"
               data={e.data}
@@ -89,54 +90,64 @@ export default function Dashboard(props: any) {
           ))}
         </View>
 
-        <View style={{ marginTop: 20 }}>
-          {/* <Text style={{ marginBottom: 10, fontWeight: "bold" }}>Metrics</Text> */}
-          <View
-            style={{ display: "flex", flexWrap: "wrap", flexDirection: "row" }}
-          >
-            {metricsCards.map((e: any, index: any) => (
-              <SummaryCard
-                key={index}
-                title={e.title}
-                color="#DEF3FD"
-                data={e.data}
-                icon={e.icon}
-                iconColor={e.iconColor}
-                tab="dashboard"
-                date={e.date || null}
-              />
-            ))}
+        <View
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            flexDirection: "row",
+            marginTop: 20,
+            marginBottom: 20,
+          }}
+        >
+          <View style={[styles.chart, { padding: 15 }]}>
+            <Text
+              style={{
+                color: "grey",
+                fontWeight: "600",
+                textTransform: "uppercase",
+                marginBottom: 20,
+              }}
+            >
+              Highest grossing customers
+            </Text>
+            {!commissionsList
+              ? null
+              : commissionsList.map((c: any, index: any) => (
+                  <DashboardList
+                    key={index}
+                    index={index}
+                    customer={c}
+                    type="customers"
+                  />
+                ))}
           </View>
-
-          <Text style={{ marginTop: 10 }}>Day with most commissions: </Text>
-          <Text style={{ marginBottom: 10 }}>5 most popular destinations</Text>
-          {!salesPerDestination
-            ? null
-            : salesPerDestination.map((d: any, index: any) => (
-                <DashboardList
-                  key={index}
-                  destination={d}
-                  type="destinations"
-                />
-              ))}
-          <Text style={{ marginTop: 10 }}>
-            5 largest sales details and commissions
-          </Text>
-          <Text style={{ marginBottom: 10 }}>Highest grossing customer(s)</Text>
-          {!commissionsList
-            ? null
-            : commissionsList.map((c: any, index: any) => (
-                <DashboardList key={index} customer={c} type="customers" />
-              ))}
-        </View>
-
-        <View style={{ marginTop: 20 }}>
-          <Text style={{ marginBottom: 10, fontWeight: "bold" }}>Analysis</Text>
-          <Text>
-            Sales/commissions % increase/decrease comparison - per year and
-            year-to-date
-          </Text>
-          <Text>5% increase of revenue projection</Text>
+          <View
+            style={[
+              styles.chart,
+              { flex: 1, marginLeft: 20, padding: 15, minWidth: 200 },
+            ]}
+          >
+            <Text
+              style={{
+                color: "grey",
+                fontWeight: "600",
+                textTransform: "uppercase",
+                marginBottom: 20,
+              }}
+            >
+              5 most popular destinations
+            </Text>
+            {!salesPerDestination
+              ? null
+              : salesPerDestination.map((d: any, index: any) => (
+                  <DashboardList
+                    key={index}
+                    index={index}
+                    destination={d}
+                    type="destinations"
+                  />
+                ))}
+          </View>
         </View>
       </View>
     </View>
@@ -155,5 +166,51 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     paddingBottom: 15,
     borderRadius: 5,
+  },
+  card: {
+    display: "flex",
+    flex: 1,
+    height: 100,
+    minWidth: 280,
+    maxWidth: 280,
+    marginBottom: 10,
+    borderRadius: 5,
+    padding: 15,
+    borderBottomWidth: 5,
+    backgroundColor: "#FFFFFF",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    alignSelf: "center",
+  },
+  percent: {
+    alignSelf: "flex-end",
+    color: "grey",
+    marginBottom: 2,
+    fontSize: 22,
+  },
+  chart: {
+    flex: 2,
+    minWidth: 350,
+    height: 400,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });

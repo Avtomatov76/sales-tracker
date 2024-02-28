@@ -162,7 +162,7 @@ export const getDashboardCards = (
         `${highestMonthCommEntry["year"]}`,
     },
     {
-      title: "Highest commissions (single)",
+      title: "Highest commission (single)",
       color: cardColors[0],
       icon: "cash",
       iconColor: "#8B0000",

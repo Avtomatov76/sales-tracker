@@ -146,3 +146,26 @@ export const getEndpoints = () => {
 
   return endPointArray;
 };
+
+export const getIcon = (icon: any) => {
+  if (!icon) return;
+
+  switch (icon) {
+    case "chart":
+      return "stats-chart";
+    case "year":
+      return "time";
+    case "total":
+      return "archive";
+    case "month":
+      return "calendar";
+    case "unpaid":
+      return "cash";
+    case "cash":
+      return "cash";
+    case "metrics":
+      return "analytics";
+    default:
+      return "search";
+  }
+};
