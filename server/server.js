@@ -9,6 +9,9 @@ const { getAllTravelTypes } = require("./queries/typeQueries");
 const {
   getAllDestinations,
   getSalesPerDestination,
+  saveDestination,
+  deleteDestination,
+  updateDestination,
 } = require("./queries/destinationQueries");
 const {
   getAllProducts,
@@ -325,14 +328,38 @@ app.get("/api/destinations-sales", async (req, res) => {
 
 // POST Destination
 app.post("/api/destinations", async (req, res) => {
-  let sql = `INSERT INTO destination (destination_id, destination_name) VALUES (?, ?)`;
-
   const destination = req.body;
-  console.log("DESTINATION COMING IN : ", destination);
+
+  let sql = saveDestination(destination);
 
   await db.pool.query(sql, destination, function (err, data) {
     if (err) throw err;
     console.log("Destination data is inserted successfully");
+  });
+
+  res.send({ result: "ok" });
+});
+
+// DELETE Destination
+app.post("/api/destinations/:id", async (req, res) => {
+  try {
+    await db.pool.query(deleteDestination(req.params["id"]));
+    res.send({ result: "ok" });
+  } catch (err) {
+    //throw err;
+    res.send({ result: "fail" });
+  }
+});
+
+// UPDATE Destination
+app.put("/api/destinations", async (req, res) => {
+  const destination = req.body;
+  console.log("ABOUT TO UPDATE DESTINATION: ", destination);
+  let sql = updateDestination(destination);
+
+  await db.pool.query(sql, function (err, data) {
+    if (err) throw err;
+    console.log("Destination is updated successfully");
   });
 
   res.send({ result: "ok" });

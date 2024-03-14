@@ -4,6 +4,7 @@ export const vendorsAPI = "/api/vendors";
 // Destination
 export const destinationsAPI = "/api/destinations";
 export const getSalesPerDestination = "/api/destinations-sales";
+export const saveDestination = "/api/destinations-save";
 
 // Suppliers
 export const suppliersAPI = "/api/suppliers";

@@ -34,17 +34,6 @@ export default function TransactionModal(props: any) {
   );
   //
 
-  // const checkForDupeDestination = (code: any) => {
-  //   let isFound = false;
-
-  //   props.destinations.forEach((dest: any) => {
-  //     if (code.toLowerCase() == dest.destination_id.toLowerCase())
-  //       isFound = true;
-  //   });
-
-  //   return isFound;
-  // };
-
   const handleSubmit = async (formData: any) => {
     if (props.flag == "edit") {
       // Update product and transaction in the DB

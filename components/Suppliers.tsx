@@ -61,7 +61,8 @@ export default function Suppliers(props: any) {
         </View>
       ) : suppliers.length > 0 ? (
         <ScrollView
-          style={[styles.scrollView, { width: width > 1000 ? "50%" : "100%" }]}
+          // style={[styles.scrollView, { width: width > 1500 ? "40%" : "100%" }]}
+          style={styles.scrollView}
         >
           {suppliers.map((s: any, index: any) => (
             <ListEntry
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
   scrollView: {
     display: "flex",
     maxHeight: 550,
-    width: "50%",
+    width: 500, //"50%",
     marginTop: 30,
     paddingTop: 10,
     paddingRight: 10,

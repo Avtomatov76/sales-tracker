@@ -136,6 +136,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     flexDirection: "row",
     alignItems: "center",
+    //backgroundColor: "#FFFFFF",
   },
   avatar: {
     display: "flex",

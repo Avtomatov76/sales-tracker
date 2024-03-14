@@ -6,6 +6,7 @@ import Transactions from "./Transactions";
 import Commissions from "./Commissions";
 import Vendors from "./Vendors";
 import Suppliers from "./Suppliers";
+import Destinations from "./Destinations";
 
 export default function Main(props: any) {
   function displayScreen() {
@@ -14,6 +15,7 @@ export default function Main(props: any) {
     if (props.screen === "customers") return <Customers />;
     if (props.screen === "vendors") return <Vendors />;
     if (props.screen === "suppliers") return <Suppliers />;
+    if (props.screen === "destinations") return <Destinations />;
     if (props.screen === "uploader") return <CSVUploader />;
 
     return <Dashboard />;

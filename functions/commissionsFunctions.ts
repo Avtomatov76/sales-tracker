@@ -84,14 +84,14 @@ export const getCommissionCards = (
     {
       title: "Unpaid Commissions",
       data: unpaidCommissions || null,
-      type: "MMMM",
+      type: "",
       color: "#FEC9C3",
       iconColor: "#8B0000",
       icon: "unpaid",
     },
     {
-      title: "",
-      type: "MMMM",
+      title: "Search Results",
+      type: "",
       color: "#ECE6FF",
       iconColor: "#791f87",
       icon: "search",

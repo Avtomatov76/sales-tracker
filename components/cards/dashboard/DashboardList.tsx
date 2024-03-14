@@ -17,6 +17,12 @@ export default function DashboardList(props: any) {
     "#FFEAEA",
   ];
 
+  const showTotal = (total: any) => {
+    let totalStr = formatDollarEntry(total);
+
+    return totalStr.substring(1);
+  };
+
   return props.type == "destinations" ? (
     <>
       <View style={styles.entryView}>
@@ -30,16 +36,14 @@ export default function DashboardList(props: any) {
               marginRight: 10,
               opacity: 0.7,
             }}
-          >
-            {" "}
-          </View>
+          ></View>
           <Text style={{ fontSize: 18 }}>{props.destination.name},&nbsp;</Text>
           <Text style={{ fontSize: 18 }}>
             {props.destination.airport}&nbsp;
           </Text>
         </View>
 
-        <Text style={{ fontSize: 18, color: "green", fontWeight: "bold" }}>
+        <Text style={{ fontSize: 18, fontWeight: "600" }}>
           {props.destination.count}
         </Text>
       </View>
@@ -58,9 +62,7 @@ export default function DashboardList(props: any) {
               marginRight: 10,
               opacity: 0.7,
             }}
-          >
-            {" "}
-          </View>
+          ></View>
           <Text style={{ fontSize: 18 }}>{props.customer.last_name}</Text>
           {props.customer.first_name.toLowerCase() == "na" ? null : (
             <Text style={{ fontSize: 18 }}>
@@ -69,11 +71,16 @@ export default function DashboardList(props: any) {
           )}
         </View>
 
-        <Text style={{ fontSize: 18, color: "green", fontWeight: "bold" }}>
-          {formatDollarEntry(props.customer.commission.toFixed(2))}&nbsp;
-        </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={{ fontSize: 16, marginTop: 1, color: "grey" }}>
+            &#36;&nbsp;
+          </Text>
+          <Text style={{ fontSize: 18, fontWeight: "600" }}>
+            {showTotal(props.customer.commission.toFixed(2))}
+          </Text>
+        </View>
       </View>
-      <Divider style={{ marginLeft: 40, marginRight: 15 }} />
+      <Divider style={{ marginLeft: 40, marginRight: 10 }} />
     </>
   );
 }

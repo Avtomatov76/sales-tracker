@@ -90,7 +90,7 @@ export default function TransactionsList(props: any) {
     }
 
     handleRefresh();
-    setShowCard(true);
+    setShowCard(false);
   };
 
   const handleSelection = (index: any) => {
@@ -123,7 +123,8 @@ export default function TransactionsList(props: any) {
 
       {!props.allProducts ? (
         <ScrollView
-          style={[styles.scrollView, { width: width > 1000 ? "50%" : "100%" }]}
+          //style={[styles.scrollView, { width: width > 1000 ? "40%" : "100%" }]}
+          style={styles.scrollView}
         >
           {props.data.map((p: any, index: any) => (
             <ListEntry
@@ -139,7 +140,8 @@ export default function TransactionsList(props: any) {
         </ScrollView>
       ) : props.allProducts.length > 0 ? (
         <ScrollView
-          style={[styles.scrollView, { width: width > 1000 ? "50%" : "100%" }]}
+          //style={[styles.scrollView, { width: width > 1000 ? "40%" : "100%" }]}
+          style={styles.scrollView}
         >
           {props.allProducts.map((p: any, index: any) => (
             <ListEntry
@@ -228,7 +230,7 @@ const styles = StyleSheet.create({
   scrollView: {
     display: "flex",
     maxHeight: 550,
-    width: "50%",
+    width: 500, //"50%",
     marginTop: 30,
     paddingTop: 10,
     paddingRight: 10,

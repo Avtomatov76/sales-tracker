@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import moment from "moment";
 import { MyContext } from "../MyContext";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { Chip } from "react-native-paper";
 
@@ -48,7 +49,15 @@ export default function Header(props: any) {
           </Pressable>
         ) : null}
 
-        <Text style={styles.title}>Sales Tracker</Text>
+        {/* <Text style={styles.title}>Sales Tracker</Text> */}
+        <View style={styles.avatar}>
+          <Ionicons
+            name="stats-chart"
+            size={24}
+            color="#FFFFFF"
+            //style={{ alignSelf: "center" }}
+          />
+        </View>
       </View>
 
       <View
@@ -68,11 +77,7 @@ export default function Header(props: any) {
               fontSize: 14,
               color: "#FFFFFF",
             }}
-            style={{
-              backgroundColor: "#f27d42",
-              borderRadius: 5,
-              marginLeft: 10,
-            }}
+            style={styles.chip}
           >
             {moment().format("DD MMMM, hh:mm A")}
           </Chip>
@@ -127,5 +132,36 @@ const styles = StyleSheet.create({
     marginRight: 20,
     height: 24,
     width: 24,
+  },
+  chip: {
+    backgroundColor: "#f27d42",
+    borderRadius: 20,
+    marginLeft: 10,
+    //
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  avatar: {
+    height: 50,
+    width: 50,
+    borderRadius: 50,
+    backgroundColor: "purple",
+    alignItems: "center",
+    justifyContent: "center",
+    //
+    shadowColor: "purple", // "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 3,
+    elevation: 5,
   },
 });

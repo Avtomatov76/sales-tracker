@@ -71,7 +71,7 @@ export default function Commissions(props: any) {
     );
 
   return (
-    <>
+    <View style={{ display: "flex" }}>
       <TabHeader
         name="Commissions"
         startDate={startDate}
@@ -109,6 +109,6 @@ export default function Commissions(props: any) {
         hideModal={() => setShowErrorModal(false)}
         recordType="dateMissing"
       /> */}
-    </>
+    </View>
   );
 }

@@ -14,7 +14,7 @@ import CommissionsPieChart from "./cards/commissions/CommissionsPieChart";
 import CommissionsChartYear from "./cards/commissions/CommissionsChartYear";
 import { fetchCommissionData } from "../utilities/dbDataFetch";
 import LoadingScreen from "./LoadingScreen";
-import SummaryCard from "./cards/SummaryCard";
+import DashboardTile from "./cards/dashboard/DashboardTile";
 
 const widthAndHeight = 150;
 
@@ -64,59 +64,67 @@ export default function CommissionsDetails(props: any) {
     );
 
   return (
-    <View
-      style={{
-        flexDirection: "column",
-        justifyContent: "space-between",
-      }}
-    >
-      <View
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          flexDirection: "column",
-          backgroundColor: "#F0F0F0",
-          marginTop: 20,
-          paddingRight: 20,
-          paddingLeft: 20,
-          paddingTop: 10,
-          paddingBottom: 10,
-        }}
-      >
-        <View
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            flexDirection: "row",
-          }}
-        >
-          {commissionCards.map((card: any, index: any) => (
-            <SummaryCard
-              key={index}
-              title={card.title}
-              data={card.data}
-              type={card.type}
-              color={card.color}
-              iconColor={card.iconColor}
-              tab="commissions"
-              icon={card.icon}
-              compare={card.compare}
-              startDate={props.startDate}
-              endDate={props.endDate}
-              commissions={props.commissions}
-            />
-          ))}
-        </View>
+    <View style={styles.container}>
+      <View style={styles.tabContainer}>
+        {commissionCards.map((card: any, index: any) => (
+          <DashboardTile
+            key={index}
+            index={index}
+            type={card.type}
+            title={card.title}
+            color="#DEF3FD"
+            data={card.data ? card.data[0].commissions : null}
+            compare={card.compare ? card.compare[0].commissions : null}
+            icon={card.icon}
+            iconColor={card.iconColor}
+            tab="commissions"
+            date={card.date || null}
+            startDate={props.startDate}
+            endDate={props.endDate}
+            commissions={props.commissions}
+          />
+        ))}
       </View>
 
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-          marginTop: 5,
-        }}
-      >
+      <View style={styles.tabContainer}>
+        {!data.yearlySales ? null : (
+          <CommissionsPieCard
+            type="sales"
+            widthAndHeight={widthAndHeight}
+            data={data.yearlySales || []}
+            series={getSeriesForPie(data.yearlySales) || []}
+            numColors={data.yearlySales.length}
+            title="Total Sales"
+            titleDetails="per year"
+          />
+        )}
+
+        {!data.suppliersCommissions ? null : (
+          <CommissionsPieCard
+            type="suppliers"
+            widthAndHeight={widthAndHeight}
+            data={data.suppliersCommissions || []}
+            series={getSeriesForPie(data.suppliersCommissions) || []}
+            numColors={data.suppliersCommissions.length}
+            title="Top Suppliers"
+            titleDetails="historic data"
+          />
+        )}
+
+        {!data.ytdSuppliersCommissions ? null : (
+          <CommissionsPieCard
+            type="suppliers"
+            widthAndHeight={widthAndHeight}
+            data={data.ytdSuppliersCommissions || []}
+            series={getSeriesForPie(data.ytdSuppliersCommissions) || []}
+            numColors={data.ytdSuppliersCommissions.length}
+            title="Top Suppliers"
+            titleDetails="year-to-date"
+          />
+        )}
+      </View>
+
+      <View style={styles.tabContainer}>
         <CommissionsLineChart
           width={600}
           minWidth={300}
@@ -156,66 +164,34 @@ export default function CommissionsDetails(props: any) {
           type="years"
           width={600}
           minWidth={300}
-          //height={300}
           allYearsComm={data.yearlyCommissions}
           currYear={data.ytdCommissions || null}
           lastYear={data.prevYearCommissions || null}
         />
-      </View>
-
-      <View
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          flexDirection: "row",
-        }}
-      >
-        {!data.yearlySales ? null : (
-          <CommissionsPieCard
-            type="sales"
-            widthAndHeight={widthAndHeight}
-            data={data.yearlySales || []}
-            series={getSeriesForPie(data.yearlySales) || []}
-            numColors={data.yearlySales.length}
-            title="Total Sales"
-            titleDetails="per year"
-          />
-        )}
-
-        {!data.suppliersCommissions ? null : (
-          <CommissionsPieCard
-            type="suppliers"
-            widthAndHeight={widthAndHeight}
-            data={data.suppliersCommissions || []}
-            series={getSeriesForPie(data.suppliersCommissions) || []}
-            numColors={data.suppliersCommissions.length}
-            title="Top Suppliers"
-            titleDetails="historic data"
-          />
-        )}
-
-        {!data.ytdSuppliersCommissions ? null : (
-          <CommissionsPieCard
-            type="suppliers"
-            widthAndHeight={widthAndHeight}
-            data={data.ytdSuppliersCommissions || []}
-            series={getSeriesForPie(data.ytdSuppliersCommissions) || []}
-            numColors={data.ytdSuppliersCommissions.length}
-            title="Top Suppliers"
-            titleDetails="year-to-date"
-          />
-        )}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    display: "flex",
+    flexWrap: "wrap",
+    flexDirection: "column",
+    backgroundColor: "#F0F0F0",
+    marginTop: 20,
+    padding: 20,
+  },
+  tabContainer: {
+    display: "flex",
+    flexWrap: "wrap",
+    flexDirection: "row",
+  },
   hamburger: {
     height: 30,
     width: 30,
     position: "absolute",
-    marginTop: 20,
+    marginTop: 10,
     marginLeft: 10,
     backgroundColor: "#f27d42",
     borderRadius: 50,

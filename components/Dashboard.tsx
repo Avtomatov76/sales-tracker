@@ -67,14 +67,8 @@ export default function Dashboard(props: any) {
     <View style={{ display: "flex" }}>
       <TabHeader name="Dashboard" />
 
-      <View style={[styles.summary, { padding: 20 }]}>
-        <View
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            flexDirection: "row",
-          }}
-        >
+      <View style={styles.container}>
+        <View style={styles.tabContainer}>
           {dashboardCards.map((e: any, index: any) => (
             <DashboardTile
               key={index}
@@ -96,20 +90,11 @@ export default function Dashboard(props: any) {
             flexWrap: "wrap",
             flexDirection: "row",
             marginTop: 20,
-            marginBottom: 20,
+            //marginBottom: 20,
           }}
         >
           <View style={[styles.chart, { padding: 15 }]}>
-            <Text
-              style={{
-                color: "grey",
-                fontWeight: "600",
-                textTransform: "uppercase",
-                marginBottom: 20,
-              }}
-            >
-              Highest grossing customers
-            </Text>
+            <Text style={styles.chartTitle}>Highest grossing customers</Text>
             {!commissionsList
               ? null
               : commissionsList.map((c: any, index: any) => (
@@ -121,22 +106,8 @@ export default function Dashboard(props: any) {
                   />
                 ))}
           </View>
-          <View
-            style={[
-              styles.chart,
-              { flex: 1, marginLeft: 20, padding: 15, minWidth: 200 },
-            ]}
-          >
-            <Text
-              style={{
-                color: "grey",
-                fontWeight: "600",
-                textTransform: "uppercase",
-                marginBottom: 20,
-              }}
-            >
-              5 most popular destinations
-            </Text>
+          <View style={[styles.chart, { padding: 15 }]}>
+            <Text style={styles.chartTitle}>5 most popular destinations</Text>
             {!salesPerDestination
               ? null
               : salesPerDestination.map((d: any, index: any) => (
@@ -148,6 +119,20 @@ export default function Dashboard(props: any) {
                   />
                 ))}
           </View>
+
+          <View style={[styles.chart, { padding: 15 }]}>
+            <Text style={styles.chartTitle}>Products</Text>
+            {/* {!salesPerDestination
+              ? null
+              : salesPerDestination.map((d: any, index: any) => (
+                  <DashboardList
+                    key={index}
+                    index={index}
+                    destination={d}
+                    type="destinations"
+                  />
+                ))} */}
+          </View>
         </View>
       </View>
     </View>
@@ -155,53 +140,25 @@ export default function Dashboard(props: any) {
 }
 
 const styles = StyleSheet.create({
-  summary: {
+  container: {
     display: "flex",
     flexWrap: "wrap",
     flexDirection: "column",
     backgroundColor: "#F0F0F0",
     marginTop: 20,
-    paddingRight: 20,
-    paddingLeft: 15,
-    paddingTop: 15,
-    paddingBottom: 15,
-    borderRadius: 5,
+    padding: 20,
   },
-  card: {
+  tabContainer: {
     display: "flex",
-    flex: 1,
-    height: 100,
-    minWidth: 280,
-    maxWidth: 280,
-    marginBottom: 10,
-    borderRadius: 5,
-    padding: 15,
-    borderBottomWidth: 5,
-    backgroundColor: "#FFFFFF",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  icon: {
-    width: 24,
-    height: 24,
-    alignSelf: "center",
-  },
-  percent: {
-    alignSelf: "flex-end",
-    color: "grey",
-    marginBottom: 2,
-    fontSize: 22,
+    flexWrap: "wrap",
+    flexDirection: "row",
   },
   chart: {
-    flex: 2,
+    flex: 1,
     minWidth: 350,
     height: 400,
+    marginRight: 20,
+    marginBottom: 20,
     backgroundColor: "#FFFFFF",
     borderRadius: 4,
     shadowColor: "#000",
@@ -212,5 +169,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+  },
+  chartTitle: {
+    color: "grey",
+    fontWeight: "700",
+    textTransform: "uppercase",
+    marginBottom: 20,
+  },
+  entryView: {
+    padding: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: 28,
   },
 });

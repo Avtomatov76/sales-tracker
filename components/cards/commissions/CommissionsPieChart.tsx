@@ -111,13 +111,11 @@ const styles = StyleSheet.create({
   },
   card: {
     display: "flex",
-    //flex: 1,
-    //flexDirection: "row",
+    paddingTop: 10,
     minWidth: 400,
     height: 340,
     backgroundColor: "#FFFFF0", //"#FFF9C4", //"#F0F0F0",
-    marginTop: 10,
-    marginRight: 15,
+    marginRight: 20,
     borderRadius: 5,
   },
 });

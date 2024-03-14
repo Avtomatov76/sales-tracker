@@ -37,14 +37,6 @@ export default function CommissionsPieCard(props: any) {
     );
   };
 
-  //
-  // return (
-  //   <View>
-  //     <Text>NONE!!! - A</Text>
-  //   </View>
-  // );
-  //
-
   return (
     <Card style={styles.card}>
       <View style={{ marginBottom: 30 }}>
@@ -89,9 +81,9 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     height: 350,
     minWidth: 350,
-    backgroundColor: "#F0F0F0",
-    marginTop: 15,
-    marginRight: 15,
+    backgroundColor: "#FFFFFF", //"#F0F0F0",
+    marginBottom: 20,
+    marginRight: 20,
     borderRadius: 5,
   },
 });

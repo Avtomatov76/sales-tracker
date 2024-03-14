@@ -156,30 +156,6 @@ export default function AddUpdateCustomer(props: any) {
             <Picker.Item label={v} value={v} key={index} />
           ))}
         </Picker>
-
-        {/* {props.formValues.state || props.formValues.state != "" ? (
-          <TextInput
-            maxLength={2}
-            placeholderTextColor="grey"
-            style={styles.textInput}
-            value={!props.formValues.state ? "" : props.formValues.state}
-            onChange={(e) => props.handleOnChange(e, "state")}
-          />
-        ) : (
-          <Picker
-            style={[
-              styles.textInput,
-              { fontSize: 14, paddingLeft: 5, backgroundColor: "#FFFFFF" },
-            ]}
-            onValueChange={(itemValue, itemIndex) =>
-              props.handleOnChange(itemValue, "state")
-            }
-          >
-            {STATES.map((v: any, index: any) => (
-              <Picker.Item label={v} value={v} key={index} />
-            ))}
-          </Picker>
-        )} */}
       </View>
     </View>
   );

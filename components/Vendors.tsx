@@ -68,7 +68,7 @@ export default function Vendors(props: any) {
           <ScrollView
             style={[
               styles.scrollView,
-              { width: width > 1000 ? "50%" : "100%" },
+              //{ width: width > 1000 ? "40%" : "100%" },
             ]}
           >
             {vendors.map((v: any, index: any) => (
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   scrollView: {
     display: "flex",
     maxHeight: 550,
-    width: "50%",
+    width: 500, //"50%",
     marginTop: 30,
     paddingTop: 10,
     paddingRight: 10,

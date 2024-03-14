@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     width: "auto",
     flexDirection: "column",
     justifyContent: "space-between",
-    margin: 8,
+    //margin: 8,
     padding: 15,
     borderRadius: 5,
   },

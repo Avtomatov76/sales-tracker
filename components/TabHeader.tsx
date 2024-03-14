@@ -3,6 +3,7 @@ import TransactionsTab from "./cards/transactions/TransactionsTab";
 import CommissionsTab from "./cards/commissions/CommissionsTab";
 import CustomersTab from "./cards/customers/CustomersTab";
 import VendorsTab from "./cards/vendors/VendorsTab";
+import DestinationsTab from "./cards/destinations/DestinationsTab";
 
 export default function TabHeader(props: any) {
   const displayTab = (name: any) => {
@@ -48,6 +49,17 @@ export default function TabHeader(props: any) {
           entryObjects={props.entryObjects}
           showSearchResults={props.showSearchResults}
           handleSelection={props.handleSelection}
+          displayModal={props.displayModal}
+        />
+      );
+
+    if (name.toLowerCase() == "destinations")
+      return (
+        <DestinationsTab
+          // foundEntries={props.foundEntries}
+          // entryObjects={props.entryObjects}
+          // showSearchResults={props.showSearchResults}
+          // handleSelection={props.handleSelection}
           displayModal={props.displayModal}
         />
       );

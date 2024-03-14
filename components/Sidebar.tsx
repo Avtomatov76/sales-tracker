@@ -19,6 +19,7 @@ export default function Sidebar(props: any) {
     "Customers",
     "Vendors",
     "Suppliers",
+    "Destinations",
     "Uploader",
   ];
 
@@ -28,6 +29,7 @@ export default function Sidebar(props: any) {
     transactions: require("../assets/icons/transaction.png"),
     vendors: require("../assets/icons/vendor.png"),
     suppliers: require("../assets/icons/supplier.png"),
+    destinations: require("../assets/icons/destination.png"),
     uploader: require("../assets/icons/upload.png"),
   };
 
