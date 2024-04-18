@@ -75,7 +75,7 @@ export default function Customers(props: any) {
     let custObjects = [];
 
     data.forEach((c: any) => {
-      if (c.last_name.toLowerCase().includes(e.target.value)) {
+      if (c.last_name.toLowerCase().includes(e.target.value.toLowerCase())) {
         let customerObj = {
           id: c.customer_id,
           lastName: c.last_name.toUpperCase(),

@@ -8,6 +8,16 @@ export default function CommissionsPieCard(props: any) {
   let pieChartData = props.data;
   let colors = getColors(props.numColors, pieChartData, props.type);
 
+  const showYears = (yearsObj: any) => {
+    let yearsStr = "";
+
+    if (yearsObj.length > 1) yearsStr = yearsObj[0].year;
+
+    yearsStr = yearsObj[0].year + " - " + yearsObj[yearsObj.length - 1].year;
+
+    return yearsStr;
+  };
+
   const displayPieDetails = (entry: any, index: any) => {
     return (
       <View
@@ -29,9 +39,13 @@ export default function CommissionsPieCard(props: any) {
             marginRight: 10,
           }}
         ></View>
-        <Text style={{ fontSize: 14 }}>{entry.name + " - "}</Text>
+        <Text style={{ fontSize: 14 }}>
+          {props.type == "years" ? entry.year + " - " : entry.name + " - "}
+        </Text>
         <Text style={{ color: "green", fontSize: 14, fontWeight: "600" }}>
-          {formatDollarEntry(entry.total)}
+          {props.type == "years"
+            ? formatDollarEntry(entry.commissions)
+            : formatDollarEntry(entry.total)}
         </Text>
       </View>
     );
@@ -43,7 +57,11 @@ export default function CommissionsPieCard(props: any) {
         <Text style={styles.catTitle}>
           {props.title}{" "}
           <Text style={{ color: "#000000", fontSize: 16, fontWeight: "100" }}>
-            &#40;{props.titleDetails}&#41;
+            &#40;
+            {props.type == "years"
+              ? showYears(props.allYearsComm)
+              : props.titleDetails}
+            &#41;
           </Text>
         </Text>
         <PieChart

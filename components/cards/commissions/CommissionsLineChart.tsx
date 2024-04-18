@@ -52,7 +52,7 @@ export default function CommissionsLineChart(props: any) {
         : [
             {
               data: props.monthlyCommYear,
-              color: (opacity = 0.5) => "#A782EC",
+              color: (opacity = 0.5) => "#F3587A", //"#A782EC",
             },
           ],
     legend:

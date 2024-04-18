@@ -85,7 +85,7 @@ export default function Transactions(props: any) {
 
     setProducts(sorted);
     //setAllProducts(sorted);
-    setListUpdate(true);
+    setListUpdate(true); // --> THIS IS WHERE THE SORTING ISSUES IS !!!!!!!!!!!!!!!!!!!!!!
   };
   //
 

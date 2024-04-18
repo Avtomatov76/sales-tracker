@@ -29,7 +29,7 @@ export const getSeriesForPie = (array: any) => {
   let series = [];
 
   array.forEach((comm: any) => {
-    let commAsInt = parseInt(comm.total);
+    let commAsInt = parseInt(comm.total) || parseInt(comm.commissions);
     series.push(commAsInt);
   });
 

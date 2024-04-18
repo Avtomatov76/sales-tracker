@@ -22,9 +22,23 @@ export function sortArray(array: any, field: any) {
   //     a[field].localeCompare(b[field])
   //   );
 
-  sortedArray = array.sort((a: any, b: any) =>
-    a[field].localeCompare(b[field])
-  );
+  sortedArray = array.sort((a: any, b: any) => {
+    if (a.is_comm_received < b.is_comm_received) {
+      return -1;
+    }
+    if (a.is_comm_received > b.is_comm_received) {
+      return 1;
+    }
+    return 0;
+  });
+
+  //
+  console.log("Sorted Array: ", sortedArray);
+  //
+
+  // sortedArray = array.sort((a: any, b: any) =>
+  //   a[field].localeCompare(b[field])
+  // );
 
   return sortedArray;
 }

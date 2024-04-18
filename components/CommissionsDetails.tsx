@@ -99,6 +99,19 @@ export default function CommissionsDetails(props: any) {
           />
         )}
 
+        {!data.yearlyCommissions ? null : (
+          <CommissionsPieCard
+            type="years"
+            widthAndHeight={widthAndHeight}
+            data={data.yearlyCommissions || []}
+            series={getSeriesForPie(data.yearlyCommissions) || []}
+            numColors={data.yearlyCommissions.length}
+            title="Commissions"
+            titleDetails=""
+            allYearsComm={data.yearlyCommissions}
+          />
+        )}
+
         {!data.suppliersCommissions ? null : (
           <CommissionsPieCard
             type="suppliers"
@@ -126,7 +139,7 @@ export default function CommissionsDetails(props: any) {
 
       <View style={styles.tabContainer}>
         <CommissionsLineChart
-          width={600}
+          width={570}
           minWidth={300}
           height={300}
           chartForYear={chartForYear}
@@ -159,15 +172,6 @@ export default function CommissionsDetails(props: any) {
             />
           </Pressable>
         )}
-
-        <CommissionsPieChart
-          type="years"
-          width={600}
-          minWidth={300}
-          allYearsComm={data.yearlyCommissions}
-          currYear={data.ytdCommissions || null}
-          lastYear={data.prevYearCommissions || null}
-        />
       </View>
     </View>
   );
