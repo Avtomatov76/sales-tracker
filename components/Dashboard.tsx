@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 import TabHeader from "./TabHeader";
-import ErrorScreen from "./ErrorScreen";
+import ErrorMessage from "./ErrorMessage";
 import {
   getDashboardCards,
   getHighestComm,
@@ -22,8 +22,17 @@ export default function Dashboard(props: any) {
     () => fetchDashboardData()
   );
 
+  if (error)
+    return (
+      <View>
+        <Text style={{ fontSize: 18, color: "red" }}>
+          Error fetching data from the server!
+        </Text>
+      </View>
+    );
+
+  //if (error) return <ErrorMessage error={error} type="dashboard" />;
   if (isLoading) return <LoadingScreen />;
-  if (error) return <ErrorScreen error={error} type="commissions" />;
 
   let dashboardCards: any[] = [];
   let allSales = getSumOfEntries(data.products, "product_cost");
@@ -55,9 +64,27 @@ export default function Dashboard(props: any) {
     );
   }
 
-  if ((!allSales && !allCommissions) || isLoading)
+  if (!data || isLoading)
+    //if ((!allSales && !allCommissions) || isLoading)
     return (
-      <ErrorScreen
+      <ErrorMessage
+        error="No product information found in the database!"
+        type="server"
+      />
+    );
+
+  if (
+    (!allSales &&
+      !ytdSales &&
+      !allCommissions &&
+      !ytdCommissions &&
+      !highestMonthCommEntry &&
+      !highestCommission) ||
+    isLoading
+  )
+    //if ((!allSales && !allCommissions) || isLoading)
+    return (
+      <ErrorMessage
         error="No product information found in the database!"
         type="server"
       />

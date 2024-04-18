@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import TabHeader from "./TabHeader";
 import GetConfiguration from "../constants/Config";
-import ErrorScreen from "./ErrorScreen";
+import ErrorMessage from "./ErrorMessage";
 import { suppliersAPI } from "../api/endPoints";
 import SubHeader from "./SubHeader";
 import ListEntry from "./ListEntry";
@@ -36,7 +36,7 @@ export default function Suppliers(props: any) {
 
   if (!suppliers)
     return (
-      <ErrorScreen
+      <ErrorMessage
         error="No supplier information found in the database!"
         type="server"
       />

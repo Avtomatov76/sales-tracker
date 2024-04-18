@@ -2,7 +2,7 @@ import { LineChart } from "react-native-chart-kit";
 import { MONTHS } from "../../../constants/Months";
 import moment from "moment";
 import { Card } from "react-native-paper";
-import ErrorScreen from "../../ErrorScreen";
+import ErrorMessage from "../../ErrorMessage";
 
 let chartConfig = {
   backgroundColor: "#4CBB17", //"#1F2F98",
@@ -77,7 +77,7 @@ export default function CommissionsLineChart(props: any) {
   const displayChart = () => {
     if (props.chartForYear != "default" && props.monthlyCommYear.length == 0)
       return (
-        <ErrorScreen
+        <ErrorMessage
           error="No commission information was found for this chart!"
           type="server"
         />

@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Modal } from "react-native";
 import { Button as Btn, TextInput } from "react-native-paper";
 import GetConfiguration from "../constants/Config";
 import { authAPI } from "../api/endPoints";
-import ErrorScreen from "../components/ErrorScreen";
+import ErrorMessage from "../components/ErrorMessage";
 
 export default function LoginModal(props: any) {
   const [formValues, setFormValues] = useState({
@@ -76,7 +76,7 @@ export default function LoginModal(props: any) {
 
   if (user == "na")
     return (
-      <ErrorScreen
+      <ErrorMessage
         error="No commission information found in the database!"
         type="server"
       />

@@ -5,7 +5,7 @@ import GetConfiguration from "../constants/Config";
 import CustomerModal from "../modals/CustomerModal";
 import { displayName, findCustomerById } from "../functions/customerFunctions";
 import LoadingScreen from "./LoadingScreen";
-import ErrorScreen from "./ErrorScreen";
+import ErrorMessage from "./ErrorMessage";
 import TabHeader from "./TabHeader";
 import CustomerSectionRenderer from "./CustomerSectionRenderer";
 import SubHeader from "./SubHeader";
@@ -32,7 +32,7 @@ export default function Customers(props: any) {
   );
 
   if (isLoading) return <LoadingScreen />;
-  if (error) return <ErrorScreen error={error} type="customers" />;
+  if (error) return <ErrorMessage error={error} type="customers" />;
   if (data)
     data.sort((a: any, b: any) => a.last_name.localeCompare(b.last_name));
 

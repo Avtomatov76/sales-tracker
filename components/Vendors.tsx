@@ -11,7 +11,7 @@ import TabHeader from "./TabHeader";
 import GetConfiguration from "../constants/Config";
 import { vendorsAPI } from "../api/endPoints";
 import SubHeader from "./SubHeader";
-import ErrorScreen from "./ErrorScreen";
+import ErrorMessage from "./ErrorMessage";
 import ListEntry from "./ListEntry";
 
 export default function Vendors(props: any) {
@@ -40,7 +40,7 @@ export default function Vendors(props: any) {
 
   if (!vendors)
     return (
-      <ErrorScreen
+      <ErrorMessage
         error="No vendor information found in the database!"
         type="server"
       />

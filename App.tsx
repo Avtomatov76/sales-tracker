@@ -48,8 +48,8 @@ export default function App() {
     );
 
   // ----- Comment this out for DEV!! -----
-  if (!dbData.user || !dbData.user.auth_id || dbData.auth)
-    return <LoginScreen getUserData={getUserData} user={dbData.user} />;
+  // if (!dbData.user || !dbData.user.auth_id || dbData.auth)
+  //   return <LoginScreen getUserData={getUserData} user={dbData.user} />;
 
   return (
     <QueryClientProvider client={queryClient}>

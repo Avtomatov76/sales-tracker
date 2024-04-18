@@ -4,6 +4,7 @@ import {
   getEndpoints,
 } from "../functions/commissionsFunctions";
 import { getDashboardEndpoints } from "../functions/dashboardFunctions";
+import { isError } from "react-query";
 
 export async function fetchDashboardData() {
   let products: any[];
@@ -15,27 +16,27 @@ export async function fetchDashboardData() {
 
   let endpoints = getDashboardEndpoints();
 
-  try {
-    await Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-      ([
-        { data: allProducts },
-        { data: allTransactions },
-        { data: allCommEntries },
-        { data: everyCommission },
-        { data: customersCommissions },
-        { data: destinationSales },
-      ]) => {
-        products = allProducts;
-        transactions = allTransactions;
-        commissionEntries = allCommEntries;
-        everyCommissionEntry = everyCommission;
-        commissionsPerCustomer = customersCommissions;
-        salesPerDestination = destinationSales;
-      }
-    );
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
+  // try {
+  await Promise.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
+    ([
+      { data: allProducts },
+      { data: allTransactions },
+      { data: allCommEntries },
+      { data: everyCommission },
+      { data: customersCommissions },
+      { data: destinationSales },
+    ]) => {
+      products = allProducts;
+      transactions = allTransactions;
+      commissionEntries = allCommEntries;
+      everyCommissionEntry = everyCommission;
+      commissionsPerCustomer = customersCommissions;
+      salesPerDestination = destinationSales;
+    }
+  );
+  // } catch (error) {
+  //   console.error("Error fetching data:", error);
+  // }
 
   return {
     products: products,

@@ -9,7 +9,7 @@ import {
   getSeriesForPie,
 } from "../functions/commissionsFunctions";
 import CommissionsLineChart from "./cards/commissions/CommissionsLineChart";
-import ErrorScreen from "./ErrorScreen";
+import ErrorMessage from "./ErrorMessage";
 import CommissionsPieChart from "./cards/commissions/CommissionsPieChart";
 import CommissionsChartYear from "./cards/commissions/CommissionsChartYear";
 import { fetchCommissionData } from "../utilities/dbDataFetch";
@@ -29,7 +29,7 @@ export default function CommissionsDetails(props: any) {
   );
 
   if (isLoading) return <LoadingScreen />;
-  if (error) return <ErrorScreen error={error} type="commissions" />;
+  if (error) return <ErrorMessage error={error} type="commissions" />;
 
   const commissionCards = getCommissionCards(
     data.commissions,
@@ -57,7 +57,7 @@ export default function CommissionsDetails(props: any) {
 
   if (!data.commissions || isLoading)
     return (
-      <ErrorScreen
+      <ErrorMessage
         error="No commission information found in the database!"
         type="server"
       />

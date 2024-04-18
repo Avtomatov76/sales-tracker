@@ -3,7 +3,7 @@ import { View } from "react-native";
 import axios from "axios";
 import { useQuery } from "react-query";
 import LoadingScreen from "./LoadingScreen";
-import ErrorScreen from "./ErrorScreen";
+import ErrorMessage from "./ErrorMessage";
 import GetConfiguration from "../constants/Config";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -30,7 +30,7 @@ export default function Commissions(props: any) {
   );
 
   if (isLoading) return <LoadingScreen />;
-  if (error) return <ErrorScreen error={error} type="commissions" />;
+  if (error) return <ErrorMessage error={error} type="commissions" />;
 
   const handleOnClick = (stage: any) => {
     setStage(stage);
@@ -64,7 +64,7 @@ export default function Commissions(props: any) {
 
   if (!data[0].commissions || isLoading)
     return (
-      <ErrorScreen
+      <ErrorMessage
         error="No commission information found in the database!"
         type="server"
       />
