@@ -1,12 +1,11 @@
 import moment from "moment";
-import { View, Text, StyleSheet } from "react-native";
-import { formatDollarEntry } from "../functions/customerFunctions";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 
 export default function VendorEntry(props: any) {
   return (
-    <View style={styles.entry}>
+    <Pressable style={styles.entry} onPress={props.handleOnPress}>
       <View style={styles.mainText}>
-        <Text style={styles.lastName}>{props.vendor.vendor_name}</Text>
+        <Text style={styles.vendorName}>{props.vendor.vendor_name}</Text>
         <Text
           style={{
             alignSelf: "flex-end",
@@ -16,34 +15,8 @@ export default function VendorEntry(props: any) {
           {moment(props.productDate).format("MMM DD, YYYY")}
         </Text>
       </View>
-      {/* <View style={styles.subText}>
-        <View style={{ flexDirection: "row" }}>
-          <Text style={{ color: "grey" }}>Paid: </Text>
-          <Text style={styles.amount}>
-            {formatDollarEntry(props.productCost)}
-          </Text>
-
-          <Text style={{ paddingLeft: 20, color: "grey" }}>Comm: </Text>
-          <Text style={styles.amount}>
-            {formatDollarEntry(props.productCommission)}
-          </Text>
-        </View>
-
-        <View style={{ flexDirection: "row" }}>
-          <Text style={{ color: "grey", fontSize: 14 }}>Received: </Text>
-          <Text
-            style={{
-              color: props.isCommReceived == "Y" ? "blue" : "red",
-              fontWeight: "700",
-              paddingLeft: 5,
-            }}
-          >
-            {props.isCommReceived}
-          </Text>
-        </View>
-      </View> */}
       <View style={styles.hairline} />
-    </View>
+    </Pressable>
   );
 }
 
@@ -74,8 +47,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  lastName: {
-    alignSelf: "flex-end",
+  vendorName: {
+    alignSelf: "center",
+    marginTop: -20,
     width: 350,
     fontSize: 16,
     fontWeight: "700",

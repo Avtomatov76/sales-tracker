@@ -13,9 +13,14 @@ import { vendorsAPI } from "../api/endPoints";
 import SubHeader from "./SubHeader";
 import ErrorMessage from "./ErrorMessage";
 import ListEntry from "./ListEntry";
+import VendorModal from "../modals/VendorModal";
 
 export default function Vendors(props: any) {
   const [vendors, setVendors] = useState<any>();
+  const [vendor, setVendor] = useState<any>();
+  const [showModal, setShowModal] = useState(false);
+  const [flag, setFlag] = useState("");
+  const [update, setUpdate] = useState(false);
 
   const { height, width } = useWindowDimensions();
 
@@ -34,8 +39,25 @@ export default function Vendors(props: any) {
     getCommissions();
   }, []);
 
+  const displayVendorModal = (flag: string) => {
+    setFlag(flag);
+    setShowModal(true);
+  };
+
+  const hideVendorModal = async () => {
+    setShowModal(false);
+    setUpdate(true);
+  };
+
+  const handleOnPress = (vendor: any) => {
+    console.log("PRESSIT BOYYYYYY!!!! -> from Vendors", vendor, flag);
+    setVendor(vendor);
+    setFlag("edit");
+    setShowModal(true);
+  };
+
   //
-  console.log("ALL VENDORS: ", vendors);
+  //console.log("ALL VENDORS: ", vendors);
   //
 
   if (!vendors)
@@ -47,9 +69,12 @@ export default function Vendors(props: any) {
     );
 
   return (
-    <>
+    <View>
       <View style={{ display: "flex" }}>
-        <TabHeader name="Vendors" />
+        <TabHeader
+          name="Vendors"
+          displayModal={() => displayVendorModal("add")}
+        />
         <SubHeader
           flag="vendors"
           selected={props.selected}
@@ -78,7 +103,7 @@ export default function Vendors(props: any) {
                 key={index}
                 vendor={v}
                 index={index}
-                //displayTransactionCard={displayTransactionCard}
+                handleOnPress={() => handleOnPress(v)}
               />
             ))}
           </ScrollView>
@@ -90,7 +115,15 @@ export default function Vendors(props: any) {
           </View>
         )}
       </View>
-    </>
+      <VendorModal
+        flag={flag}
+        id={!vendor ? null : vendor.vendor_id}
+        vendor={!vendor ? null : vendor}
+        vendors={vendors}
+        visible={showModal}
+        hideModal={hideVendorModal}
+      />
+    </View>
   );
 }
 

@@ -4,8 +4,14 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const db = require("./db");
 var JSONbig = require("json-bigint");
 const { getAllSuppliers } = require("./queries/supplierQueries");
-const { getAllVendors } = require("./queries/vendorQueries");
+const {
+  getAllVendors,
+  saveVendor,
+  deleteVendor,
+  updateVendor,
+} = require("./queries/vendorQueries");
 const { getAllTravelTypes } = require("./queries/typeQueries");
+
 const {
   getAllDestinations,
   getSalesPerDestination,
@@ -276,7 +282,7 @@ app.post("/api/customers-save", async (req, res) => {
   }
 });
 
-// GET Vendor
+// GET Vendors
 app.get("/api/vendors", async (req, res) => {
   try {
     const result = await db.pool.query(getAllVendors);
@@ -284,6 +290,37 @@ app.get("/api/vendors", async (req, res) => {
   } catch (err) {
     throw err;
   }
+});
+
+// POST Vendor
+app.post("/api/vendors", async (req, res) => {
+  const vendor = req.body;
+  console.log("SHOW VENDOR: ", vendor);
+
+  let sql = saveVendor(vendor);
+
+  await db.pool.query(sql, vendor, function (err, data) {
+    if (err) throw err;
+    console.log("Vendor data is inserted successfully");
+  });
+
+  res.send({ result: "ok" });
+});
+
+// UPDATE Vendor
+app.put("/api/vendors", async (req, res) => {
+  const vendor = req.body;
+  console.log("ABOUT TO UPDATE vendor: ", vendor);
+  let sql = updateVendor(vendor);
+
+  console.log("SHOW ME SQL: ", sql);
+
+  await db.pool.query(sql, function (err, data) {
+    if (err) throw err;
+    console.log("Vendor is updated successfully");
+  });
+
+  res.send({ result: "ok" });
 });
 
 // GET Supplier

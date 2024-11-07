@@ -151,7 +151,7 @@ export default function Transactions(props: any) {
   if (!products) return <NotFound message="No transactions found!" />;
 
   return (
-    <>
+    <View>
       <View style={{ display: "flex" }}>
         <TabHeader
           name="Transactions"
@@ -199,6 +199,6 @@ export default function Transactions(props: any) {
           />
         </View>
       ) : null}
-    </>
+    </View>
   );
 }

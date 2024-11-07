@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 export function sortArray(array: any, field: any) {
   if (array.length == 0) return;
 
-  console.log("HITTTTTTTTIING SORT ARRAY: ", array, field);
+  //console.log("HITTTTTTTTIING SORT ARRAY: ", array, field);
 
   let sortedArray = [];
 
@@ -33,7 +33,7 @@ export function sortArray(array: any, field: any) {
   });
 
   //
-  console.log("Sorted Array: ", sortedArray);
+  //console.log("Sorted Array: ", sortedArray);
   //
 
   // sortedArray = array.sort((a: any, b: any) =>
@@ -137,6 +137,17 @@ export function checkForDupeDestination(code: any, destinations: any) {
 
   destinations.forEach((dest: any) => {
     if (code.toLowerCase() == dest.destination_id.toLowerCase()) isFound = true;
+  });
+
+  return isFound;
+}
+
+// Re-write above 2 functions into one
+export function checkForDupeVendor(code: any, vendors: any) {
+  let isFound = false;
+
+  vendors.forEach((vendor: any) => {
+    if (code.toLowerCase() == vendor.vendor_id.toLowerCase()) isFound = true;
   });
 
   return isFound;

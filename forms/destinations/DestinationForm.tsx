@@ -49,7 +49,7 @@ export default function DestinationForm(props: any) {
   };
 
   return (
-    <>
+    <View>
       {props.flag === "delete" ? (
         <ConfirmDelete
           flag="destination"
@@ -88,6 +88,6 @@ export default function DestinationForm(props: any) {
           <CustomButton submitForm={submitForm} flag="add" type="text" />
         </View>
       ) : null}
-    </>
+    </View>
   );
 }

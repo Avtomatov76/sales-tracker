@@ -37,25 +37,11 @@ export default function ListEntry(props: any) {
       return (
         <VendorEntry
           vendor={props.vendor}
-          // displayName={displayName(props.product)}
-          // productDate={props.product.date}
-          // productCost={props.product.cost}
-          // productCommission={props.product.commission}
-          // isCommReceived={props.product.is_comm_received}
+          handleOnPress={props.handleOnPress}
         />
       );
 
-    if (flag == "suppliers")
-      return (
-        <SupplierEntry
-          supplier={props.supplier}
-          // displayName={displayName(props.product)}
-          // productDate={props.product.date}
-          // productCost={props.product.cost}
-          // productCommission={props.product.commission}
-          // isCommReceived={props.product.is_comm_received}
-        />
-      );
+    if (flag == "suppliers") return <SupplierEntry supplier={props.supplier} />;
 
     if (flag == "transactions")
       return (

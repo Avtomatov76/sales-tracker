@@ -48,6 +48,8 @@ const showTransactionForm = (props: any) => {
   let sortedVendors = sortArray(props.vendors, "vendor_name") || [];
   let sortedSuppliers = sortArray(props.suppliers, "supplier_name") || [];
   let sortedTypes = sortArray(props.travelTypes, "type_id") || [];
+  let sortedDestinations =
+    sortArray(props.destinations, "destination_id") || [];
 
   const displayLegendStyle = (name: any) => {
     return props.error && !props.formValues[name]
@@ -287,53 +289,31 @@ const showTransactionForm = (props: any) => {
           <Text style={[displayLegendStyle("destination"), { zIndex: 1000 }]}>
             Airport Code
           </Text>
-
-          {/* {!showDestinations ? ( */}
           <View style={{ flexDirection: "row" }}>
-            <TextInput
-              maxLength={3}
-              //placeholder="enter code or click to select"
-              placeholderTextColor="grey"
-              style={[
-                displayTextInputStyle("destination"),
-                {
-                  width: "90%",
-                  marginRight: 0,
-                  borderTopRightRadius: 0,
-                  borderBottomEndRadius: 0,
-                },
-              ]}
-              value={
+            <Picker
+              selectedValue={
                 !props.formValues.destination
                   ? ""
                   : props.formValues.destination
               }
-              onChange={(e) => handleChange(e, "destination")}
-            />
-            <Pressable
-              style={[
-                styles.codeDownArrow,
-                {
-                  borderColor:
-                    props.error && !props.formValues["destination"]
-                      ? "red"
-                      : "#CCC",
-                },
-              ]}
-              onPress={handleDestinationToggle}
+              style={[displayPickerStyle("destination"), { width: "95%" }]}
+              //onChange={(e) => handleChange(e, "destination")}
+              onValueChange={(itemValue, itemIndex) =>
+                handleChange(itemValue, "destination", "selected")
+              }
             >
-              <Image
-                source={require("../../assets/chevron-down.png")}
-                style={{ alignSelf: "center", width: 10, height: 10 }}
-              />
-            </Pressable>
+              <Picker.Item label="- select -" value="" />
+              {!sortedDestinations
+                ? null
+                : sortedDestinations.map((d: any, index: any) => (
+                    <Picker.Item
+                      label={d.destination_id + " - " + d.destination_name}
+                      value={d.destination_id}
+                      key={index}
+                    />
+                  ))}
+            </Picker>
           </View>
-
-          {showDestinations && (
-            <OutsideClickHandler onOutsideClick={handleOutsideClick}>
-              {showDestinationDropdown(props.destinations)}
-            </OutsideClickHandler>
-          )}
         </View>
 
         <View style={{ width: "50%" }}>
