@@ -2,18 +2,18 @@ import { View, Text, StyleSheet, Picker } from "react-native";
 import CustomButton from "../../CustomButton";
 import Searchbar from "../../Searchbar";
 
-export default function DestinationsTab(props: any) {
+export default function SuppliersTab(props: any) {
   return (
     <View>
       <View style={styles.tabStyle}>
-        {/* <View style={{ display: "flex", marginRight: 20 }}>
-          <Searchbar
+        <View style={{ display: "flex", marginRight: 20 }}>
+          {/* <Searchbar
             options={props.foundEntries}
             objects={props.entryObjects}
             onChange={(e: any) => props.showSearchResults(e)}
             handleSelection={props.handleSelection}
-          />
-        </View> */}
+          /> */}
+        </View>
       </View>
       {/* <View
         style={{

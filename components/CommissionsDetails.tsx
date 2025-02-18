@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "react-query";
-import { StyleSheet, View, Image, Pressable } from "react-native";
+import { StyleSheet, View, Text, Image, Pressable } from "react-native";
 import OutsideClickHandler from "react-outside-click-handler";
 import CommissionsPieCard from "./cards/commissions/CommissionsPieCard";
 import {
@@ -15,6 +15,7 @@ import CommissionsChartYear from "./cards/commissions/CommissionsChartYear";
 import { fetchCommissionData } from "../utilities/dbDataFetch";
 import LoadingScreen from "./LoadingScreen";
 import DashboardTile from "./cards/dashboard/DashboardTile";
+import UpdaidCommissionsModal from "../modals/UnpaidCommissionsModal";
 
 const widthAndHeight = 150;
 
@@ -22,6 +23,8 @@ export default function CommissionsDetails(props: any) {
   const [chartOptionsDisplay, setChartOptionsDisplay] = useState(false);
   const [chartForYear, setChartForYear] = useState<any>("default");
   const [commForYearSelected, setCommForYearSelected] = useState<any>();
+  const [unpaidCommEntries, setUnpaidCommEntries] = useState<any>();
+  const [showModal, setShowModal] = useState(false);
 
   const { isLoading, isError, data, error, refetch } = useQuery(
     ["commissions-details"],
@@ -55,6 +58,11 @@ export default function CommissionsDetails(props: any) {
     setCommForYearSelected(commArray);
   };
 
+  function handleTilePress() {
+    setUnpaidCommEntries(data.unpaidCommEntries);
+    setShowModal(true);
+  }
+
   if (!data.commissions || isLoading)
     return (
       <ErrorMessage
@@ -82,6 +90,7 @@ export default function CommissionsDetails(props: any) {
             startDate={props.startDate}
             endDate={props.endDate}
             commissions={props.commissions}
+            handleTilePress={handleTilePress}
           />
         ))}
       </View>
@@ -173,6 +182,14 @@ export default function CommissionsDetails(props: any) {
           </Pressable>
         )}
       </View>
+
+      {!unpaidCommEntries ? null : (
+        <UpdaidCommissionsModal
+          visible={showModal}
+          hideModal={() => setShowModal(false)}
+          data={unpaidCommEntries ? unpaidCommEntries : null}
+        />
+      )}
     </View>
   );
 }

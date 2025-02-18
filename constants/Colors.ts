@@ -21,6 +21,9 @@ const colors = [
   "#F3587A",
   "#A166AA",
   "#90D0EC",
+  "rgb(255,203,112)",
+  "rgb(122,220,180)",
+  "rgb(167,130,236)",
 
   // "rgb(40,116,252)", // 1
   // "rgba(255,105,0,1)", // 2
@@ -38,12 +41,13 @@ export const getAvatarColor = () => {
 
 export const getColors = (num: any, data: any, type = "") => {
   //if (data.length == 0) return;
+
   let newColors = [];
 
   if (type == "years" || type == "sales") newColors = colors.slice(0, num);
   else if (type == "suppliers") {
     data.forEach((el: any) => {
-      let index = suppliers.indexOf(el.name);
+      let index = suppliers.indexOf(el.name) + 5;
       newColors.push(colors[index]);
     });
   }

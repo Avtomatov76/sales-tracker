@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Pressable, Text, Image, StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { getIcon } from "../../../functions/commissionsFunctions";
 import { formatDollarEntry } from "../../../functions/customerFunctions";
@@ -120,9 +120,16 @@ export default function DashboardTile(props: any) {
       );
   };
 
+  //
+  function handleTilePress() {
+    console.log("DATA: ", props.title);
+    if (props.title === "Unpaid Commissions") props.handleTilePress();
+  }
+  //
+
   const displayContent = (type: any) => {
     return (
-      <View
+      <Pressable
         style={[
           styles.card,
           {
@@ -133,6 +140,7 @@ export default function DashboardTile(props: any) {
             borderBottomColor: colors[props.index],
           },
         ]}
+        onPress={() => handleTilePress()}
       >
         <View>
           {props.type ? (
@@ -186,7 +194,7 @@ export default function DashboardTile(props: any) {
 
           {props.date ? <Text style={styles.date}>{props.date}</Text> : null}
         </View>
-      </View>
+      </Pressable>
     );
   };
 

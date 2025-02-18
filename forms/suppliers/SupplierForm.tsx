@@ -1,100 +1,64 @@
 import { useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { nanoid } from "nanoid";
-//import AddUpdateCustomer from "./AddUpdateCustomer";
-import CustomerCard from "../../components/cards/customers/CustomerCard";
-import { validateCustomer } from "../../functions/customerFunctions";
-//import ConfirmDelete from "./ConfirmDelete";
+import { View } from "react-native";
 import CustomButton from "../../components/CustomButton";
-import ModalHeader from "../../modals/ModalHeader";
 import AddUpdateSupplier from "./AddUpdateSupplier";
+import ConfirmDelete from "../../modals/ConfirmDelete";
+import { validateSupplier } from "../../functions/supplierFunctions";
 
 export default function SupplierForm(props: any) {
   const [error, setError] = useState(false);
   const [formValues, setFormValues] = useState({
     id: props.initialValues.id,
-    firstName: props.initialValues.firstName,
-    lastName: props.initialValues.lastName,
-    address: props.initialValues.address,
-    city: props.initialValues.city,
-    state: props.initialValues.state,
+    name: props.initialValues.name,
     phone: props.initialValues.phone,
-    email: props.initialValues.email,
   });
 
   const handleOnChange = (e: any, name: any) => {
     setError(false);
 
-    if (name == "state")
-      setFormValues({
-        ...formValues,
-        [name]: e,
-      });
-    else
-      setFormValues({
-        ...formValues,
-        [name]: e.target.value,
-      });
+    setFormValues({
+      ...formValues,
+      [name]: e.target.value,
+    });
   };
 
   const submitForm = () => {
-    let { validCustomer, error } = validateCustomer(
+    let { validSupplier, error } = validateSupplier(
       formValues,
-      props.customers
+      props.suppliers
     );
 
-    if (!validCustomer) {
+    if (!validSupplier) {
       setError(error);
       console.log("There are erorrs in your form!!");
       return;
     }
 
     let values = formValues;
-
-    if (props.flag === "add") {
-      let id = nanoid();
-      values.id = id;
-    }
-
+    values.id = formValues.id.toUpperCase();
     props.handleSubmit(values);
   };
 
-  const displayFormContent = () => {
-    if (props.flag === "details")
-      return <CustomerCard customer={props.customer} />;
-
-    // if (props.flag === "delete")
-    //   return (
-    //     <ConfirmDelete
-    //       message={props.message}
-    //       hideModal={props.hideModal}
-    //       customerId={props.customerId}
-    //       customer={props.customer}
-    //       deleteCustomer={props.deleteCustomer}
-    //       handleOKpress={props.handleOKpress}
-    //     />
-    //   );
-
-    if (props.flag === "add" || props.flag === "edit")
-      return (
-        <AddUpdateSupplier
-          formValues={formValues}
-          error={error}
-          handleOnChange={handleOnChange}
-          hideModal={props.hideModal}
-        />
-      );
-  };
-
   return (
-    <View style={styles.modalView}>
-      <ModalHeader
-        flag={props.flag}
-        title="Supplier"
-        onPress={props.hideModal}
-      />
-
-      {displayFormContent()}
+    <View>
+      {props.flag === "delete" ? (
+        <ConfirmDelete
+          flag="destination"
+          message={props.message}
+          hideModal={props.hideModal}
+          recordId={props.formValues.code}
+          record={props.customer}
+          deleteRecord={props.deleteCustomer}
+          handleOKpress={props.handleOKpress}
+        />
+      ) : (
+        <AddUpdateSupplier
+          flag={props.flag}
+          error={error}
+          formValues={formValues}
+          handleOnChange={handleOnChange}
+        />
+      )}
 
       {props.flag == "edit" || props.flag == "add" ? (
         <View
@@ -112,31 +76,13 @@ export default function SupplierForm(props: any) {
               type="text"
             />
           </View>
-          <CustomButton submitForm={submitForm} flag="add" type="text" />
+          <CustomButton
+            submitForm={submitForm}
+            flag={props.flag == "edit" ? "update" : "add"}
+            type="text"
+          />
         </View>
       ) : null}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  modalView: {
-    width: 450,
-    marginLeft: 20,
-    marginRight: 20,
-    marginBottom: 20,
-    backgroundColor: "white",
-    borderRadius: 5,
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-});

@@ -31,7 +31,6 @@ export default function Dashboard(props: any) {
       </View>
     );
 
-  //if (error) return <ErrorMessage error={error} type="dashboard" />;
   if (isLoading) return <LoadingScreen />;
 
   let dashboardCards: any[] = [];
@@ -65,7 +64,6 @@ export default function Dashboard(props: any) {
   }
 
   if (!data || isLoading)
-    //if ((!allSales && !allCommissions) || isLoading)
     return (
       <ErrorMessage
         error="No product information found in the database!"
@@ -82,7 +80,6 @@ export default function Dashboard(props: any) {
       !highestCommission) ||
     isLoading
   )
-    //if ((!allSales && !allCommissions) || isLoading)
     return (
       <ErrorMessage
         error="No product information found in the database!"
@@ -149,16 +146,13 @@ export default function Dashboard(props: any) {
 
           <View style={[styles.chart, { padding: 15 }]}>
             <Text style={styles.chartTitle}>Products</Text>
-            {/* {!salesPerDestination
-              ? null
-              : salesPerDestination.map((d: any, index: any) => (
-                  <DashboardList
-                    key={index}
-                    index={index}
-                    destination={d}
-                    type="destinations"
-                  />
-                ))} */}
+            <Text>
+              - List categories in descending order of the most popular products
+            </Text>
+            <Text>
+              - Maybe make each profuct clickabel with relevant details included
+            </Text>
+            <Text>Packages - 1045</Text>
           </View>
         </View>
       </View>

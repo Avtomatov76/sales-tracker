@@ -1,10 +1,10 @@
 import moment from "moment";
 import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 import { formatDollarEntry } from "../functions/customerFunctions";
+import { color } from "react-native-elements/dist/helpers";
 
 export default function TransactionEntry(props: any) {
   const handlePress = (product: any) => {
-    console.log("PRESSING ON THE XXXXXXXXXX !!!!!!!");
     props.removeTransaction("delete", product);
   };
 
@@ -46,7 +46,13 @@ export default function TransactionEntry(props: any) {
           </Text>
 
           <Text style={{ paddingLeft: 20, color: "grey" }}>Comm: </Text>
-          <Text style={styles.amount}>
+          <Text
+            style={
+              props.productCommission < 0
+                ? [styles.amount, { color: "red" }]
+                : styles.amount
+            }
+          >
             {formatDollarEntry(props.productCommission)}
           </Text>
         </View>

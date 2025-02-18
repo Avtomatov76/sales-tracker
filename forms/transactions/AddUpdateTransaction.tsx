@@ -3,18 +3,21 @@ import {
   Text,
   View,
   TextInput,
+  //CheckBox,
   Picker,
   StyleSheet,
   Pressable,
   Image,
   ScrollView,
 } from "react-native";
+import { CheckBox } from "react-native-elements";
 import { sortArray } from "../../functions/transactionsFunctions";
 import AddUpdateCustomer from "../customers/AddUpdateCustomer";
 import OutsideClickHandler from "react-outside-click-handler";
 import Calendar from "react-calendar";
 import moment from "moment";
 import TESTdropdown from "../../dropdowns/TESTdropdown";
+import { colors } from "@material-ui/core";
 
 // Left code to create a UNIVERSAL dropdown
 // {
@@ -44,6 +47,7 @@ const showTransactionForm = (props: any) => {
   const [calendar, showCalendar] = useState(false);
   const [calType, setCalType] = useState("");
   const [showDestinations, setShowDestination] = useState(false);
+  const [commissionCheck, setCommissionCheck] = useState(false);
 
   let sortedVendors = sortArray(props.vendors, "vendor_name") || [];
   let sortedSuppliers = sortArray(props.suppliers, "supplier_name") || [];
@@ -116,10 +120,15 @@ const showTransactionForm = (props: any) => {
   const checkIfNumber = (input: any) => {
     if (!input) return;
 
-    let priodCount = countPeriod(input);
+    let periodCount = countPeriod(input);
+
+    // if first char is '-' take it out else proceed
+
     let char = input[input.length - 1];
 
-    if ((char == "." && priodCount == 1) || char == "0") return true;
+    if ((char == "." && periodCount == 1) || char == "0") return true;
+
+    console.log("SHOW ME A CHAR --------------- : ", char);
 
     if (!parseFloat(char) || !parseInt(char)) {
       return false;
@@ -143,6 +152,12 @@ const showTransactionForm = (props: any) => {
 
     props.handleOnChange(e, name, flag);
   };
+
+  function handleCheckbox(name: any) {
+    if (name === "commissionCheck") setCommissionCheck(!commissionCheck);
+
+    handleChange("", name, "");
+  }
 
   const showDestinationDropdown = (codes: any) => {
     return (
@@ -182,7 +197,7 @@ const showTransactionForm = (props: any) => {
           />
         </View>
 
-        <View style={{ width: "50%" }}>
+        <View style={{ width: "50%", marginBottom: 10 }}>
           <Text style={displayLegendStyle("commission")}>Commission</Text>
           <TextInput
             placeholderTextColor="grey"
@@ -191,6 +206,14 @@ const showTransactionForm = (props: any) => {
               !props.formValues.commission ? "" : props.formValues.commission
             }
             onChange={(e) => handleChange(e, "commission")}
+          />
+
+          <CheckBox
+            center
+            title="Check if 'Commission' is negative"
+            textStyle={{ fontSize: 8 }}
+            checked={commissionCheck}
+            onPress={() => handleCheckbox("commissionCheck")}
           />
         </View>
       </View>

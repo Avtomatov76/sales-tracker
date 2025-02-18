@@ -21,7 +21,10 @@ export default function AddUpdateVendor(props: any) {
             styles.textInput,
             {
               borderColor:
-                props.error && !props.formValues.code ? "red" : "#CCC",
+                (props.error && !props.formValues.code) ||
+                (props.error && props.formValues.code.length < 3)
+                  ? "red"
+                  : "#CCC",
             },
           ]}
           value={

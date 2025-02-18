@@ -24,7 +24,7 @@ export default function DashboardList(props: any) {
   };
 
   return props.type == "destinations" ? (
-    <>
+    <View>
       <View style={styles.entryView}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View
@@ -48,9 +48,9 @@ export default function DashboardList(props: any) {
         </Text>
       </View>
       <Divider style={{ marginLeft: 40, marginRight: 10 }} />
-    </>
+    </View>
   ) : (
-    <>
+    <View>
       <View style={styles.entryView}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View
@@ -81,7 +81,7 @@ export default function DashboardList(props: any) {
         </View>
       </View>
       <Divider style={{ marginLeft: 40, marginRight: 10 }} />
-    </>
+    </View>
   );
 }
 

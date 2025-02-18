@@ -46,26 +46,10 @@ export default function CustomButton(props: any) {
         >
           {props.flag.toUpperCase()}
         </Text>
-
-        // <Btn
-        //   mode="contained"
-        //   style={styles.deleteBtn}
-        //   onPress={props.handleDelete}
-        // >
-        //   DELETE
-        // </Btn>
       );
 
     if (props.flag == "cancel" || props.flag == "ok")
       return (
-        // <Btn
-        //   textColor="#368cbf"
-        //   style={styles.cancelBtn}
-        //   onPress={props.hideModal}
-        // >
-        //   CANCEL
-        // </Btn>
-
         <View style={{ marginRight: 25 }}>
           <Text
             style={{ color: "grey", fontWeight: "700" }}
@@ -77,7 +61,7 @@ export default function CustomButton(props: any) {
       );
   };
 
-  return <>{renderBtn()}</>;
+  return <View>{renderBtn()}</View>;
 }
 
 const styles = StyleSheet.create({

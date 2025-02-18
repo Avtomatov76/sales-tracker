@@ -1,5 +1,6 @@
 import axios from "axios";
 import { nanoid } from "nanoid";
+import { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Modal from "react-native-modal";
 import GetConfiguration from "../constants/Config";
@@ -21,25 +22,23 @@ import {
 export default function TransactionModal(props: any) {
   const baseURL = GetConfiguration().baseUrl;
 
+  const [commissionNegative, setCommissionNegative] = useState(false);
+
   let customersNames = getCustomersNames(props.customers);
 
   const hideModal = () => {
+    setCommissionNegative(false);
     props.hideModal();
   };
-
-  //
-  console.log(
-    "------------------  ACTION, ACTION, ACTION  ------------------ : ",
-    props.action
-  );
-  //
 
   const handleSubmit = async (formData: any) => {
     if (props.flag == "edit") {
       // Update product and transaction in the DB
-      let { product, transaction } = createProductEntry(formData, props.flag);
-
-      console.log("STUFF: ", product, transaction);
+      let { product, transaction } = createProductEntry(
+        formData,
+        props.flag,
+        commissionNegative
+      );
 
       try {
         await axios.post(baseURL + updateProduct, product);
@@ -75,7 +74,13 @@ export default function TransactionModal(props: any) {
       }
 
       // Save product and transaction to DB
-      let { product, transaction } = createProductEntry(formData, props.flag);
+      let { product, transaction } = createProductEntry(
+        formData,
+        props.flag,
+        commissionNegative
+      );
+
+      console.log("SHow product ENTRY: ", product);
 
       try {
         await axios.post(baseURL + saveProductsAPI, product);
@@ -109,10 +114,6 @@ export default function TransactionModal(props: any) {
 
     hideModal();
   };
-
-  //
-  console.log("FLAG from TRANSACTION MODA: ", props.flag);
-  //
 
   return (
     <Modal
@@ -153,6 +154,8 @@ export default function TransactionModal(props: any) {
         customersNames={customersNames}
         handleSubmit={handleSubmit}
         hideModal={hideModal}
+        commissionNegative={commissionNegative}
+        setCommissionNegative={setCommissionNegative}
       />
       {/* )} */}
     </Modal>

@@ -136,9 +136,12 @@ export const getDashboardCards = (
       color: cardColors[3],
       icon: "metrics",
       iconColor: "purple",
-      data: `${((parseInt(ytdCommissions) * 100) / parseInt(ytdSales)).toFixed(
-        3
-      )}%`,
+      data:
+        ytdCommissions === "0.00"
+          ? "0.00%"
+          : `${((parseInt(ytdCommissions) * 100) / parseInt(ytdSales)).toFixed(
+              3
+            )}%`,
     },
     {
       title: "Revenue margin (historic)",

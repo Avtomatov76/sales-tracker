@@ -13,11 +13,17 @@ import ErrorMessage from "./ErrorMessage";
 import { suppliersAPI } from "../api/endPoints";
 import SubHeader from "./SubHeader";
 import ListEntry from "./ListEntry";
+import SupplierModal from "../modals/SupplierModal";
+import ConfirmDelete from "../modals/ConfirmDelete";
 
 export default function Suppliers(props: any) {
   const [suppliers, setSuppliers] = useState<any>();
-
-  const { height, width } = useWindowDimensions();
+  const [supplier, setSupplier] = useState<any>();
+  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [flag, setFlag] = useState("");
+  const [update, setUpdate] = useState(false);
+  const [message, setMessage] = useState("");
 
   const baseURL = GetConfiguration().baseUrl;
 
@@ -34,6 +40,46 @@ export default function Suppliers(props: any) {
     getCommissions();
   }, []);
 
+  const displaySupplierModal = (flag: string) => {
+    setFlag(flag);
+    setShowModal(true);
+  };
+
+  const hideSupplierModal = async () => {
+    setShowModal(false);
+    setUpdate(true);
+  };
+
+  const handleOnPress = (supplier: any) => {
+    console.log("PRESSIT BOYYYYYY!!!! -> from suppliers", supplier, flag);
+    setSupplier(supplier);
+    setFlag("edit");
+    setShowModal(true);
+  };
+
+  //
+
+  const displayDeleteModal = (supplier: any) => {
+    console.log("Showing COnfirm Delete Modal: ", supplier);
+    setSupplier(supplier);
+    setFlag("delete");
+    //setShowDeleteModal(true);
+  };
+
+  const deleteSupplier = async (id: any) => {
+    try {
+      const res = await axios.post(baseURL + suppliersAPI + `/${id}`);
+      console.log(res.data.result);
+      if (res.data) setMessage("Could not delete customer ");
+    } catch (err) {
+      console.log(err);
+    }
+
+    setShowDeleteModal(false);
+    //handleRefresh();
+  };
+  //
+
   if (!suppliers)
     return (
       <ErrorMessage
@@ -46,11 +92,10 @@ export default function Suppliers(props: any) {
     <View style={{ display: "flex" }}>
       <TabHeader name="Suppliers" />
       <SubHeader
-        flag="vendors"
+        flag="suppliers"
         selected={props.selected}
         numEntries={suppliers.length}
-        //sortProducts={props.sortProducts}
-        //submitForm={() => displayTransactionModal("add")}
+        submitForm={() => displaySupplierModal("add")}
       />
 
       {!suppliers ? (
@@ -71,7 +116,8 @@ export default function Suppliers(props: any) {
               key={index}
               supplier={s}
               index={index}
-              //displayTransactionCard={displayTransactionCard}
+              handleOnPress={() => handleOnPress(s)}
+              displayDeleteModal={() => displayDeleteModal(s)}
             />
           ))}
         </ScrollView>
@@ -82,6 +128,27 @@ export default function Suppliers(props: any) {
           </Text>
         </View>
       )}
+
+      <SupplierModal
+        flag={flag}
+        id={!supplier ? null : supplier.supplier_id}
+        supplier={!supplier ? null : supplier}
+        suppliers={suppliers}
+        visible={showModal}
+        hideModal={hideSupplierModal}
+      />
+
+      {flag === "delete" ? (
+        <ConfirmDelete
+          flag="supplier"
+          message={props.message}
+          hideModal={props.hideModal}
+          //recordId={props.formValues.code}
+          record={!supplier ? null : supplier}
+          // deleteRecord={props.deleteCustomer}
+          // handleOKpress={props.handleOKpress}
+        />
+      ) : null}
     </View>
   );
 }
@@ -90,7 +157,7 @@ const styles = StyleSheet.create({
   scrollView: {
     display: "flex",
     maxHeight: 550,
-    width: 500, //"50%",
+    width: "40%",
     marginTop: 30,
     paddingTop: 10,
     paddingRight: 10,

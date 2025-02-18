@@ -3,7 +3,12 @@ const cors = require("cors");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const db = require("./db");
 var JSONbig = require("json-bigint");
-const { getAllSuppliers } = require("./queries/supplierQueries");
+const {
+  getAllSuppliers,
+  saveSupplier,
+  deleteSupplier,
+  updateSupplier,
+} = require("./queries/supplierQueries");
 const {
   getAllVendors,
   saveVendor,
@@ -60,6 +65,7 @@ const {
   getCommissionsAllYears,
   getEveryCommissionEntry,
   getMonthlyCommAllYears,
+  getUnpaidCommEntries,
 } = require("./queries/commissionQueries");
 const {
   getAllTransactions,
@@ -333,6 +339,50 @@ app.get("/api/suppliers", async (req, res) => {
   }
 });
 
+// POST Supplier
+app.post("/api/suppliers", async (req, res) => {
+  const supplier = req.body;
+  console.log("SHOW Supplier: ", supplier);
+
+  let sql = saveSupplier(supplier);
+
+  await db.pool.query(sql, supplier, function (err, data) {
+    if (err) throw err;
+    console.log("Supplier data is inserted successfully");
+  });
+
+  res.send({ result: "ok" });
+});
+
+// UPDATE Supplier
+app.put("/api/suppliers", async (req, res) => {
+  const supplier = req.body;
+  console.log("SHOW Supplier: ", supplier);
+
+  let sql = updateSupplier(supplier);
+
+  console.log("show me SQL -- ", sql);
+
+  await db.pool.query(sql, supplier, function (err, data) {
+    if (err) throw err;
+    console.log("Supplier updated successfully");
+  });
+
+  res.send({ result: "ok" });
+});
+
+// DELETE Supplier
+app.get("/api/suppliers/delete/:id", async (req, res) => {
+  let id = req.params["id"];
+
+  try {
+    await db.pool.query("DELETE FROM supplier WHERE supplier_id = ?", [id]);
+    res.redirect("/suppliers");
+  } catch (err) {
+    throw err;
+  }
+});
+
 // GET Travel Type
 app.get("/api/types", async (req, res) => {
   try {
@@ -591,6 +641,16 @@ app.get("/api/commissions-lastCurrent", async (req, res) => {
 app.get("/api/commissions-unpaid", async (req, res) => {
   try {
     const result = await db.pool.query(getUnpaidCommissions);
+    res.send(result);
+  } catch (err) {
+    throw err;
+  }
+});
+
+// GET unpaid commission entries
+app.get("/api/commissions-unpaid-entries", async (req, res) => {
+  try {
+    const result = await db.pool.query(getUnpaidCommEntries);
     res.send(result);
   } catch (err) {
     throw err;

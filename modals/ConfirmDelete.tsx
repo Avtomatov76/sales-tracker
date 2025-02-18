@@ -46,10 +46,10 @@ export default function ConfirmDelete(props: any) {
     );
   };
 
-  //console.log(props.record);
+  console.log(props.record);
 
   const displayMessage = () => {
-    if (props.message != "")
+    if (props.message != "" && props.flag != "supplier")
       return (
         <Text style={{ marginBottom: 10, marginLeft: 5 }}>
           {props.message}
@@ -65,6 +65,15 @@ export default function ConfirmDelete(props: any) {
           <Text style={{ color: "blue" }}>
             {props.record.last_name} {props.record.cost} {props.record.date}
           </Text>{" "}
+          from the database?
+        </Text>
+      );
+
+    if (props.flag === "supplier")
+      return (
+        <Text style={{ marginBottom: 10, marginLeft: 5 }}>
+          Are you sure you want to delete this supplier:{" "}
+          <Text style={{ color: "blue" }}>{props.record.supplier_name}</Text>{" "}
           from the database?
         </Text>
       );

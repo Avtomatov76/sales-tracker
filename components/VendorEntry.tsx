@@ -5,15 +5,15 @@ export default function VendorEntry(props: any) {
   return (
     <Pressable style={styles.entry} onPress={props.handleOnPress}>
       <View style={styles.mainText}>
-        <Text style={styles.vendorName}>{props.vendor.vendor_name}</Text>
-        <Text
+        <Text style={styles.name}>{props.vendor.vendor_name}</Text>
+        {/* <Text
           style={{
             alignSelf: "flex-end",
             fontSize: 16,
           }}
         >
           {moment(props.productDate).format("MMM DD, YYYY")}
-        </Text>
+        </Text> */}
       </View>
       <View style={styles.hairline} />
     </Pressable>
@@ -21,12 +21,6 @@ export default function VendorEntry(props: any) {
 }
 
 const styles = StyleSheet.create({
-  transaction: {
-    height: 65,
-    paddingLeft: 10,
-    flexDirection: "row",
-    alignItems: "center",
-  },
   entry: {
     display: "flex",
     height: "100%",
@@ -47,16 +41,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  vendorName: {
+  name: {
     alignSelf: "center",
-    marginTop: -20,
     width: 350,
     fontSize: 16,
     fontWeight: "700",
-  },
-  amount: {
-    color: "green",
-    fontWeight: "600",
   },
   hairline: {
     display: "flex",

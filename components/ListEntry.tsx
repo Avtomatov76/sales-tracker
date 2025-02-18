@@ -41,7 +41,14 @@ export default function ListEntry(props: any) {
         />
       );
 
-    if (flag == "suppliers") return <SupplierEntry supplier={props.supplier} />;
+    if (flag == "suppliers")
+      return (
+        <SupplierEntry
+          supplier={props.supplier}
+          handleOnPress={props.handleOnPress}
+          displayDeleteModal={props.displayDeleteModal}
+        />
+      );
 
     if (flag == "transactions")
       return (
@@ -95,8 +102,8 @@ export default function ListEntry(props: any) {
     <Pressable
       style={
         props.index == props.selected
-          ? [styles.transaction, { backgroundColor: "rgb(255, 249, 196)" }]
-          : styles.transaction
+          ? [styles.entry, { backgroundColor: "rgb(255, 249, 196)" }]
+          : styles.entry
       }
       onPress={() => handleOnPress()}
     >
@@ -104,7 +111,7 @@ export default function ListEntry(props: any) {
         <Text
           style={{
             fontSize: 24,
-            //color: "grey",
+            textTransform: "uppercase",
           }}
         >
           {displayInitials(props.flag)}
@@ -117,9 +124,10 @@ export default function ListEntry(props: any) {
 }
 
 const styles = StyleSheet.create({
-  transaction: {
+  entry: {
     height: 65,
     paddingLeft: 10,
+    paddingRight: 10,
     flexDirection: "row",
     alignItems: "center",
     //backgroundColor: "#FFFFFF",

@@ -4,10 +4,11 @@ import CommissionsTab from "./cards/commissions/CommissionsTab";
 import CustomersTab from "./cards/customers/CustomersTab";
 import VendorsTab from "./cards/vendors/VendorsTab";
 import DestinationsTab from "./cards/destinations/DestinationsTab";
+import SuppliersTab from "./cards/suppliers/SupplierTab";
 
 export default function TabHeader(props: any) {
   const displayTab = (name: any) => {
-    if (name.toLowerCase() == "transactions")
+    if (name.toLowerCase() === "transactions")
       return (
         <TransactionsTab
           selected={props.selected}
@@ -21,7 +22,7 @@ export default function TabHeader(props: any) {
         />
       );
 
-    if (name.toLowerCase() == "commissions")
+    if (name.toLowerCase() === "commissions")
       return (
         <CommissionsTab
           startDate={props.startDate}
@@ -31,7 +32,7 @@ export default function TabHeader(props: any) {
         />
       );
 
-    if (name.toLowerCase() == "customers")
+    if (name.toLowerCase() === "customers")
       return (
         <CustomersTab
           foundEntries={props.foundEntries}
@@ -42,7 +43,7 @@ export default function TabHeader(props: any) {
         />
       );
 
-    if (name.toLowerCase() == "vendors")
+    if (name.toLowerCase() === "vendors")
       return (
         <VendorsTab
           foundEntries={props.foundEntries}
@@ -53,7 +54,9 @@ export default function TabHeader(props: any) {
         />
       );
 
-    if (name.toLowerCase() == "destinations")
+    if (name.toLowerCase() === "suppliers") return <SuppliersTab />;
+
+    if (name.toLowerCase() === "destinations")
       return (
         <DestinationsTab
           // foundEntries={props.foundEntries}
@@ -66,14 +69,14 @@ export default function TabHeader(props: any) {
   };
 
   return (
-    <>
+    <View>
       <View style={styles.header}>
         <Text style={styles.textField}>{props.name}</Text>
         {displayTab(props.name)}
       </View>
 
       <hr style={styles.hr} />
-    </>
+    </View>
   );
 }
 

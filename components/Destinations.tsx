@@ -6,6 +6,8 @@ import GetConfiguration from "../constants/Config";
 import { destinationsAPI } from "../api/endPoints";
 import { Divider } from "react-native-paper";
 import DestinationModal from "../modals/DestinationModal";
+import SubHeader from "./SubHeader";
+import ErrorMessage from "./ErrorMessage";
 
 export default function Destinations(props: any) {
   const [destination, setDestination] = useState<any>();
@@ -47,11 +49,25 @@ export default function Destinations(props: any) {
     setShowModal(true);
   };
 
+  if (!destinations)
+    return (
+      <ErrorMessage
+        error="No destination information found in the database!"
+        type="server"
+      />
+    );
+
   return (
     <View>
       <TabHeader
         name="Destinations"
-        displayModal={() => displayDestinationModal("add")}
+        //displayModal={() => displayDestinationModal("add")}
+      />
+      <SubHeader
+        flag="destinations"
+        selected={props.selected}
+        numEntries={destinations.length}
+        submitForm={() => displayDestinationModal("add")}
       />
       <View style={styles.summary}>
         <ScrollView style={styles.chart}>
@@ -103,8 +119,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   chart: {
-    minWidth: 350,
-    maxWidth: 500,
+    // minWidth: 350,
+    // maxWidth: 500,
+    width: "40%",
     height: 600,
     marginRight: 20,
     marginBottom: 20,

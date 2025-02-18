@@ -4,18 +4,18 @@ import Searchbar from "../../Searchbar";
 
 export default function VendorsTab(props: any) {
   return (
-    <>
+    <View>
       <View style={styles.tabStyle}>
         <View style={{ display: "flex", marginRight: 20 }}>
-          <Searchbar
+          {/* <Searchbar
             options={props.foundEntries}
             objects={props.entryObjects}
             onChange={(e: any) => props.showSearchResults(e)}
             handleSelection={props.handleSelection}
-          />
+          /> */}
         </View>
       </View>
-      <View
+      {/* <View
         style={{
           display: "flex",
           height: "auto",
@@ -28,8 +28,8 @@ export default function VendorsTab(props: any) {
           type="button"
           submitForm={() => props.displayModal("add")}
         />
-      </View>
-    </>
+      </View> */}
+    </View>
   );
 }
 

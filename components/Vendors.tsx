@@ -56,10 +56,6 @@ export default function Vendors(props: any) {
     setShowModal(true);
   };
 
-  //
-  //console.log("ALL VENDORS: ", vendors);
-  //
-
   if (!vendors)
     return (
       <ErrorMessage
@@ -80,7 +76,7 @@ export default function Vendors(props: any) {
           selected={props.selected}
           numEntries={vendors.length}
           sortProducts={props.sortProducts}
-          //submitForm={() => displayTransactionModal("add")}
+          submitForm={() => displayVendorModal("add")}
         />
 
         {!vendors ? (
@@ -131,7 +127,7 @@ const styles = StyleSheet.create({
   scrollView: {
     display: "flex",
     maxHeight: 550,
-    width: 500, //"50%",
+    width: "40%",
     marginTop: 30,
     paddingTop: 10,
     paddingRight: 10,

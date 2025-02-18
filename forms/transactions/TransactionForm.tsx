@@ -24,8 +24,6 @@ export default function TransactionForm(props: any) {
     props.hideModal();
   };
 
-  console.log("********** transactions **********  : ", props.transaction);
-
   useEffect(() => {
     if (props.flag == "edit")
       setFormValues({
@@ -43,7 +41,6 @@ export default function TransactionForm(props: any) {
         travelType: props.transaction.travel_type,
         vendor: props.transaction.vendor_id,
         supplier: props.transaction.supplier,
-        //supplier_name: props.transaction.supplier_name,
         notes: props.transaction.notes,
       });
   }, []);
@@ -64,6 +61,11 @@ export default function TransactionForm(props: any) {
   };
 
   const handleOnChange = (e: any, name: any, flag = "") => {
+    if (name === "commissionCheck") {
+      props.setCommissionNegative(!props.commissionNegative);
+      return;
+    }
+
     let arr = ["state", "start", "end", "saleDate"];
 
     if (arr.includes(name) || flag == "selected")
@@ -78,43 +80,51 @@ export default function TransactionForm(props: any) {
       });
   };
 
-  //
-  console.log("UPDATED FORM VALUES!!!! ", formValues, props.flag);
-  //
+  const submitForm = async () => {
+    if (props.commissionNegative === true)
+      setFormValues((previousFormValues) => {
+        const newFormValues = previousFormValues;
 
-  const submitForm = () => {
-    console.log("customer: ", formValues);
+        newFormValues["commission"] = parseFloat(
+          "\u002D" + previousFormValues.commission
+        );
+        return newFormValues;
+      });
+    else
+      setFormValues((previousFormValues) => {
+        const newFormValues = previousFormValues;
+
+        newFormValues["commission"] = previousFormValues.commission.replaceAll(
+          "\u002D",
+          ""
+        );
+        return newFormValues;
+      });
     if (!formValues) {
       alert(`Form is empty - Please enter required data!`);
       return;
     }
-
     if (props.flag == "add") {
       let { validCustomer, error } = validateCustomer(
         formValues,
         props.customers
       );
-
       if (!validCustomer) {
         setError(error);
         console.log("There are erorrs in your form!!");
         return;
       }
     }
-
     let { validTransaction, transError } = validateTransaction(
       formValues,
       props.products
     );
-
     if (!validTransaction) {
       setError(transError);
       console.log("There are erorrs in your form!!");
       return;
     }
-
     let values = formValues;
-
     props.handleSubmit(values);
   };
 

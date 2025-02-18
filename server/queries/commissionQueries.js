@@ -144,6 +144,19 @@ SELECT CONCAT("$", ROUND(SUM(product_comm),2)) as commissions FROM product
 WHERE is_comm_received = 'N';
 `;
 
+// GET unpaid commission entries
+const getUnpaidCommEntries = `
+SELECT c.last_name, c.first_name, c.cust_phone, c.email, p.product_cost,
+p.product_comm, p.is_comm_received, t.transaction_date, t.transaction_type,
+p.fk_type_id, p.fk_destination_id, v.vendor_name
+FROM product p
+JOIN transaction t ON p.product_id=t.fk_product_id
+JOIN customer c ON t.fk_customer_id=c.customer_id
+JOIN vendor v ON p.fk_vendor_id=v.vendor_id
+WHERE p.is_comm_received = 'N'
+ORDER BY t.transaction_date DESC;
+`;
+
 // GET all individual commission amounts
 const getEveryCommissionEntry = `
 SELECT DATE_FORMAT(t.transaction_date, '%Y-%m-%d') AS date, t.transaction_amount AS amount, p.product_comm AS commission FROM transaction t
@@ -180,4 +193,5 @@ module.exports = {
   getCommissionsAllYears,
   getEveryCommissionEntry,
   getMonthlyCommAllYears,
+  getUnpaidCommEntries,
 };

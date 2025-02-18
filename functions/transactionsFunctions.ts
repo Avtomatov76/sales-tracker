@@ -5,8 +5,6 @@ import { nanoid } from "nanoid";
 export function sortArray(array: any, field: any) {
   if (array.length == 0) return;
 
-  //console.log("HITTTTTTTTIING SORT ARRAY: ", array, field);
-
   let sortedArray = [];
 
   // if (field == "is_comm_received") {
@@ -31,10 +29,6 @@ export function sortArray(array: any, field: any) {
     }
     return 0;
   });
-
-  //
-  //console.log("Sorted Array: ", sortedArray);
-  //
 
   // sortedArray = array.sort((a: any, b: any) =>
   //   a[field].localeCompare(b[field])
@@ -75,7 +69,11 @@ export const validateTransaction = (formValues: any, products: any) => {
   return { validTransaction: true, transError: false };
 };
 
-export function createProductEntry(formData: any, flag: any) {
+export function createProductEntry(
+  formData: any,
+  flag: any,
+  commissionState: any
+) {
   if (!formData) {
     return;
   }
@@ -96,21 +94,25 @@ export function createProductEntry(formData: any, flag: any) {
 
   prodHash = prodHash.replace(/\s+/g, "").toLowerCase();
 
-  product = {
-    id: flag == "edit" ? formData.product_id : productID,
-    destinationID: formData.destination.toUpperCase(),
-    typeID: formData.travelType,
-    vendorID: formData.vendor,
-    supplierID: formData.supplier,
-    partySize: parseInt(formData.partySize),
-    partyInfo: formData.notes ? formData.notes.trim() : "n/a",
-    productCost: parseFloat(formData.total),
-    productComm: parseFloat(formData.commission),
-    isCommReceived: formData.status,
-    tvlStartDate: formData.start,
-    tvlEndDate: !formData.end ? null : formData.end,
-    hash: prodHash,
-  };
+  if (formData.commission)
+    product = {
+      id: flag == "edit" ? formData.product_id : productID,
+      destinationID: formData.destination.toUpperCase(),
+      typeID: formData.travelType,
+      vendorID: formData.vendor,
+      supplierID: formData.supplier,
+      partySize: parseInt(formData.partySize),
+      partyInfo: formData.notes ? formData.notes.trim() : "n/a",
+      productCost: parseFloat(formData.total),
+      productComm:
+        commissionState === true
+          ? parseFloat("\u002D" + formData.commission)
+          : parseFloat(formData.commission),
+      isCommReceived: formData.status,
+      tvlStartDate: formData.start,
+      tvlEndDate: !formData.end ? null : formData.end,
+      hash: prodHash,
+    };
 
   transaction = createTransactionEntry(formData, productID, flag);
 

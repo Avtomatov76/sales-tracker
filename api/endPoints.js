@@ -37,6 +37,7 @@ export const getYearToDatePerMonth = "/api/commissions-monthlyCurrent";
 export const getLastYearToDatePerMonth = "/api/commissions-monthlyLast";
 export const getCommissionsEntries = "/api/commissions-entries";
 export const getEveryCommissionEntry = "/api/commissions-every";
+export const getUnpaidCommEntries = "/api/commissions-unpaid-entries";
 
 // Transactions
 export const transactionsAPI = "/api/transactions";

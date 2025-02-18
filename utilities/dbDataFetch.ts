@@ -64,6 +64,7 @@ export async function fetchCommissionData() {
   let numericValuesAllYears: any[];
   let commissionEntries: any[];
   let yearlyCommissions: any[];
+  let unpaidCommEntries: any[];
 
   let endpoints = getCommissionEndpoints();
 
@@ -85,6 +86,7 @@ export async function fetchCommissionData() {
         { data: allYearsNumeric },
         { data: allCommEntries },
         { data: yearsCommissions },
+        { data: unpaidCommissionEntries },
       ]) => {
         commissions = totalCommissions;
         ytdCommissions = yearToDateComm;
@@ -101,6 +103,7 @@ export async function fetchCommissionData() {
         numericValuesAllYears = allYearsNumeric;
         commissionEntries = allCommEntries;
         yearlyCommissions = yearsCommissions;
+        unpaidCommEntries = unpaidCommissionEntries;
       }
     );
   } catch (error) {
@@ -123,5 +126,6 @@ export async function fetchCommissionData() {
     numericValuesAllYears: numericValuesAllYears,
     commissionEntries: commissionEntries,
     yearlyCommissions: yearlyCommissions,
+    unpaidCommEntries: unpaidCommEntries,
   };
 }

@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { nanoid } from "nanoid";
-//import AddUpdateCustomer from "./AddUpdateCustomer";
-import CustomerCard from "../../components/cards/customers/CustomerCard";
 import { validateVendor } from "../../functions/vendorFunctions";
-//import ConfirmDelete from "./ConfirmDelete";
 import CustomButton from "../../components/CustomButton";
-import ModalHeader from "../../modals/ModalHeader";
 import AddUpdateVendor from "./AddUpdateVendor";
 import ConfirmDelete from "../../modals/ConfirmDelete";
 
@@ -16,9 +11,6 @@ export default function VendorForm(props: any) {
     code: props.initialValues.code,
     name: props.initialValues.name,
   });
-
-  //
-  console.log("On change: ", formValues);
 
   const handleOnChange = (e: any, name: any) => {
     setError(false);

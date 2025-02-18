@@ -1,13 +1,24 @@
 import { Text, View, TextInput, StyleSheet, Picker } from "react-native";
 
 export default function AddUpdateSupplier(props: any) {
+  console.log(props.error);
+
+  function checkUserInput(entryType: any) {
+    if (props.formValues["entryType"] === "") return false;
+
+    if (entryType === "id" && props.formValues.id.length < 3) return false;
+
+    if (entryType === "phone" && props.formValues.phone.length < 10)
+      return false;
+  }
+
   return (
     <View style={{ display: "flex", flexDirection: "column" }}>
       <View style={{ display: "flex", flexDirection: "row" }}>
         <View style={{ width: "50%" }}>
           <Text
             style={
-              props.error && !props.formValues.firstName
+              props.error && props.formValues.id.length < 3
                 ? [styles.legend, { color: "red" }]
                 : styles.legend
             }
@@ -15,19 +26,23 @@ export default function AddUpdateSupplier(props: any) {
             Supplier ID
           </Text>
           <TextInput
+            autoCapitalize="characters"
+            maxLength={3}
             placeholderTextColor="grey"
             style={[
               styles.textInput,
               {
                 borderColor:
-                  props.error && !props.formValues.firstName ? "red" : "#CCC",
+                  props.error && props.formValues.id.length < 3
+                    ? "red"
+                    : "#CCC",
               },
             ]}
-            onChange={(e) => props.handleOnChange(e, "firstName")}
+            onChange={(e) => props.handleOnChange(e, "id")}
             value={
-              !props.formValues || !props.formValues.firstName
+              !props.formValues || !props.formValues.id
                 ? ""
-                : props.formValues.firstName
+                : props.formValues.id
             }
           />
         </View>
@@ -35,7 +50,7 @@ export default function AddUpdateSupplier(props: any) {
         <View style={{ width: "50%" }}>
           <Text
             style={
-              props.error && !props.formValues.lastName
+              props.error && !props.formValues.name
                 ? [styles.legend, { color: "red" }]
                 : styles.legend
             }
@@ -48,15 +63,15 @@ export default function AddUpdateSupplier(props: any) {
               styles.textInput,
               {
                 borderColor:
-                  props.error && !props.formValues.lastName ? "red" : "#CCC",
+                  props.error && !props.formValues.name ? "red" : "#CCC",
               },
             ]}
             value={
-              !props.formValues || !props.formValues.lastName
+              !props.formValues || !props.formValues.name
                 ? ""
-                : props.formValues.lastName
+                : props.formValues.name
             }
-            onChange={(e) => props.handleOnChange(e, "lastName")}
+            onChange={(e) => props.handleOnChange(e, "name")}
           />
         </View>
       </View>
@@ -65,7 +80,7 @@ export default function AddUpdateSupplier(props: any) {
         <View style={{ width: "50%" }}>
           <Text
             style={
-              props.error && !props.formValues.firstName
+              props.error && props.formValues.phone.length < 10
                 ? [styles.legend, { color: "red" }]
                 : styles.legend
             }
@@ -73,19 +88,22 @@ export default function AddUpdateSupplier(props: any) {
             Supplier Phone
           </Text>
           <TextInput
+            maxLength={10}
             placeholderTextColor="grey"
             style={[
               styles.textInput,
               {
                 borderColor:
-                  props.error && !props.formValues.firstName ? "red" : "#CCC",
+                  props.error && props.formValues.phone.length < 10
+                    ? "red"
+                    : "#CCC",
               },
             ]}
-            onChange={(e) => props.handleOnChange(e, "firstName")}
+            onChange={(e) => props.handleOnChange(e, "phone")}
             value={
-              !props.formValues || !props.formValues.firstName
+              !props.formValues || !props.formValues.phone
                 ? ""
-                : props.formValues.firstName
+                : props.formValues.phone
             }
           />
         </View>
