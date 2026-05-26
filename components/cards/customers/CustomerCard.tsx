@@ -25,9 +25,9 @@ export default function CustomerCard(props: any) {
   const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
-  console.log(
-    "----------------   rendering customer card   -------------------"
-  );
+  // console.log(
+  //   "----------------   rendering customer card   -------------------"
+  // );
 
   let customer = props.customer;
   let flag = "";

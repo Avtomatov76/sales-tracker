@@ -3,7 +3,9 @@ import CustomButton from "../components/CustomButton";
 
 export default function ConfirmDelete(props: any) {
   const deleteRecord = () => {
-    props.deleteRecord(props.record.product_id);
+    if (props.flag === "transaction")
+      props.deleteRecord(props.record.product_id);
+    else props.deleteRecord(props.record.customer_id);
     //props.hideModal();
   };
 
@@ -23,7 +25,9 @@ export default function ConfirmDelete(props: any) {
             flag="ok"
             type="text"
             //handleDelete={() => props.deleteCustomer(props.customerId, false)}
-            handleOKpress={props.handleOKpress}
+            //deleteRecord={() => props.handleOKpress(props.record.customer_id)}
+            //
+            //handleOKpress={() => props.handleOKpress(props.record.customer_id)} //{props.handleOKpress}
             hideModal={props.hideModal}
           />
         ) : (

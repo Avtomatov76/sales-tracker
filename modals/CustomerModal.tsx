@@ -31,12 +31,15 @@ export default function CustomerModal(props: any) {
     props.hideModal();
   };
 
-  const handleOKpress = () => {
+  const handleOKpress = (id: any) => {
+    console.log("SHow me the ID - ", +id);
     setMessage("");
+    deleteCustomer(id);
     hideModal();
   };
 
   const deleteCustomer = async (id: any) => {
+    console.log("IS it even reaching this??????" + id);
     try {
       const res = await axios.post(baseUrl + customersAPI + `/${id}`);
       console.log(res.data.result);

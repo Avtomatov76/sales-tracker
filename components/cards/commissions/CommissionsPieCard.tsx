@@ -76,7 +76,7 @@ export default function CommissionsPieCard(props: any) {
         {!pieChartData || pieChartData.length == 0
           ? 0
           : pieChartData.map((entry: any, index: any) =>
-              displayPieDetails(entry, index)
+              displayPieDetails(entry, index),
             )}
       </View>
     </Card>
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     paddingTop: 20,
-    height: 350,
+    height: 400, //350,
     minWidth: 350,
     backgroundColor: "#FFFFFF", //"#F0F0F0",
     marginBottom: 20,

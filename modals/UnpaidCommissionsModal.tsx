@@ -8,6 +8,15 @@ export default function UpdaidCommissionsModal(props: any) {
     props.hideModal();
   };
 
+  console.log(
+    "------------------ UNPAID COMMISSIONS LOADED ---------------------"
+  );
+
+  // const changeReceived = (id: string) => {
+  //   props.updateProductField("is_comm_received", "Y", id);
+  //   props.refreshTEST();
+  // };
+
   return (
     <Modal
       isVisible={props.visible}
@@ -19,19 +28,32 @@ export default function UpdaidCommissionsModal(props: any) {
         <View
           style={{ display: "flex", flexDirection: "column", marginTop: 20 }}
         >
-          <View style={{ flexDirection: "row" }}>
-            <Text style={{ color: "blue", fontSize: 20, fontWeight: "400" }}>
-              Unpaid Commissions
-            </Text>
-            &nbsp;
-            <Text style={{ fontSize: 20, fontWeight: "600" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              backgroundColor: "rgb(240, 240, 240)",
+              paddingTop: 2,
+              paddingBottom: 2,
+            }}
+          >
+            <Text
+              style={{
+                marginLeft: 10,
+                fontSize: 28,
+                fontWeight: "600",
+              }}
+            >
               {props.data.length}
             </Text>
           </View>
           {props.data.length ? (
             <ScrollView style={styles.scrollView}>
               {props.data.map((entry: any, index: any) => (
-                <CommissionsEntry key={index} entry={entry} />
+                <CommissionsEntry
+                  key={index}
+                  entry={entry}
+                  updateProductField={props.updateProductField}
+                />
               ))}
             </ScrollView>
           ) : (
@@ -74,7 +96,7 @@ const styles = StyleSheet.create({
     display: "flex",
     maxHeight: 550,
     //width: 450, //"50%",
-    marginTop: 30,
+    marginTop: 20,
     paddingTop: 10,
     paddingRight: 10,
     paddingBottom: 10,

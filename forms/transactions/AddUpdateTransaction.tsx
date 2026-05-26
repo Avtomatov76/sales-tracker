@@ -210,12 +210,26 @@ const showTransactionForm = (props: any) => {
 
           <CheckBox
             center
+            size={18}
+            iconType="material-community"
+            checkedIcon="checkbox-outline"
+            uncheckedIcon={"checkbox-blank-outline"}
             title="Check if 'Commission' is negative"
             textStyle={{ fontSize: 8 }}
             checked={commissionCheck}
             onPress={() => handleCheckbox("commissionCheck")}
           />
         </View>
+        {/* <CheckBox
+          center
+          iconType="material-community"
+          checkedIcon="checkbox-outline"
+          uncheckedIcon={"checkbox-blank-outline"}
+          title="Check if 'Commission' is negative"
+          textStyle={{ fontSize: 8 }}
+          checked={commissionCheck}
+          onPress={() => handleCheckbox("commissionCheck")}
+        /> */}
       </View>
 
       <View style={{ display: "flex", flexDirection: "row" }}>

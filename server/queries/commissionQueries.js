@@ -146,7 +146,7 @@ WHERE is_comm_received = 'N';
 
 // GET unpaid commission entries
 const getUnpaidCommEntries = `
-SELECT c.last_name, c.first_name, c.cust_phone, c.email, p.product_cost,
+SELECT p.product_id, c.last_name, c.first_name, c.cust_phone, c.email, p.product_cost,
 p.product_comm, p.is_comm_received, t.transaction_date, t.transaction_type,
 p.fk_type_id, p.fk_destination_id, v.vendor_name
 FROM product p

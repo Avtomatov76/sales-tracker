@@ -66,6 +66,7 @@ export default function CustomerForm(props: any) {
       return (
         <ConfirmDelete
           flag="customer"
+          customerId={props.customerId}
           message={props.message}
           hideModal={props.hideModal}
           recordId={props.customerId}

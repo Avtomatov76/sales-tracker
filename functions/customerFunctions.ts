@@ -81,7 +81,7 @@ export const checkNameForDupes = (
   id = "",
   fName: any,
   lName: any,
-  customerArray: any
+  customerArray: any,
 ) => {
   if (!customerArray || !fName || !lName) return;
 
@@ -105,7 +105,7 @@ export const checkNameForDupes = (
 };
 
 export const findCustomerById = (id: any, data: any) => {
-  let customer = data.find((x) => x.customer_id == id);
+  let customer = data.find((x: any) => x.customer_id == id);
   return customer;
 };
 
@@ -119,7 +119,7 @@ export const formatDollarEntry = (amount: any) => {
 
   if (amountAsStr[0] == "$") amountAsStr = amountAsStr.substring(1);
   if (amountAsStr[0] == "-") {
-    (amountAsStr = amountAsStr.substring(1)), (minusSign = "-");
+    ((amountAsStr = amountAsStr.substring(1)), (minusSign = "-"));
   }
 
   let intStr =
@@ -168,12 +168,12 @@ export const validateCustomer = (formValues: any, customers: any) => {
     formValues.id,
     formValues.firstName,
     formValues.lastName,
-    customers
+    customers,
   );
 
   if (isDupe) {
     alert(
-      `${formValues.firstName} ${formValues.lastName} - is already in the database.  Please update the customer instead of adding a duplicate record!`
+      `${formValues.firstName} ${formValues.lastName} - is already in the database.  Please update the customer instead of adding a duplicate record!`,
     );
     return { validCustomer: false, error: false };
   }

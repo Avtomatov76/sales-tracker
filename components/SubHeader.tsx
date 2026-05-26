@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Picker } from "react-native";
 import CustomButton from "./CustomButton";
 
 export default function SubHeader(props: any) {
-  console.log("FLAGGGGGGG : ", props);
+  //console.log("FLAGGGGGGG : ", props);
   //
 
   //   const displayNumEntries = (flag: string) => {

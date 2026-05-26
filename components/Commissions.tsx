@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View } from "react-native";
 import axios from "axios";
 import { useQuery } from "react-query";
@@ -21,8 +21,20 @@ export default function Commissions(props: any) {
   const [showCalendar, setShowCalendar] = useState(false);
   const [stage, setStage] = useState("");
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showUnpaidCommModal, setShowUnpaidCommModal] = useState(false);
+  //const [listUpdate, setListUpdate] = useState(false);
 
   const baseURL = GetConfiguration().baseUrl;
+
+  //
+  console.log("------------------ COMMISSIONS LOADED ---------------------");
+  //console.log("LIST UPDATE VALUE: ", listUpdate);
+  //
+  // useEffect(() => {
+  //   refetch();
+  //   setListUpdate(false);
+  // }, [listUpdate]);
+  //
 
   const { isLoading, isError, data, error, refetch } = useQuery(
     ["commissions"],
@@ -62,6 +74,33 @@ export default function Commissions(props: any) {
       .then((res) => setCommissions(res.data[0]));
   };
 
+  //
+  const updateProductField = async (field: any, value: string, id: string) => {
+    const params = {
+      field: field,
+      value: value,
+      id: id,
+    };
+
+    console.log("C");
+
+    console.log(
+      "SHOW ME inside commissions: ",
+      "field: " + field + " " + "value: " + value + " " + "id: " + id
+    );
+
+    // try {
+    //   await axios.post(baseURL + updateProductFieldAPI, { params });
+    // } catch (err) {
+    //   console.log(err);
+    // }
+
+    //setShowModal(false);
+    //
+    //refetch();
+  };
+  //
+
   if (!data[0].commissions || isLoading)
     return (
       <ErrorMessage
@@ -86,6 +125,11 @@ export default function Commissions(props: any) {
         }
         startDate={startDate || ""}
         endDate={endDate || ""}
+        updateProductField={updateProductField}
+        // unpaidCommModalState={showUnpaidCommModal}
+        //setUnpaidCommModalState={setShowUnpaidCommModal}
+        //setListUpdate={setListUpdate}
+        //modalState={modalState}
       />
 
       {showCalendar ? (

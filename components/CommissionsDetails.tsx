@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
+import axios from "axios";
 import { StyleSheet, View, Text, Image, Pressable } from "react-native";
 import OutsideClickHandler from "react-outside-click-handler";
 import CommissionsPieCard from "./cards/commissions/CommissionsPieCard";
@@ -16,6 +17,8 @@ import { fetchCommissionData } from "../utilities/dbDataFetch";
 import LoadingScreen from "./LoadingScreen";
 import DashboardTile from "./cards/dashboard/DashboardTile";
 import UpdaidCommissionsModal from "../modals/UnpaidCommissionsModal";
+import { productsAPI, updateProductFieldAPI } from "../api/endPoints";
+import GetConfiguration from "../constants/Config";
 
 const widthAndHeight = 150;
 
@@ -26,21 +29,30 @@ export default function CommissionsDetails(props: any) {
   const [unpaidCommEntries, setUnpaidCommEntries] = useState<any>();
   const [showModal, setShowModal] = useState(false);
 
+  const queryClient = useQueryClient();
+  //
+  const baseURL = GetConfiguration().baseUrl;
+  //
+
+  console.log(
+    "------------------ COMMISSIONS DETAILS LOADED ---------------------",
+  );
+
   const { isLoading, isError, data, error, refetch } = useQuery(
     ["commissions-details"],
-    () => fetchCommissionData()
+    () => fetchCommissionData(),
   );
 
   if (isLoading) return <LoadingScreen />;
   if (error) return <ErrorMessage error={error} type="commissions" />;
 
   const commissionCards = getCommissionCards(
-    data.commissions,
-    data.ytdCommissions,
-    data.prevYtdCommissions,
-    data.currMonthCommission,
-    data.prevYearCurrMonthCommissions,
-    data.commissionsDue
+    data!.commissions,
+    data!.ytdCommissions,
+    data!.prevYtdCommissions,
+    data!.currMonthCommission,
+    data!.prevYearCurrMonthCommissions,
+    data!.commissionsDue,
   );
 
   const blurhash =
@@ -54,14 +66,86 @@ export default function CommissionsDetails(props: any) {
     setChartOptionsDisplay(false);
     setChartForYear(year);
 
-    let commArray = getCommForYearSelected(year, data.commissionEntries);
+    let commArray = getCommForYearSelected(year, data!.commissionEntries);
     setCommForYearSelected(commArray);
   };
 
   function handleTilePress() {
-    setUnpaidCommEntries(data.unpaidCommEntries);
+    setUnpaidCommEntries(data!.unpaidCommEntries);
+    setShowModal(true);
+    props.updateProductField(true);
+  }
+
+  //
+
+  function openModal() {
     setShowModal(true);
   }
+
+  function closeModal() {
+    setShowModal(false);
+  }
+
+  async function updateProductField(message: any, status: any, id: any) {
+    console.log(
+      "COOL, it is hitting this sheyT!!!!!!" +
+        " message " +
+        message +
+        " status " +
+        status +
+        " id " +
+        id,
+    );
+
+    const params = {
+      field: message,
+      value: status,
+      id: id,
+    };
+
+    try {
+      await axios.post(baseURL + updateProductFieldAPI, { params });
+      refetch();
+    } catch (err) {
+      console.log(err);
+    }
+    //queryClient.invalidateQueries("commissions-details");
+
+    setShowModal(false);
+
+    setTimeout(() => {
+      setShowModal(true);
+    }, 2000);
+  }
+
+  //function updateProductField() {
+  // const updateProductField = async (field: any, value: string, id: string) => {
+  //   const params = {
+  //     field: field,
+  //     value: value,
+  //     id: id,
+  //   };
+
+  //   console.log(
+  //     "SHOW ME inside commissions: ",
+  //     "field: " + field + " " + "value: " + value + " " + "id: " + id
+  //   );
+
+  //   //props.updateProductField();
+
+  //   //
+  //   try {
+  //     await axios.post(baseURL + updateProductFieldAPI, { params });
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+
+  //   setShowModal(false);
+  //   //
+
+  //   props.setListUpdate(true);
+  // };
+  //
 
   if (!data.commissions || isLoading)
     return (
@@ -186,8 +270,15 @@ export default function CommissionsDetails(props: any) {
       {!unpaidCommEntries ? null : (
         <UpdaidCommissionsModal
           visible={showModal}
-          hideModal={() => setShowModal(false)}
+          //visible={props.updateProductField}
+          hideModal={() => closeModal()} //{() => setShowModal(false)}
+          //hideModal={() => props.updateProductField(false)}
           data={unpaidCommEntries ? unpaidCommEntries : null}
+          //unpaidCommModalState={props.showUnpaidCommModal}
+          //setUnpaidCommModalState={props.setShowUnpaidCommModal}
+          //
+          //updateProductField={props.updateProductField}
+          updateProductField={updateProductField}
         />
       )}
     </View>
