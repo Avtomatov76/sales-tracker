@@ -18,7 +18,7 @@ CREATE OR REPLACE TABLE Customer (
   city 				VARCHAR(30),
   state 			CHAR(2),
   cust_phone 			VARCHAR(12) NOT NULL,
-  email 			VARCHAR(30)
+  email 			VARCHAR(254)
 );
 
 INSERT INTO

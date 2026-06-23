@@ -28,11 +28,11 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     flex: 1,
-    paddingTop: 40,
-    paddingLeft: 40,
-    paddingRight: 40,
+    paddingTop: 32,
+    paddingLeft: 32,
+    paddingRight: 32,
+    paddingBottom: 32,
     flexDirection: "column",
-    backgroundColor: "#FFFFFF", //"#F0F0F0",
-    //backgroundColor: "#E8E9EB", // <-- Added a shade of grey
+    backgroundColor: "#F6F8FB",
   },
 });

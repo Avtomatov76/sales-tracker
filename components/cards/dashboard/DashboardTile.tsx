@@ -6,14 +6,14 @@ import moment from "moment";
 
 export default function DashboardTile(props: any) {
   const colors = [
-    "blue",
-    "red",
-    "purple",
-    "#ff7400",
-    "green",
-    "brown",
-    "#FFB52F", //"#FFEE0D","#ffc100",
-    "teal",
+    "#1F6F9F",
+    "#C75272",
+    "#7D3C98",
+    "#F27D42",
+    "#237A57",
+    "#8A5A44",
+    "#D99A25",
+    "#168C8C",
   ];
 
   const getComparisonData = () => {
@@ -152,7 +152,7 @@ export default function DashboardTile(props: any) {
               &#41;
             </Text>
           ) : (
-            <Text style={{ color: "grey", fontWeight: "700" }}>
+            <Text style={styles.cardTitle}>
               {props.title.toUpperCase()}
             </Text>
           )}
@@ -188,7 +188,7 @@ export default function DashboardTile(props: any) {
               name={getIcon(props.icon)}
               size={36}
               color={colors[props.index]}
-              style={{ opacity: 0.7 }}
+              style={{ opacity: 0.82 }}
             />
           </View>
 
@@ -221,19 +221,25 @@ const styles = StyleSheet.create({
     minWidth: 280,
     maxWidth: 280,
     marginBottom: 20,
-    borderRadius: 5,
-    padding: 15,
-    borderBottomWidth: 5,
+    borderRadius: 8,
+    padding: 16,
+    borderBottomWidth: 4,
+    borderWidth: 1,
+    borderColor: "#E3EAF1",
     backgroundColor: "#FFFFFF",
-    //
-    shadowColor: "#000",
+    shadowColor: "#1F2933",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 3,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
     elevation: 5,
+  },
+  cardTitle: {
+    color: "#506171",
+    fontWeight: "700",
+    fontSize: 12,
   },
   icon: {
     width: 24,
@@ -262,7 +268,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   date: {
-    color: "blue",
+    color: "#1F6F9F",
     marginTop: -10,
     marginLeft: 10,
     fontSize: 12,

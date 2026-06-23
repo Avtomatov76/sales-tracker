@@ -20,23 +20,16 @@ let entryObj = {
 export default function CommissionsEntry(props: any) {
   let commissionEntry = props.entry;
 
-  //console.log("ENTRY DETAILS: ", commissionEntry);
-
   function handleEntryPress() {
     console.log("Pressing on UNPAID commissions entry!");
   }
 
   function handleStatusPress(id: any) {
-    //console.log("Pressing on entry, ID: ", id);
     props.updateProductField("is_comm_received", "Y", id);
-    //props.refreshTEST();
   }
 
   return (
-    <Pressable
-      style={styles.entry}
-      //onPress={handleEntryPress}
-    >
+    <Pressable style={styles.entry}>
       <View style={styles.mainRow}>
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
           <Text style={{ fontWeight: "600", fontSize: 18 }}>

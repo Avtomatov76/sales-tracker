@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const db = require("./db");
 var JSONbig = require("json-bigint");
@@ -87,7 +88,8 @@ BigInt.prototype.toJSON = function () {
 };
 
 const app = express();
-const port = process.env.PORT || 8080; //19006; //...http://192.168.0.223:19006 const port = process.env.PORT || 5000;
+const startingPort = Number.parseInt(process.env.PORT, 10) || 8080;
+const maxPortAttempts = 10;
 const bodyParser = require("body-parser");
 
 app.use(cors());
@@ -217,17 +219,20 @@ app.get("/api/customers", async (req, res) => {
 
 // POST Customer
 app.post("/api/customers", async (req, res) => {
-  let sql = `INSERT INTO customer (customer_id, first_name, last_name, street_address, city, state, cust_phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+  const sql = `INSERT INTO customer (customer_id, first_name, last_name, street_address, city, state, cust_phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
   const customer = req.body;
   console.log("CUSTOMER COMING IN: ", customer);
 
-  await db.pool.query(sql, customer, function (err, data) {
-    if (err) throw err;
+  try {
+    await db.pool.query(sql, customer);
     console.log("User data is inserted successfully");
-  });
-
-  res.send({ result: "ok" });
+    res.send({ result: "ok" });
+  } catch (err) {
+    console.error("Customer insert failed:", err.sqlMessage || err.message);
+    const status = err.code === "ER_DATA_TOO_LONG" ? 400 : 500;
+    res.status(status).send({ result: "fail", error: err.sqlMessage || err.message });
+  }
 });
 
 // DELETE Customer
@@ -868,24 +873,47 @@ app.post("/api/transactions-update", async (req, res) => {
   }
 });
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
-
 // Server test route
 app.get("/test", async (req, res) => {
   console.log("TESTING server!!!");
   res.send("TESTING server!!!");
 });
 
-// Setting up proxy
-app.use(
-  "/",
-  createProxyMiddleware({
-    target: "http://localhost:3000",
-    //target: "http://127.0.0.1:3000",
-    changeOrigin: true,
-    //secure: false,
-  })
-);
+if (process.env.NODE_ENV === "production") {
+  const webBuildPath = path.join(__dirname, "..", "web-build");
+
+  app.use(express.static(webBuildPath));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(webBuildPath, "index.html"));
+  });
+} else {
+  app.use(
+    "/",
+    createProxyMiddleware({
+      target: "http://localhost:3000",
+      changeOrigin: true,
+    })
+  );
+}
+
+function listen(port, attemptsRemaining = maxPortAttempts) {
+  const server = app.listen(port, () =>
+    console.log(`Listening on port ${port}`)
+  );
+
+  server.on("error", (error) => {
+    if (error.code === "EADDRINUSE" && attemptsRemaining > 1) {
+      const nextPort = port + 1;
+      console.warn(`Port ${port} is busy; trying port ${nextPort}...`);
+      listen(nextPort, attemptsRemaining - 1);
+      return;
+    }
+
+    throw error;
+  });
+}
+
+listen(startingPort);
 
 async function doStuff(items) {
   try {

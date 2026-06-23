@@ -45,14 +45,22 @@ export default function CommissionsDetails(props: any) {
 
   if (isLoading) return <LoadingScreen />;
   if (error) return <ErrorMessage error={error} type="commissions" />;
+  if (!data)
+    return (
+      <ErrorMessage
+        error="No commission information found in the database!"
+        type="server"
+      />
+    );
+  const commissionData = data;
 
   const commissionCards = getCommissionCards(
-    data!.commissions,
-    data!.ytdCommissions,
-    data!.prevYtdCommissions,
-    data!.currMonthCommission,
-    data!.prevYearCurrMonthCommissions,
-    data!.commissionsDue,
+    commissionData.commissions,
+    commissionData.ytdCommissions,
+    commissionData.prevYtdCommissions,
+    commissionData.currMonthCommission,
+    commissionData.prevYearCurrMonthCommissions,
+    commissionData.commissionsDue,
   );
 
   const blurhash =
@@ -66,12 +74,12 @@ export default function CommissionsDetails(props: any) {
     setChartOptionsDisplay(false);
     setChartForYear(year);
 
-    let commArray = getCommForYearSelected(year, data!.commissionEntries);
+    let commArray = getCommForYearSelected(year, commissionData.commissionEntries);
     setCommForYearSelected(commArray);
   };
 
   function handleTilePress() {
-    setUnpaidCommEntries(data!.unpaidCommEntries);
+    setUnpaidCommEntries(commissionData.unpaidCommEntries);
     setShowModal(true);
     props.updateProductField(true);
   }
@@ -105,17 +113,21 @@ export default function CommissionsDetails(props: any) {
 
     try {
       await axios.post(baseURL + updateProductFieldAPI, { params });
-      refetch();
+      if (message == "is_comm_received" && status == "Y") {
+        setUnpaidCommEntries((entries: any) =>
+          entries
+            ? entries.filter((entry: any) => entry.product_id !== id)
+            : entries,
+        );
+      }
+
+      const refreshedCommissions = await refetch();
+      if (refreshedCommissions.data?.unpaidCommEntries) {
+        setUnpaidCommEntries(refreshedCommissions.data.unpaidCommEntries);
+      }
     } catch (err) {
       console.log(err);
     }
-    //queryClient.invalidateQueries("commissions-details");
-
-    setShowModal(false);
-
-    setTimeout(() => {
-      setShowModal(true);
-    }, 2000);
   }
 
   //function updateProductField() {

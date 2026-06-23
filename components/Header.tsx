@@ -58,6 +58,10 @@ export default function Header(props: any) {
             //style={{ alignSelf: "center" }}
           />
         </View>
+        <View style={styles.brandBlock}>
+          <Text style={styles.brandTitle}>Sales Tracker</Text>
+          <Text style={styles.brandSubtitle}>Performance dashboard</Text>
+        </View>
       </View>
 
       <View
@@ -93,9 +97,10 @@ export default function Header(props: any) {
       >
         <Text
           style={{
-            fontSize: 24,
+            fontSize: 20,
             color: "#ffffff",
             marginTop: -5,
+            fontWeight: "600",
           }}
         >
           {showUser(context.user)}
@@ -113,11 +118,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingTop: 16,
+    paddingBottom: 16,
     paddingLeft: 35,
     paddingRight: 35,
-    backgroundColor: "#368cbf",
+    backgroundColor: "#1F6F9F",
+    borderBottomWidth: 4,
+    borderBottomColor: "#F27D42",
   },
   title: {
     color: "#FFFFFF",
@@ -134,34 +141,38 @@ const styles = StyleSheet.create({
     width: 24,
   },
   chip: {
-    backgroundColor: "#f27d42",
+    backgroundColor: "#2B86BD",
     borderRadius: 20,
     marginLeft: 10,
-    //
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
   avatar: {
     height: 50,
     width: 50,
     borderRadius: 50,
-    backgroundColor: "purple",
+    backgroundColor: "#7D3C98",
     alignItems: "center",
     justifyContent: "center",
-    //
-    shadowColor: "purple", // "#000",
+    shadowColor: "#14364D",
     shadowOffset: {
       width: 0,
-      height: 3,
+      height: 2,
     },
-    shadowOpacity: 0.7,
-    shadowRadius: 3,
+    shadowOpacity: 0.28,
+    shadowRadius: 5,
     elevation: 5,
+  },
+  brandBlock: {
+    marginLeft: 14,
+  },
+  brandTitle: {
+    color: "#FFFFFF",
+    fontSize: 22,
+    fontWeight: "700",
+  },
+  brandSubtitle: {
+    color: "#D9EDF8",
+    fontSize: 12,
+    marginTop: 2,
+    textTransform: "uppercase",
   },
 });

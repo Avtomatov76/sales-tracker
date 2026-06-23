@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text } from "react-native";
-import { Image } from "expo-image";
+import { View, Text, Image } from "react-native";
 import { Divider } from "react-native-paper";
 import {
   displayAddress,
@@ -21,9 +20,6 @@ import {
 export default function CustomerCard(props: any) {
   const [sales, setSales] = useState<any>();
   const [latestSale, setLatetSale] = useState<any>();
-
-  const blurhash =
-    "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
   // console.log(
   //   "----------------   rendering customer card   -------------------"
@@ -98,9 +94,7 @@ export default function CustomerCard(props: any) {
       <Image
         style={{ margin: 10, height: 200 }}
         source={{ uri: "https://picsum.photos/700" }}
-        placeholder={blurhash}
-        contentFit="cover"
-        transition={1000}
+        resizeMode="cover"
       />
       {/* <Card.Title title="Details" left={LeftContent} /> */}
       <Card.Content>

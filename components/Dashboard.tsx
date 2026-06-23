@@ -1,5 +1,6 @@
 import { useQuery } from "react-query";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Dimensions, ScrollView } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import TabHeader from "./TabHeader";
 import ErrorMessage from "./ErrorMessage";
 import {
@@ -33,14 +34,22 @@ export default function Dashboard(props: any) {
 
   if (isLoading) return <LoadingScreen />;
 
+  if (!data)
+    return (
+      <ErrorMessage
+        error="No product information found in the database!"
+        type="server"
+      />
+    );
+
   let dashboardCards: any[] = [];
-  let allSales = getSumOfEntries(data.products, "product_cost");
-  let ytdSales = getYearToDateSales(data.transactions);
-  let allCommissions = getSumOfEntries(data.products, "product_comm");
+  let allSales = getSumOfEntries(data.products, "product_cost") ?? "0.00";
+  let ytdSales = getYearToDateSales(data.transactions) ?? "0.00";
+  let allCommissions = getSumOfEntries(data.products, "product_comm") ?? "0.00";
   let ytdCommissions = getYearToDateCommissions(
     data.products,
     data.transactions
-  );
+  ) ?? "0.00";
   let highestMonthCommEntry = getHighestComm(
     data.commissionEntries,
     "monthly_sum"
@@ -51,6 +60,13 @@ export default function Dashboard(props: any) {
   );
   let commissionsList = data.commissionsPerCustomer.slice(0, 11);
   let salesPerDestination = data.salesPerDestination.slice(1, 6);
+  let productCount = data.products.length;
+  let averageSale =
+    productCount > 0 ? (parseFloat(allSales) / productCount).toFixed(2) : "0";
+  let receivedCommissions = data.products.filter(
+    (p: any) => p.is_comm_received
+  ).length;
+  let pendingCommissions = productCount - receivedCommissions;
 
   if (allSales && ytdSales && allCommissions && ytdCommissions) {
     dashboardCards = getDashboardCards(
@@ -62,14 +78,6 @@ export default function Dashboard(props: any) {
       highestCommission
     );
   }
-
-  if (!data || isLoading)
-    return (
-      <ErrorMessage
-        error="No product information found in the database!"
-        type="server"
-      />
-    );
 
   if (
     (!allSales &&
@@ -119,16 +127,21 @@ export default function Dashboard(props: any) {
         >
           <View style={[styles.chart, { padding: 15 }]}>
             <Text style={styles.chartTitle}>Highest grossing customers</Text>
-            {!commissionsList
-              ? null
-              : commissionsList.map((c: any, index: any) => (
-                  <DashboardList
-                    key={index}
-                    index={index}
-                    customer={c}
-                    type="customers"
-                  />
-                ))}
+            <ScrollView
+              style={styles.customerListScroll}
+              contentContainerStyle={styles.customerListContent}
+            >
+              {!commissionsList
+                ? null
+                : commissionsList.map((c: any, index: any) => (
+                    <DashboardList
+                      key={index}
+                      index={index}
+                      customer={c}
+                      type="customers"
+                    />
+                  ))}
+            </ScrollView>
           </View>
           <View style={[styles.chart, { padding: 15 }]}>
             <Text style={styles.chartTitle}>5 most popular destinations</Text>
@@ -146,13 +159,31 @@ export default function Dashboard(props: any) {
 
           <View style={[styles.chart, { padding: 15 }]}>
             <Text style={styles.chartTitle}>Products</Text>
-            <Text>
-              - List categories in descending order of the most popular products
-            </Text>
-            <Text>
-              - Maybe make each profuct clickabel with relevant details included
-            </Text>
-            <Text>Packages - 1045</Text>
+            <View style={styles.productHero}>
+              <View>
+                <Text style={styles.productCount}>{productCount}</Text>
+                <Text style={styles.productLabel}>total products sold</Text>
+              </View>
+              <View style={styles.productIcon}>
+                <Ionicons name="briefcase" size={28} color="#1F6F9F" />
+              </View>
+            </View>
+            <View style={styles.productMetric}>
+              <Text style={styles.productMetricLabel}>Average sale</Text>
+              <Text style={styles.productMetricValue}>
+                ${averageSale.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+              </Text>
+            </View>
+            <View style={styles.productMetric}>
+              <Text style={styles.productMetricLabel}>Commissions received</Text>
+              <Text style={styles.productMetricValue}>{receivedCommissions}</Text>
+            </View>
+            <View style={styles.productMetric}>
+              <Text style={styles.productMetricLabel}>Commissions pending</Text>
+              <Text style={[styles.productMetricValue, { color: "#B64D20" }]}>
+                {pendingCommissions}
+              </Text>
+            </View>
           </View>
         </View>
       </View>
@@ -165,9 +196,10 @@ const styles = StyleSheet.create({
     display: "flex",
     flexWrap: "wrap",
     flexDirection: "column",
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "#EEF3F7",
     marginTop: 20,
-    padding: 20,
+    padding: 24,
+    borderRadius: 8,
   },
   tabContainer: {
     display: "flex",
@@ -181,21 +213,31 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginBottom: 20,
     backgroundColor: "#FFFFFF",
-    borderRadius: 4,
-    shadowColor: "#000",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#E3EAF1",
+    shadowColor: "#1F2933",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 3,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
     elevation: 5,
   },
   chartTitle: {
-    color: "grey",
+    color: "#506171",
     fontWeight: "700",
     textTransform: "uppercase",
     marginBottom: 20,
+    letterSpacing: 0,
+  },
+  customerListScroll: {
+    flex: 1,
+    overflow: "hidden",
+  },
+  customerListContent: {
+    paddingBottom: 8,
   },
   entryView: {
     padding: 10,
@@ -203,5 +245,50 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     height: 28,
+  },
+  productHero: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: "#EAF4FB",
+    marginBottom: 18,
+  },
+  productCount: {
+    fontSize: 42,
+    fontWeight: "700",
+    color: "#1F2933",
+  },
+  productLabel: {
+    color: "#506171",
+    fontSize: 13,
+    textTransform: "uppercase",
+  },
+  productIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
+  },
+  productMetric: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingTop: 14,
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E9EEF3",
+  },
+  productMetricLabel: {
+    color: "#506171",
+    fontSize: 15,
+  },
+  productMetricValue: {
+    color: "#1F2933",
+    fontSize: 18,
+    fontWeight: "700",
   },
 });

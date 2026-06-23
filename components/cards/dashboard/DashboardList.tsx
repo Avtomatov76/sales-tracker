@@ -4,17 +4,17 @@ import { formatDollarEntry } from "../../../functions/customerFunctions";
 
 export default function DashboardList(props: any) {
   const colors = [
-    "#660000",
-    "#990000",
-    "#CC0000",
-    "#FF1919",
-    "#FF1D1D",
-    "#FF8080",
-    "#FF9999",
-    "#FEC9C9",
-    "#FFCCCC",
-    "#FFE6E6",
-    "#FFEAEA",
+    "#1F6F9F",
+    "#7D3C98",
+    "#F27D42",
+    "#237A57",
+    "#D99A25",
+    "#C75272",
+    "#168C8C",
+    "#8A5A44",
+    "#7597B3",
+    "#9C7FB0",
+    "#E4A177",
   ];
 
   const showTotal = (total: any) => {
@@ -29,21 +29,20 @@ export default function DashboardList(props: any) {
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View
             style={{
-              height: 20,
-              width: 20,
-              borderRadius: 50,
+              height: 12,
+              width: 12,
+              borderRadius: 12,
               backgroundColor: colors[props.index],
-              marginRight: 10,
-              opacity: 0.7,
+              marginRight: 12,
             }}
           ></View>
-          <Text style={{ fontSize: 18 }}>{props.destination.name},&nbsp;</Text>
-          <Text style={{ fontSize: 18 }}>
+          <Text style={styles.entryText}>{props.destination.name},&nbsp;</Text>
+          <Text style={styles.entryText}>
             {props.destination.airport}&nbsp;
           </Text>
         </View>
 
-        <Text style={{ fontSize: 18, fontWeight: "600" }}>
+        <Text style={styles.entryValue}>
           {props.destination.count}
         </Text>
       </View>
@@ -55,27 +54,26 @@ export default function DashboardList(props: any) {
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View
             style={{
-              height: 20,
-              width: 20,
-              borderRadius: 50,
+              height: 12,
+              width: 12,
+              borderRadius: 12,
               backgroundColor: colors[props.index],
-              marginRight: 10,
-              opacity: 0.7,
+              marginRight: 12,
             }}
           ></View>
-          <Text style={{ fontSize: 18 }}>{props.customer.last_name}</Text>
+          <Text style={styles.entryText}>{props.customer.last_name}</Text>
           {props.customer.first_name.toLowerCase() == "na" ? null : (
-            <Text style={{ fontSize: 18 }}>
+            <Text style={styles.entryText}>
               ,&nbsp;{props.customer.first_name}&nbsp;
             </Text>
           )}
         </View>
 
         <View style={{ flexDirection: "row" }}>
-          <Text style={{ fontSize: 16, marginTop: 1, color: "grey" }}>
+          <Text style={{ fontSize: 14, marginTop: 2, color: "#506171" }}>
             &#36;&nbsp;
           </Text>
-          <Text style={{ fontSize: 18, fontWeight: "600" }}>
+          <Text style={styles.entryValue}>
             {showTotal(props.customer.commission.toFixed(2))}
           </Text>
         </View>
@@ -87,10 +85,22 @@ export default function DashboardList(props: any) {
 
 const styles = StyleSheet.create({
   entryView: {
-    padding: 10,
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 10,
+    paddingRight: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    height: 28,
+    minHeight: 44,
+  },
+  entryText: {
+    color: "#1F2933",
+    fontSize: 16,
+  },
+  entryValue: {
+    color: "#1F2933",
+    fontSize: 17,
+    fontWeight: "700",
   },
 });

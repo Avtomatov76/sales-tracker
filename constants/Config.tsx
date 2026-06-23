@@ -1,10 +1,14 @@
 export default function GetConfiguration() {
-  var baseUrl = "http://localhost:8080"; //"https://example/herokuapp.com"; "http://127.0.0.1:5000"; //
-
-  if (process.env["DEV"])
-    // NOTE - Chrome sometimes hates localhost, and never finishes requests.
-    //        Try 127.0.0.1 in that case.
-    baseUrl = "http://localhost:8080"; //"http://127.0.0.1:5000";
+  // On web, API requests should follow the port that served the application.
+  // Native clients do not have a browser origin, so they retain the default.
+  const location = typeof window !== "undefined" ? window.location : undefined;
+  const port = Number(location?.port);
+  const isDirectLocalDevServer =
+    location?.hostname === "localhost" && port && (port < 8080 || port > 8089);
+  const baseUrl =
+    location?.origin && !isDirectLocalDevServer
+      ? location.origin
+      : "http://localhost:8080";
 
   return {
     // profile: baseUrl + "/backend/profile",

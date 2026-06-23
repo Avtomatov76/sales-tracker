@@ -1,0 +1,2 @@
+ALTER TABLE Customer
+  MODIFY COLUMN email VARCHAR(254);
